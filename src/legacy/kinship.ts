@@ -1,6 +1,7 @@
 import type { Locale } from "./locale";
 import { BLOOD, isBloodLine, lastOf, movesKey, reverseMoves, type Chain } from "../chain";
 import { findChain } from "../path";
+import { otherBloodTies, type BloodTie } from "../ties";
 import type { Move } from "../types";
 import { fullName, type Sex, type TreeIndex, type TreePerson } from "./tree";
 
@@ -57,7 +58,7 @@ export function relationReport(index: TreeIndex, fromId: string, toId: string, l
     to: lastOf(found.main),
     main: describeChain(index, found.main, locale),
     others: found.others.map((tie) => ({
-      ...describeChain(index, tie.connection, locale),
+      ...describeChain(index, tie.chain, locale),
       commonAncestors: commonAncestors(tie, locale),
     })),
     couple: found.couple,
@@ -103,8 +104,8 @@ function marriagesOf({ from, steps }: Connection): [string, string][] {
 }
 
 /** The common ancestors of a blood tie, named; none on a direct line, where one is the other's ancestor. */
-function commonAncestors(tie: BloodTie, locale: Locale) {
-  const ends = [tie.connection.from.id, lastOf(tie.connection).id];
+function commonAncestors(tie: BloodTie<TreePerson>, locale: Locale) {
+  const ends = [tie.chain.from.id, lastOf(tie.chain).id];
   if (tie.ancestors.some((ancestor) => ends.includes(ancestor.id))) return null;
   return phrases[locale].commonAncestors(tie.ancestors.map(fullName));
 }
@@ -139,48 +140,6 @@ const phrases: Record<
 
 /* ---------- Related in more than one way ---------- */
 
-/** A blood relationship through one common ancestor (or couple of ancestors), besides the main one. */
-type BloodTie = { connection: Connection; ancestors: TreePerson[] };
-
-/**
- * The other ways two people are related by blood, closest first: one for each common ancestor
- * (a couple counts once) other than the one the main chain goes through. Two brothers who married
- * two sisters have children related twice; a couple may have been cousins before they married.
- */
-function otherBloodTies(index: TreeIndex, main: Connection): BloodTie[] {
-  const a = main.from.id;
-  const b = lastOf(main).id;
-  const upA = ancestorPaths(index, a);
-  const upB = ancestorPaths(index, b);
-  const common = new Set([...upA.keys()].filter((id) => upB.has(id)));
-  // The closest common ancestors: none of their children is a common ancestor too.
-  const closest = [...common].filter((id) => !index.children(id).some((child) => common.has(child.id)));
-
-  const groups: string[][] = [];
-  for (const id of closest) {
-    const spouses = new Set(index.spouses(id).map((spouse) => spouse.id));
-    const group = groups.find((members) => members.some((member) => spouses.has(member)));
-    if (group) group.push(id);
-    else groups.push([id]);
-  }
-
-  const mainIsBlood = isBloodLine(main);
-  const onMainChain = new Set([a, ...main.steps.map((step) => step.person.id)]);
-  return groups
-    .filter((group) => !(mainIsBlood && group.some((id) => onMainChain.has(id))))
-    .map((group) => {
-      const top = group[0];
-      const up = upA.get(top)!;
-      const down = [...upB.get(top)!].reverse();
-      const steps: Connection["steps"] = [
-        ...up.slice(1).map((id) => ({ person: index.byId.get(id)!, move: "up" as const })),
-        ...down.slice(1).map((id) => ({ person: index.byId.get(id)!, move: "down" as const })),
-      ];
-      return { connection: { from: main.from, steps }, ancestors: group.map((id) => index.byId.get(id)!) };
-    })
-    .sort((x, y) => x.connection.steps.length - y.connection.steps.length);
-}
-
 /**
  * Everything that relates two people: the main relationship, and the other blood ties after it.
  * A blood tie usually comes before a chain through marriages (or through the child of a
@@ -193,7 +152,7 @@ function findRelationships(index: TreeIndex, fromId: string, toId: string) {
   if (!shortest) return null;
   const ties = otherBloodTies(index, shortest);
   const couple = shortest.steps.length === 1 && shortest.steps[0].move === "spouse";
-  const closest = ties[0]?.connection;
+  const closest = ties[0]?.chain;
   const bloodFirst =
     closest !== undefined &&
     !isBloodLine(shortest) &&
@@ -213,24 +172,6 @@ const hasName = (connection: Connection) =>
   isBloodLine(connection) ||
   marriageTerm(movesKey(connection.steps.map((step) => step.move)), lastOf(connection).sex, connection.from.sex) !==
     null;
-
-/** For a person and each of their ancestors (the person included), the shortest line between them, the person first. */
-function ancestorPaths(index: TreeIndex, id: string) {
-  const paths = new Map<string, string[]>([[id, [id]]]);
-  let generation = [id];
-  while (generation.length > 0) {
-    const next: string[] = [];
-    for (const current of generation) {
-      for (const parent of index.parents(current)) {
-        if (paths.has(parent.id)) continue;
-        paths.set(parent.id, [...paths.get(current)!, parent.id]);
-        next.push(parent.id);
-      }
-    }
-    generation = next;
-  }
-  return paths;
-}
 
 /* ---------- Names of relationships ---------- */
 

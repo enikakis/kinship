@@ -2,6 +2,7 @@ import type { Locale } from "./locale";
 import { BLOOD, lastOf, movesKey, reverseMoves, type Chain } from "../chain";
 import { findRelationships } from "../choose";
 import { marriageKind } from "../classify";
+import { legalDegree, type LegalDegree } from "../degree";
 import type { BloodTie } from "../ties";
 import type { Move } from "../types";
 import { fullName, type Sex, type TreeIndex, type TreePerson } from "./tree";
@@ -80,7 +81,7 @@ function describeChain(index: TreeIndex, connection: Connection, locale: Locale)
     chain: [...chain].reverse(),
   });
   const roles = other !== null && self !== null ? { other, self } : null;
-  const degree = relationDegree(moves);
+  const degree = legalDegree(moves);
   return {
     roles,
     // Every blood relationship has a name, so only chains through marriages go without one.
@@ -119,22 +120,22 @@ const phrases: Record<
   Locale,
   {
     throughMarriages: (couples: [string, string][]) => string;
-    degree: (degree: Degree) => string;
+    degree: (degree: LegalDegree) => string;
     commonAncestors: (names: string[]) => string;
   }
 > = {
   el: {
     throughMarriages: (couples) =>
       `Συγγενεύουν μέσα από ${couples.length > 1 ? "τους γάμους" : "τον γάμο"}: ${couples.map((couple) => couple.join(" και ")).join("· ")}.`,
-    degree: ({ byMarriage, direct, degree }) =>
-      `Συγγένεια ${byMarriage ? "εξ αγχιστείας" : "εξ αίματος"} ${direct ? "σε ευθεία γραμμή" : "εκ πλαγίου"}, ${degree}ου βαθμού`,
+    degree: ({ kind, line, degree }) =>
+      `Συγγένεια ${kind === "affinity" ? "εξ αγχιστείας" : "εξ αίματος"} ${line === "direct" ? "σε ευθεία γραμμή" : "εκ πλαγίου"}, ${degree}ου βαθμού`,
     commonAncestors: (names) => `${names.length > 1 ? "Κοινοί πρόγονοι" : "Κοινός πρόγονος"}: ${names.join(" και ")}`,
   },
   en: {
     throughMarriages: (couples) =>
       `Related through the ${couples.length > 1 ? "marriages" : "marriage"} of ${couples.map((couple) => couple.join(" and ")).join("; ")}.`,
-    degree: ({ byMarriage, direct, degree }) =>
-      `Related ${byMarriage ? "by marriage (affinity)" : "by blood"} in the ${direct ? "direct" : "collateral"} line, ${englishNumber(degree)} degree`,
+    degree: ({ kind, line, degree }) =>
+      `Related ${kind === "affinity" ? "by marriage (affinity)" : "by blood"} in the ${line} line, ${englishNumber(degree)} degree`,
     commonAncestors: (names) => `Common ancestor${names.length > 1 ? "s" : ""}: ${names.join(" and ")}`,
   },
 };
@@ -358,26 +359,6 @@ function englishBloodName(up: number, down: number, sex: Sex): string {
   const removed = Math.abs(up - down);
   if (removed === 0) return cousin;
   return `${cousin} ${removed === 1 ? "once" : removed === 2 ? "twice" : `${removed} times`} removed`;
-}
-
-type Degree = { byMarriage: boolean; direct: boolean; degree: number };
-
-/**
- * The degree of a relationship as the law counts it (Αστικός Κώδικας, άρθρα 1463–1464): one
- * degree for each generation between the two, through the common ancestor. By blood, or by
- * marriage (αγχιστεία) to the spouse's blood relatives, in the same degree. In the direct line
- * one descends from the other; otherwise the line is collateral. Null for a couple and for
- * relations through more than one marriage, which the law does not count.
- */
-function relationDegree(moves: Move[]): Degree | null {
-  const key = movesKey(moves);
-  const blood = key.replace(/^S|S$/, "");
-  if (blood === "" || !BLOOD.test(blood) || (key !== blood && key.length - blood.length !== 1)) return null;
-  return {
-    byMarriage: key !== blood,
-    direct: !blood.includes("U") || !blood.includes("D"),
-    degree: blood.length,
-  };
 }
 
 /* ---------- The chain as a small tree ---------- */

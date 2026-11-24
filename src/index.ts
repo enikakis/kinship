@@ -15,17 +15,3 @@ export type { ConnectionDiagram, DiagramNode } from "./diagram";
 export type { KinshipLocale, NameQuery } from "./locale";
 export type { Move, Person, Sex, TreeInput, TreeOptions } from "./types";
 
-/*
- * The original API, until the tests are ported to the new one. Its types that share a name with
- * the new ones are exported with a `Legacy` prefix; its `Sex` is the same as the new one.
- */
-export { relationReport } from "./legacy/kinship";
-export type {
-  ConnectionDiagram as LegacyConnectionDiagram,
-  OtherTie as LegacyOtherTie,
-  RelationReport,
-  Relationship as LegacyRelationship,
-} from "./legacy/kinship";
-export type { Locale } from "./legacy/locale";
-export { indexTree, SEXES } from "./legacy/tree";
-export type { FuzzyDate, Tree as LegacyTree, TreeIndex, TreePerson, TreeUnion } from "./legacy/tree";

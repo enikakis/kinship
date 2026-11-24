@@ -3,7 +3,7 @@ import { describeRelation } from "./describe";
 import { el } from "./locales/el";
 import { en } from "./locales/en";
 import { relate } from "./relate";
-import { family, twice, village } from "./testing/fixtures";
+import { family, twice, twoLines, village } from "./testing/fixtures";
 import { createTree } from "./tree";
 
 it("relates two people with plain objects, in a few lines", () => {
@@ -47,9 +47,34 @@ it("gives the other blood ties with their common ancestors as people", () => {
   expect(others[0].commonAncestors.map((ancestor) => ancestor.id).sort()).toEqual(["ma", "pa"]);
 });
 
-it("puts the aunt's husband first, before his distant blood tie", () => {
-  const { main, others } = relate(village, "me", "husband")!;
+it("puts an old common ancestor before a closer chain through the children of a marriage", () => {
+  const { main, others } = relate(twoLines, "me", "you")!;
+  expect([main.from.id, ...main.path.map((step) => step.person.id)]).toEqual([
+    "me",
+    "mom",
+    "gm",
+    "l2",
+    "l1",
+    "old",
+    "r1",
+    "r2",
+    "gf",
+    "dad",
+    "you",
+  ]);
+  expect(main.cousin).toEqual({ degree: 4, removed: 0 });
+  expect(others).toEqual([]);
+});
+
+it("puts a relation by marriage with a name before a distant blood tie", () => {
+  const { main, others, couple } = relate(village, "me", "husband")!;
   expect(main.kind).toBe("uncleByMarriage");
+  expect(couple).toBe(false);
   expect(others).toHaveLength(1);
   expect(others[0].cousin).toEqual({ degree: 3, removed: 1 });
+  expect(others[0].commonAncestors.map((ancestor) => ancestor.id)).toEqual(["old"]);
+  // The other way round too: I am his nephew by marriage first.
+  const back = relate(village, "husband", "me")!;
+  expect(back.main.kind).toBe("nephewByMarriage");
+  expect(back.others).toHaveLength(1);
 });

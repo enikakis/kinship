@@ -22,13 +22,23 @@ Keep it that way.
 
 ## Layout (current)
 
-- `src/kinship.ts`: everything: path search (Dijkstra), other blood ties, choosing the main
-  relationship, Greek and English names, legal degree, diagram layout. Public: `relationReport()`.
-- `src/tree.ts`: `Tree` / `TreePerson` types, `indexTree()` lookups, `fullName()`. Trimmed from
-  the site's `model.ts` + `person-display.ts` (no zod, no site fields).
-- `src/locale.ts`: `type Locale = "el" | "en"`.
-- `src/index.ts`: public entry (temporary re-exports until the new API in PLAN step 2).
-- `src/kinship.test.ts`: behaviour spec. Read its ASCII family diagrams to understand the cases.
+- `src/index.ts`: public entry: `createTree`, `relate`, `describeRelation`, and the types.
+- `src/types.ts`: `Person`, `Sex`, `Move`, `TreeInput`, `TreeOptions`.
+- `src/tree.ts`: `createTree()`: lookups of parents, children, spouses, half-siblings, names.
+- `src/chain.ts`: a chain of moves between two people, and helpers on moves (`"UUD"` keys).
+- `src/path.ts`: the shortest chain (Dijkstra, 10 a step, 11 a marriage step).
+- `src/ties.ts`: the other blood ties, one per closest common ancestor (or couple).
+- `src/choose.ts`: which relationship is the main one (`findRelationships`).
+- `src/classify.ts`: a chain's kind, generations, cousin degree, side and elder branch.
+- `src/degree.ts`: the legal degree as data.
+- `src/diagram.ts`: the chain laid out in rows and lanes for a small diagram.
+- `src/relate.ts`: `relate()`: how two people are related, as data.
+- `src/describe.ts`: `describeRelation()`: a relation in words, in a locale.
+- `src/locale.ts`: the `KinshipLocale` interface and its `NameQuery`.
+- `src/locales/el.ts`, `src/locales/en.ts`: Greek and English (`shared.ts`: helpers for both).
+- `src/testing/fixtures.ts`: the test trees, drawn in ASCII. Read them to understand the cases.
+- `src/*.test.ts`, `src/locales/*.test.ts`: behaviour spec: data next to each module, words
+  per locale.
 - Git history: the first commit holds the four original files (only the example names changed to
   fictional ones), for reference.
 

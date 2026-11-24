@@ -1,4 +1,4 @@
-import { movesKey, reverseMoves } from "./chain";
+import { reverseMoves } from "./chain";
 import { nameQuery } from "./classify";
 import type { KinshipLocale } from "./locale";
 import type { OtherTie, Relation, Relationship } from "./relate";
@@ -48,8 +48,8 @@ function relationshipText<P extends Person>(
   relationship: Relationship<P>,
   locale: KinshipLocale,
 ): RelationshipText {
-  const { from, to, path, moves, legalDegree } = relationship;
-  const halfSibling = movesKey(moves) === "UD" && tree.areHalfSiblings(from.id, to.id);
+  const { from, path, moves, legalDegree } = relationship;
+  const halfSibling = relationship.kind === "halfSibling";
   const sexes = [from, ...path.map((step) => step.person)].map((person) => person.sex);
   const other = locale.name(nameQuery(moves, sexes, halfSibling));
   const self = locale.name(nameQuery(reverseMoves(moves), [...sexes].reverse(), halfSibling));

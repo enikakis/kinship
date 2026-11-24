@@ -1,7 +1,8 @@
 import type { Locale } from "./locale";
-import { BLOOD, isBloodLine, lastOf, movesKey, reverseMoves, type Chain } from "../chain";
-import { findChain } from "../path";
-import { otherBloodTies, type BloodTie } from "../ties";
+import { BLOOD, lastOf, movesKey, reverseMoves, type Chain } from "../chain";
+import { findRelationships } from "../choose";
+import { marriageKind } from "../classify";
+import type { BloodTie } from "../ties";
 import type { Move } from "../types";
 import { fullName, type Sex, type TreeIndex, type TreePerson } from "./tree";
 
@@ -138,41 +139,6 @@ const phrases: Record<
   },
 };
 
-/* ---------- Related in more than one way ---------- */
-
-/**
- * Everything that relates two people: the main relationship, and the other blood ties after it.
- * A blood tie usually comes before a chain through marriages (or through the child of a
- * marriage), even a shorter one. But a relation by marriage with an everyday name (a couple, an
- * uncle by marriage, in-laws) comes before a distant blood tie, one beyond first cousins: in a
- * village an aunt's husband is often a distant cousin too, and he is her husband first of all.
- */
-function findRelationships(index: TreeIndex, fromId: string, toId: string) {
-  const shortest = findChain(index, fromId, toId);
-  if (!shortest) return null;
-  const ties = otherBloodTies(index, shortest);
-  const couple = shortest.steps.length === 1 && shortest.steps[0].move === "spouse";
-  const closest = ties[0]?.chain;
-  const bloodFirst =
-    closest !== undefined &&
-    !isBloodLine(shortest) &&
-    !couple &&
-    !(hasName(shortest) && closest.steps.length > FIRST_COUSIN_STEPS);
-  return bloodFirst ? { main: closest, others: ties.slice(1), couple } : { main: shortest, others: ties, couple };
-}
-
-/** Steps between first cousins (up twice, down twice): blood ties this close always come first. */
-const FIRST_COUSIN_STEPS = 4;
-
-/**
- * Whether a chain has a name of its own, such as «κουνιάδος», rather than only a number of steps.
- * Both languages name the same relationships, so the main one is the same in either.
- */
-const hasName = (connection: Connection) =>
-  isBloodLine(connection) ||
-  marriageTerm(movesKey(connection.steps.map((step) => step.move)), lastOf(connection).sex, connection.from.sex) !==
-    null;
-
 /* ---------- Names of relationships ---------- */
 
 type Word = { male: string; female: string; unknown: string };
@@ -267,7 +233,7 @@ function relationName(
     if (key === "UD") return words[locale][halfSibling ? "halfSibling" : "sibling"][sex];
     return bloodName(key, sex, locale, chain);
   }
-  const term = marriageTerm(key, sex, otherSex);
+  const term = marriageKind(key, sex, otherSex);
   if (term) return words[locale][term][sex];
   // The relatives by marriage the law counts (αγχιστεία) that have no word of their own are named
   // through the blood relative: the spouse of one's relative, or a relative of one's spouse.
@@ -297,30 +263,6 @@ function bloodName(key: string, sex: Sex, locale: Locale, chain: Sex[], of = fal
   const up = key.indexOf("D") < 0 ? key.length : key.indexOf("D");
   const down = key.length - up;
   return locale === "el" ? greekBloodName(up, down, sex, chain, of) : englishBloodName(up, down, sex);
-}
-
-/** Relations by marriage with a name of their own. */
-const BY_MARRIAGE: Record<string, Term> = {
-  S: "spouse",
-  SU: "parentInLaw",
-  DS: "childInLaw",
-  SUD: "siblingInLaw",
-  UDS: "siblingInLaw",
-  DSU: "coParentInLaw",
-  US: "stepParent",
-  SD: "stepChild",
-  // An aunt's husband, or a spouse's uncle; and the other way round.
-  UUDS: "uncleByMarriage",
-  SUUD: "uncleByMarriage",
-  SUDD: "nephewByMarriage",
-  UDDS: "nephewByMarriage",
-};
-
-/** The name of a relation by marriage, in any language; null when it has none. */
-function marriageTerm(key: string, sex: Sex, otherSex: Sex): Term | null {
-  // Two men married to sisters, or two women married to brothers; other pairs have no name.
-  if (key === "SUDS") return sex !== "unknown" && sex === otherSex ? "coSiblingInLaw" : null;
-  return BY_MARRIAGE[key] ?? null;
 }
 
 /*

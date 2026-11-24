@@ -64,13 +64,15 @@ See "Decided design" in the design doc above and its core-API implementation pla
 - [x] Port the original tests to the new API (data assertions + per-locale name assertions).
 - [x] Property-based tests with `fast-check` on random trees:
   - path A→B and B→A have the same length; `reverse(reverse(moves)) === moves`
-  - legal degree is symmetric; `relate(a, b)` is null ⇔ `relate(b, a)` is null
+  - a chain and its reverse count the same legal degree; `relate(a, b)` is null ⇔ `relate(b, a)` is null
   - blood relationships always have a name in both locales; no name contains "undefined"
 - [x] Tests for edge cases: unknown sex, single parent recorded, pedigree collapse (cousin
       marriages), very distant relatives (ordinals beyond «έκτος», 10+ generations).
 
 ## Step 3b: New features
 
+- [ ] Make `relate` independent of direction (same main relationship, inverse roles, equal degree
+      from either end); turn the `it.fails` test in relate.test.ts into a passing test
 - [ ] fr / de / es locales
 - [ ] `relateAll`
 - [ ] `svg` entry

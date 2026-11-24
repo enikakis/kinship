@@ -3,7 +3,7 @@ import { describeRelation } from "./describe";
 import { el } from "./locales/el";
 import { en } from "./locales/en";
 import { relate } from "./relate";
-import { family, line, twice, twoLines, village } from "./testing/fixtures";
+import { family, line, person, twice, twoLines, village } from "./testing/fixtures";
 import { createTree } from "./tree";
 
 it("relates two people with plain objects, in a few lines", () => {
@@ -77,6 +77,37 @@ it("puts a relation by marriage with a name before a distant blood tie", () => {
   const back = relate(village, "husband", "me")!;
   expect(back.main.kind).toBe("nephewByMarriage");
   expect(back.others).toHaveLength(1);
+});
+
+// Known to fail: from Bob the first equally short chain goes through his grandfather's marriage
+// and has no name. Making `relate` independent of direction is in docs/PLAN.md, Step 3b.
+it.fails("gives the same relationship from either end", () => {
+  // gm → kate, aunt; kate → anna; hal → hank → bob; kate ═ hal (her later marriage); bob ═ aunt
+  const tree = createTree({
+    people: [
+      person("gm", "female"),
+      person("kate", "female"),
+      person("aunt", "female"),
+      person("anna", "female"),
+      person("hal", "male"),
+      person("hank", "male"),
+      person("bob", "male"),
+    ],
+    parents: [
+      ["gm", "kate"],
+      ["gm", "aunt"],
+      ["kate", "anna"],
+      ["hal", "hank"],
+      ["hank", "bob"],
+    ],
+    unions: [
+      { a: "kate", b: "hal" },
+      { a: "bob", b: "aunt" },
+    ],
+  });
+  const degree = { degree: 3, line: "collateral", kind: "affinity" };
+  expect(relate(tree, "anna", "bob")!.main).toMatchObject({ kind: "uncleByMarriage", legalDegree: degree });
+  expect(relate(tree, "bob", "anna")!.main).toMatchObject({ kind: "nephewByMarriage", legalDegree: degree });
 });
 
 it("finds the child of two first cousins descending from the common grandparents", () => {

@@ -72,7 +72,7 @@ describe("properties on random trees", () => {
     );
   });
 
-  it("the legal degree is the same from either end", () => {
+  it("counts the same degree for a chain and its reverse", () => {
     fc.assert(
       fc.property(arbTree, arbPair, ({ tree, ids }, pair) => {
         const relation = relate(tree, ...pick(ids, pair));

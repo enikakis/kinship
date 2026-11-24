@@ -98,7 +98,7 @@ One package now, with subpath exports (each tree-shakeable, `"sideEffects": fals
 
 | Entry | Contents |
 |---|---|
-| `@enikakis/kinship` | `createTree`, `relate`, `relateAll`, `describe`, `validateTree`, types |
+| `@enikakis/kinship` | `createTree`, `relate`, `relateAll`, `describeRelation`, `validateTree`, types |
 | `@enikakis/kinship/locales/el` (and `en`, `fr`, `de`, `es`) | one `KinshipLocale` each |
 | `@enikakis/kinship/gedcom` | `fromGedcom(text)` |
 | `@enikakis/kinship/svg` | `toSvg(diagram, options)` |
@@ -145,13 +145,14 @@ rel.couple      // boolean
 - `blood`: `{ up, down }` for blood relations (null otherwise); `cousin`: `{ degree, removed }`
   for cousins;
 - `legalDegree`: `{ degree, line: "direct" | "collateral", kind: "blood" | "affinity" } | null`;
-- `diagram`: today's `ConnectionDiagram` data (nodes with row/lane, links, ends), with `P` for
-  persons and no role strings in it (roles come from `describe`).
+- `diagram`: today's `ConnectionDiagram` data (nodes with row/lane, links), with `P` for persons.
+  No `ends` field: the two people are the first and the last node, and their roles come from
+  `describeRelation`.
 
 **Data for future languages** (cheap now, needed by Chinese/Korean/Hindi later; v1 locales may
 ignore it): `side` ("paternal" | "maternal" | null: the sex of the first parent stepped up to) and
-`elder` (which of the two branches below the common ancestor was born first, when `born` allows
-telling; null otherwise).
+`elderBranch` ("from" | "to": whose branch below the common ancestor starts with the elder child,
+when `born` allows telling; null otherwise).
 
 ### The legal degree
 
@@ -164,17 +165,23 @@ worked example, not as a Greece-only feature. Wording of the degree sentence is 
 
 ```ts
 interface KinshipLocale {
-  // what `rel.main.path`'s last person is to the first, and back; null = no everyday name
-  roles(rel: Relationship<…>): { other: string; self: string } | null;
+  code: string;                                  // "el", "en"
+  // what the last person of a chain is to the first; null = no everyday name
+  name(query: NameQuery): string | null;         // NameQuery = { kind, moves, blood, sexes }
   step(move, sex): string;                       // «πατέρας», "son", for the chain
   degree(d: LegalDegree): string;                // the degree as a sentence
   throughMarriages(couples: [string, string][]): string;
   commonAncestors(names: string[]): string;
 }
-const text = describe(rel, el);   // { roles, summary, degree, chain, others[] } using tree's `name`
+const text = describeRelation(tree, rel, el);
+// { main: { roles, summary, degree, chain }, others: [{ …, commonAncestors }], couple }, using the tree's `name`
 ```
 
-The interface above is the intent; its exact shape is the builder's. The rules:
+`describeRelation` asks the locale for both directions (`roles.other` and `roles.self`). A
+query's `blood` is the generations of its blood part: the whole chain for a blood relation; for
+`spouseOfRelative` and `relativeOfSpouse`, the chain without its marriage step, so a locale names
+them through the blood relative («σύζυγος της πρώτης εξαδέλφης», "wife's first cousin"). The
+rules:
 
 - A locale owns its grammar (gender, case, word order). Shared helpers (cousin degree/removal,
   English-style ordinals) live in one internal module locales may use.
@@ -248,7 +255,7 @@ is the clean one that will be pushed; all further work uses fictional names from
 Follows `docs/PLAN.md`, with the new features slotted in. `PLAN.md` is updated to match this
 document as the first commit of the work.
 
-1. Step 2: new API (`createTree`, `relate`, `describe`, locale interface), module split,
+1. Step 2: new API (`createTree`, `relate`, `describeRelation`, locale interface), module split,
    compatibility wrapper; el + en locales ported.
 2. Step 3: tests ported to the new API, property-based tests, edge cases; wrapper removed.
    (Fictional names: already done.)

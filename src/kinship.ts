@@ -1,6 +1,5 @@
-import type { Locale } from "@/shared/i18n";
-import type { Sex, TreeIndex, TreePerson } from "./model";
-import { fullName } from "./person-display";
+import type { Locale } from "./locale";
+import { fullName, type Sex, type TreeIndex, type TreePerson } from "./tree";
 
 /*
  * How two people of the tree are related: the shortest chain of parents, children and marriages

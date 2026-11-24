@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { relationReport } from "./kinship";
-import { indexTree, type Tree, type TreeIndex, type TreePerson } from "./model";
-import type { Locale } from "@/shared/i18n";
+import type { Locale } from "./locale";
+import { indexTree, type Tree, type TreeIndex, type TreePerson } from "./tree";
 
 const person = (id: string, sex: TreePerson["sex"]): TreePerson => ({
   id,

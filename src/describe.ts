@@ -31,7 +31,7 @@ export type RelationText = {
 };
 
 /** A relation (see `relate`) in words, in `locale`. */
-export function describe<P extends Person>(tree: Tree<P>, relation: Relation<P>, locale: KinshipLocale): RelationText {
+export function describeRelation<P extends Person>(tree: Tree<P>, relation: Relation<P>, locale: KinshipLocale): RelationText {
   return {
     main: relationshipText(tree, relation.main, locale),
     others: relation.others.map((tie) => ({

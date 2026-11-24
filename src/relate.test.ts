@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { describe } from "./describe";
+import { describeRelation } from "./describe";
 import { el } from "./locales/el";
 import { en } from "./locales/en";
 import { relate } from "./relate";
@@ -29,8 +29,8 @@ it("relates two people with plain objects, in a few lines", () => {
   });
   // The caller's own object, not a copy.
   expect(rel.main.to).toBe(tree.byId.get("maria"));
-  expect(describe(tree, rel, el).main.roles).toEqual({ other: "θεία", self: "ανιψιός" });
-  expect(describe(tree, rel, en).main.roles).toEqual({ other: "aunt", self: "nephew" });
+  expect(describeRelation(tree, rel, el).main.roles).toEqual({ other: "θεία", self: "ανιψιός" });
+  expect(describeRelation(tree, rel, en).main.roles).toEqual({ other: "aunt", self: "nephew" });
 });
 
 it("is null for people who are not connected, or for the same person", () => {

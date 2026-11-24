@@ -1,5 +1,5 @@
 import type { Locale } from "./locale";
-import { describe, type RelationshipText } from "../describe";
+import { describeRelation, type RelationshipText } from "../describe";
 import type { ConnectionDiagram as NewDiagram } from "../diagram";
 import type { KinshipLocale } from "../locale";
 import { el } from "../locales/el";
@@ -10,8 +10,8 @@ import type { TreeIndex, TreePerson } from "./tree";
 const locales: Record<Locale, KinshipLocale> = { el, en };
 
 /*
- * The original report, kept until the tests are ported: `relate` and `describe` in the old shape,
- * with the two people marked on each diagram.
+ * The original report, kept until the tests are ported: `relate` and `describeRelation` in the
+ * old shape, with the two people marked on each diagram.
  */
 
 /** One way two people are related, in words and drawn as a small tree. */
@@ -32,7 +32,7 @@ export type RelationReport = {
 export function relationReport(index: TreeIndex, fromId: string, toId: string, locale: Locale): RelationReport | null {
   const relation = relate(index, fromId, toId);
   if (!relation) return null;
-  const text = describe(index, relation, locales[locale]);
+  const text = describeRelation(index, relation, locales[locale]);
   return {
     from: relation.main.from,
     to: relation.main.to,

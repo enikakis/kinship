@@ -1,13 +1,13 @@
 /*
  * Public entry point: `createTree`, then `relate` for how two people are related, as data, and
- * `describe` to put it into words in a locale. Designed in
+ * `describeRelation` to put it into words in a locale. Designed in
  * docs/superpowers/specs/2026-11-24-kinship-v1-design.md.
  */
 export { createTree } from "./tree";
 export type { Tree } from "./tree";
 export { relate } from "./relate";
 export type { OtherTie, Relation, Relationship } from "./relate";
-export { describe } from "./describe";
+export { describeRelation } from "./describe";
 export type { RelationshipText, RelationText } from "./describe";
 export type { Blood, Kind } from "./classify";
 export type { LegalDegree } from "./degree";

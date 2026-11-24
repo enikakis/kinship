@@ -2,6 +2,7 @@ import type { Locale } from "./locale";
 import { BLOOD, lastOf, movesKey, reverseMoves, type Chain } from "../chain";
 import { findRelationships } from "../choose";
 import { marriageKind } from "../classify";
+import { chainDiagram, type ConnectionDiagram as NewDiagram } from "../diagram";
 import { legalDegree, type LegalDegree } from "../degree";
 import type { BloodTie } from "../ties";
 import type { Move } from "../types";
@@ -94,7 +95,13 @@ function describeChain(index: TreeIndex, connection: Connection, locale: Locale)
         text: `${words[locale][STEP_TERMS[move]][person.sex]}: ${fullName(person)}`,
       })),
     ],
-    diagram: connectionDiagram(connection, { from: roles?.self ?? null, to: roles?.other ?? null }),
+    diagram: {
+      ...chainDiagram(connection),
+      ends: [
+        { id: from.id, role: roles?.self ?? null },
+        { id: to.id, role: roles?.other ?? null },
+      ],
+    },
   };
 }
 
@@ -364,61 +371,9 @@ function englishBloodName(up: number, down: number, sex: Sex): string {
 /* ---------- The chain as a small tree ---------- */
 
 /**
- * A person of the chain in the diagram: `row` is the generation (0 the oldest), `lane` the
- * column, which may be halfway between two (a common ancestor above both lines).
+ * The chain laid out as a tree (see `chainDiagram`), with the two people compared and what each
+ * is to the other (null: no everyday name).
  */
-type DiagramNode = { person: TreePerson; row: number; lane: number };
-
-/**
- * The chain laid out as a tree: its people, how many lanes wide it is, the lines in chain order,
- * and the two people compared, with what each is to the other (null: no everyday name).
- */
-export type ConnectionDiagram = {
-  nodes: DiagramNode[];
-  rows: number;
-  lanes: number;
-  links: { from: string; to: string; kind: "parent" | "spouse" }[];
+export type ConnectionDiagram = NewDiagram<TreePerson> & {
   ends: { id: string; role: string | null }[];
 };
-
-/**
- * Lays a chain out as a family tree. Going up is the row above and going down the row below, in
- * the same lane, so each line of ancestors stands straight. Where the chain turns from going up
- * to going down, the common ancestor sits halfway between the two lines and the chain moves to a
- * new lane; a marriage or another turn also moves to a new lane, in the same row.
- */
-function connectionDiagram(
-  connection: Connection,
-  roles: { from: string | null; to: string | null },
-): ConnectionDiagram {
-  const chain: { person: TreePerson; level: number; lane: number }[] = [{ person: connection.from, level: 0, lane: 0 }];
-  let lane = 0;
-  connection.steps.forEach(({ person, move }, i) => {
-    const before = chain.at(-1)!;
-    const previousMove = connection.steps[i - 1]?.move;
-    if (move === "spouse") lane += 1;
-    else if (move === "down" && previousMove === "up") {
-      before.lane = lane + 0.5;
-      lane += 1;
-    } else if (move === "up" && previousMove === "down") lane += 1;
-    const level = before.level + (move === "up" ? -1 : move === "down" ? 1 : 0);
-    chain.push({ person, level, lane });
-  });
-  const top = Math.min(...chain.map((node) => node.level));
-  const nodes = chain.map(({ person, level, lane }) => ({ person, row: level - top, lane }));
-  const links = connection.steps.map(({ person, move }, i) => ({
-    from: chain[i].person.id,
-    to: person.id,
-    kind: move === "spouse" ? ("spouse" as const) : ("parent" as const),
-  }));
-  return {
-    nodes,
-    rows: Math.max(...nodes.map((node) => node.row)) + 1,
-    lanes: Math.ceil(Math.max(...nodes.map((node) => node.lane))) + 1,
-    links,
-    ends: [
-      { id: connection.from.id, role: roles.from },
-      { id: lastOf(connection).id, role: roles.to },
-    ],
-  };
-}

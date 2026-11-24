@@ -3,7 +3,7 @@ import { describeRelation } from "./describe";
 import { el } from "./locales/el";
 import { en } from "./locales/en";
 import { relate } from "./relate";
-import { family, twice, twoLines, village } from "./testing/fixtures";
+import { family, line, twice, twoLines, village } from "./testing/fixtures";
 import { createTree } from "./tree";
 
 it("relates two people with plain objects, in a few lines", () => {
@@ -77,4 +77,39 @@ it("puts a relation by marriage with a name before a distant blood tie", () => {
   const back = relate(village, "husband", "me")!;
   expect(back.main.kind).toBe("nephewByMarriage");
   expect(back.others).toHaveLength(1);
+});
+
+it("finds the child of two first cousins descending from the common grandparents", () => {
+  // gp ═ gm → a, b;  a → x, b → y;  x ═ y → kid
+  const tree = createTree({
+    people: ["gp", "gm", "a", "b", "x", "y", "kid"].map((id) => ({ id, sex: "unknown" as const })),
+    parents: [
+      ["gp", "a"], ["gm", "a"], ["gp", "b"], ["gm", "b"],
+      ["a", "x"], ["b", "y"], ["x", "kid"], ["y", "kid"],
+    ],
+    unions: [{ a: "gp", b: "gm" }, { a: "x", b: "y" }],
+  });
+  const rel = relate(tree, "kid", "gp")!;
+  expect(rel.main).toMatchObject({ kind: "ancestor", blood: { up: 3, down: 0 } });
+  expect(rel.others).toEqual([]);
+
+  const cousins = relate(tree, "x", "y")!;
+  expect(cousins.couple).toBe(true);
+  expect(cousins.others[0]?.kind).toBe("cousin");
+});
+
+it("does not hang on a parent cycle in bad data", () => {
+  const tree = createTree({
+    people: ["a", "b", "c"].map((id) => ({ id, sex: "unknown" as const })),
+    parents: [["a", "b"], ["b", "a"], ["b", "c"]],
+    unions: [],
+  });
+  expect(relate(tree, "c", "a")).not.toBeNull();
+});
+
+it("gives both forms when nobody's sex is known", () => {
+  const { tree, from, to } = line("UUD", "unknown");
+  const rel = relate(tree, from, to)!;
+  expect(describeRelation(tree, rel, el).main.summary).toBe("θείος/θεία");
+  expect(describeRelation(tree, rel, en).main.summary).toBe("uncle/aunt");
 });

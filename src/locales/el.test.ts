@@ -229,3 +229,20 @@ describe("related in more than one way", () => {
     expect(others.map((tie) => [tie.summary, tie.commonAncestors])).toEqual([["προ-προ-προπάππους", null]]);
   });
 });
+
+describe("very distant relatives", () => {
+  const name = (key: string, sex: Sex) => along(key, sex).summary;
+
+  it("names cousins beyond the sixth with words, then with numbers", () => {
+    expect(name("U".repeat(8) + "D".repeat(8), "male")).toBe("έβδομος εξάδελφος");
+    expect(name("U".repeat(11) + "D".repeat(11), "female")).toBe("δέκατη εξαδέλφη");
+    expect(name("U".repeat(12) + "D".repeat(12), "male")).toBe("11ος εξάδελφος");
+    expect(name("U".repeat(12) + "D".repeat(12), "female")).toBe("11η εξαδέλφη");
+    // genitive: a parent's 8th cousin
+    expect(name("U".repeat(10) + "D".repeat(9), "male")).toBe("όγδοος εξάδελφος του γονιού");
+  });
+
+  it("names an ancestor twelve generations up", () => {
+    expect(name("U".repeat(12), "male")).toBe("πρόγονος 12ης γενιάς");
+  });
+});

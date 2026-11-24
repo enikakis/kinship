@@ -128,3 +128,10 @@ describe("related in more than one way", () => {
     expect(others.map((tie) => [tie.summary, tie.commonAncestors])).toEqual([["3rd great-grandfather", null]]);
   });
 });
+
+describe("very distant relatives", () => {
+  it("names very distant relatives", () => {
+    expect(along("U".repeat(12), "male").summary).toBe("10th great-grandfather");
+    expect(along("U".repeat(8) + "D".repeat(8), "female").summary).toBe("7th cousin");
+  });
+});

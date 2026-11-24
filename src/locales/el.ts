@@ -10,8 +10,6 @@ import { bloodPart, STEP_TERMS, w } from "./shared";
 
 const words = {
   parent: w("πατέρας", "μητέρα", "γονιός"),
-  grandparent: w("παππούς", "γιαγιά"),
-  greatGrandparent: w("προπάππους", "προγιαγιά"),
   ancestor: w("πρόγονος", "πρόγονος", "πρόγονος"),
   child: w("γιος", "κόρη", "παιδί"),
   grandchild: w("εγγονός", "εγγονή", "εγγόνι"),

@@ -9,12 +9,8 @@ import { bloodPart, STEP_TERMS, w } from "./shared";
 const words = {
   parent: w("father", "mother", "parent"),
   grandparent: w("grandfather", "grandmother", "grandparent"),
-  greatGrandparent: w("great-grandfather", "great-grandmother", "great-grandparent"),
-  ancestor: w("ancestor", "ancestor", "ancestor"),
   child: w("son", "daughter", "child"),
   grandchild: w("grandson", "granddaughter", "grandchild"),
-  greatGrandchild: w("great-grandson", "great-granddaughter", "great-grandchild"),
-  descendant: w("descendant", "descendant", "descendant"),
   sibling: w("brother", "sister", "sibling"),
   halfSibling: w("half-brother", "half-sister", "half-sibling"),
   uncle: w("uncle", "aunt", "uncle/aunt"),
@@ -83,7 +79,7 @@ export const en: KinshipLocale = {
   commonAncestors: (names) => `Common ancestor${names.length > 1 ? "s" : ""}: ${names.join(" and ")}`,
 };
 
-/** «great-», «great-great-», then «3rd great-», «4th great-»… */
+/** "great-", "great-great-", then "3rd great-", "4th great-"… */
 const greats = (n: number) => (n <= 2 ? "great-".repeat(n) : `${number(n)} great-`);
 
 /**

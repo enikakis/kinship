@@ -56,7 +56,8 @@ export type Kind =
 /** A blood tie: generations up to the closest common ancestor, then down. */
 export type Blood = { up: number; down: number };
 
-const bloodOf = (key: string): Blood => {
+/** The generations up and down of a blood chain, from its key (see `movesKey`). */
+export const bloodOf = (key: string): Blood => {
   const up = key.indexOf("D") < 0 ? key.length : key.indexOf("D");
   return { up, down: key.length - up };
 };

@@ -1,5 +1,7 @@
 # Plan: from extracted code to a published npm package
 
+Design: docs/superpowers/specs/2026-11-24-kinship-v1-design.md · Implementation plans: docs/superpowers/plans/
+
 Goal: publish `@enikakis/kinship` as a polished, zero-dependency TypeScript library that works
 as a portfolio showcase (clear API, strong tests, docs, live demo, CI, verified npm provenance),
 then make `vrisies-history-hub` use it instead of its own copy.
@@ -17,8 +19,7 @@ Work through the steps in order; tick boxes as you go. Keep `npm test` green aft
 
 ## Step 2: Design the public API (data first, words second)
 
-Today `relationReport()` returns mostly finished strings. Split into structured data plus
-per-language formatters.
+See "Decided design" in the design doc above and its core-API implementation plan; the boxes below are that plan's tasks 2–7.
 
 - [ ] **Generic person type:** `<P extends { id: string; sex: Sex }>`, so users pass their own
       objects and get them back typed. Name display via an option `getName?: (p: P) => string`
@@ -67,6 +68,13 @@ per-language formatters.
   - blood relationships always have a name in both locales; no name contains "undefined"
 - [ ] Tests for edge cases: unknown sex, single parent recorded, pedigree collapse (cousin
       marriages), very distant relatives (ordinals beyond «έκτος», 10+ generations).
+
+## Step 3b: New features
+
+- [ ] fr / de / es locales
+- [ ] `relateAll`
+- [ ] `svg` entry
+- [ ] `gedcom` entry
 
 ## Step 4: Performance
 

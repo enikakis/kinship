@@ -21,12 +21,12 @@ Work through the steps in order; tick boxes as you go. Keep `npm test` green aft
 
 See "Decided design" in the design doc above and its core-API implementation plan; the boxes below are that plan's tasks 2–7.
 
-- [ ] **Generic person type:** `<P extends { id: string; sex: Sex }>`, so users pass their own
+- [x] **Generic person type:** `<P extends { id: string; sex: Sex }>`, so users pass their own
       objects and get them back typed. Name display via an option `getName?: (p: P) => string`
       (default: `p.name ?? p.id`). Remove `given_name` / `surname` / `living` from the core.
-- [ ] **Input shape** stays close to today:
+- [x] **Input shape** stays close to today:
       `{ people: P[]; parents: [parentId, childId][]; unions: { a: string; b: string }[] }`.
-- [ ] **Structured result** (sketch, refine while implementing):
+- [x] **Structured result** (sketch, refine while implementing):
       ```ts
       const tree = createTree(input);
       const rel = relate(tree, "maria", "nikos");   // null if unrelated / same person
@@ -40,15 +40,15 @@ See "Decided design" in the design doc above and its core-API implementation pla
       rel.others             // other blood ties, each with commonAncestors
       rel.couple             // boolean
       ```
-- [ ] **Languages as separate, tree-shakeable modules:** `@enikakis/kinship/locales/el` and
+- [x] **Languages as separate, tree-shakeable modules:** `@enikakis/kinship/locales/el` and
       `/locales/en`, each implementing one `KinshipLocale` interface (names, ordinals, phrases).
-      `describe(rel, el)` → `{ roles, summary, degree, chain }` (today's `Relationship` strings).
-- [ ] Keep a compatibility wrapper that reproduces today's `relationReport()` output exactly, so
-      the existing 27 tests keep passing during the refactor (delete it once tests are ported).
-- [ ] Split `kinship.ts` into modules:
+      `describeRelation(tree, relation, locale)` → `{ main, others, couple }`, each with `{ roles, summary, degree, chain }` (today's `Relationship` strings).
+- [x] Keep a compatibility wrapper that reproduces the original `relationReport()` output exactly, so
+      the existing tests keep passing during the refactor (delete it once tests are ported).
+- [x] Split `kinship.ts` into modules:
       ```
       src/
-      ├── index.ts        public API: createTree, relate, describe, validateTree, types
+      ├── index.ts        public API: createTree, relate, describeRelation, validateTree, types
       ├── tree.ts         indexing (parents / children / spouses as Maps)
       ├── path.ts         shortest chain (Dijkstra)
       ├── ties.ts         other blood ties, closest common ancestors
@@ -61,12 +61,12 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 ## Step 3: Tests
 
-- [ ] Port the 27 tests to the new API (data assertions + per-locale name assertions).
-- [ ] Property-based tests with `fast-check` on random trees:
+- [x] Port the original tests to the new API (data assertions + per-locale name assertions).
+- [x] Property-based tests with `fast-check` on random trees:
   - path A→B and B→A have the same length; `reverse(reverse(moves)) === moves`
   - legal degree is symmetric; `relate(a, b)` is null ⇔ `relate(b, a)` is null
   - blood relationships always have a name in both locales; no name contains "undefined"
-- [ ] Tests for edge cases: unknown sex, single parent recorded, pedigree collapse (cousin
+- [x] Tests for edge cases: unknown sex, single parent recorded, pedigree collapse (cousin
       marriages), very distant relatives (ordinals beyond «έκτος», 10+ generations).
 
 ## Step 3b: New features

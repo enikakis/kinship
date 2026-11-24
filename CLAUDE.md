@@ -6,14 +6,14 @@ removed", plus the legal degree (Greek Civil Code arts. 1463–1464), the other 
 for a small diagram of the chain.
 
 **Status:** extracted from the owner's site `~/Developer/personal/vrisies-history-hub`
-(`src/features/family-tree/`, commit `3433dad`) and made standalone. The code is still in its
-original shape. The roadmap to a published npm package is in **`docs/PLAN.md`**: read it first,
+(`src/features/family-tree/`, commit `3433dad`) and made standalone. The
+core API is in place (`createTree` / `relate` / `describeRelation`, el + en locales). The roadmap to a published npm package continues in **`docs/PLAN.md`**: read it first,
 work through it in order, and tick the boxes as steps are done.
 
 ## Commands
 
 ```sh
-npm test            # vitest, 27 tests, all must stay green
+npm test            # vitest, the whole suite must stay green
 npm run typecheck   # tsc --noEmit (strict)
 ```
 

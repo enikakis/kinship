@@ -1,4 +1,5 @@
 import { BLOOD, lastOf, movesKey, movesOf, type Chain } from "./chain";
+import type { NameQuery } from "./locale";
 import type { Tree } from "./tree";
 import type { Move, Person, Sex } from "./types";
 
@@ -56,8 +57,7 @@ export type Kind =
 /** A blood tie: generations up to the closest common ancestor, then down. */
 export type Blood = { up: number; down: number };
 
-/** The generations up and down of a blood chain, from its key (see `movesKey`). */
-export const bloodOf = (key: string): Blood => {
+const bloodOf = (key: string): Blood => {
   const up = key.indexOf("D") < 0 ? key.length : key.indexOf("D");
   return { up, down: key.length - up };
 };
@@ -79,6 +79,19 @@ export function kindOf(moves: readonly Move[], sexes: readonly Sex[], halfSiblin
   if (BLOOD.test(key.slice(0, -1)) && key.endsWith("S")) return "spouseOfRelative";
   if (key.startsWith("S") && BLOOD.test(key.slice(1))) return "relativeOfSpouse";
   return "unnamed";
+}
+
+/**
+ * What a locale needs to name the last person of a chain to the first (see `NameQuery`): the
+ * kind, and the generations of the blood part, which for a relation by marriage named through
+ * the blood relative is the chain without its marriage step.
+ */
+export function nameQuery(moves: readonly Move[], sexes: readonly Sex[], halfSibling: boolean): NameQuery {
+  const kind = kindOf(moves, sexes, halfSibling);
+  const key = movesKey(moves);
+  const bloodPart =
+    kind === "spouseOfRelative" ? key.slice(0, -1) : kind === "relativeOfSpouse" ? key.slice(1) : key;
+  return { kind, moves, blood: BLOOD.test(bloodPart) ? bloodOf(bloodPart) : null, sexes };
 }
 
 export type Classification = {

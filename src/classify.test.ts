@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { classify, kindOf } from "./classify";
+import { classify, kindOf, nameQuery } from "./classify";
 import { findChain } from "./path";
 import { createTree } from "./tree";
 import { family, fromKey, line, person, sexesFor } from "./testing/fixtures";
@@ -19,6 +19,18 @@ describe("classify", () => {
     ["SUUD", "uncleByMarriage"], ["SUDD", "nephewByMarriage"], ["UDDS", "nephewByMarriage"],
     ["UUDDS", "spouseOfRelative"], ["UUS", "spouseOfRelative"], ["SDD", "relativeOfSpouse"], ["UDSUD", "unnamed"],
   ])("calls %s a %s", (key, kind) => expect(kindOf(fromKey(key), sexesFor(key, "male"), false)).toBe(kind));
+
+  it("gives a name query the generations of the blood part, if any", () => {
+    const blood = (key: string) => nameQuery(fromKey(key), sexesFor(key, "male"), false).blood;
+    expect(blood("UUD")).toEqual({ up: 2, down: 1 });
+    // The spouse of a first cousin; a spouse's grandchild.
+    expect(blood("UUDDS")).toEqual({ up: 2, down: 2 });
+    expect(blood("SDD")).toEqual({ up: 0, down: 2 });
+    // Relations by marriage with a word of their own, and chains with no name.
+    expect(blood("SU")).toBeNull();
+    expect(blood("UDSUD")).toBeNull();
+    expect(nameQuery(fromKey("UD"), sexesFor("UD", "male"), true).kind).toBe("halfSibling");
+  });
 
   it("calls SUDS co-siblings-in-law only between two people of the same sex", () => {
     const same: Sex[] = ["female", "male", "unknown", "male", "female"];

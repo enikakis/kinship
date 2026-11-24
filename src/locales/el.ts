@@ -1,8 +1,7 @@
-import { movesKey } from "../chain";
-import { bloodOf, type Blood } from "../classify";
+import type { Blood } from "../classify";
 import type { KinshipLocale } from "../locale";
 import type { Sex } from "../types";
-import { STEP_TERMS, w } from "./shared";
+import { bloodPart, STEP_TERMS, w } from "./shared";
 
 /*
  * Greek. Names need the sex of the person named and, inside longer names, the genitive case:
@@ -51,7 +50,8 @@ const bySex = (sex: Sex, male: string, female: string) =>
 export const el: KinshipLocale = {
   code: "el",
 
-  name({ kind, moves, blood, sexes }) {
+  name(query) {
+    const { kind, sexes } = query;
     const sex = sexes[sexes.length - 1];
     switch (kind) {
       case "sibling":
@@ -62,15 +62,15 @@ export const el: KinshipLocale = {
       case "uncle":
       case "nephew":
       case "cousin":
-        return bloodName(blood ?? bloodOf(movesKey(moves)), sex, sexes);
+        return bloodName(bloodPart(query), sex, sexes);
       // The relatives by marriage the law counts (αγχιστεία) that have no word of their own are
       // named through the blood relative: the spouse of one's relative, or a relative of one's spouse.
       case "spouseOfRelative": {
-        const relative = bloodOf(movesKey(moves.slice(0, -1)));
-        return `${words.spouse[sex]} ${bloodName(relative, sexes[sexes.length - 2], sexes.slice(0, -1), true)}`;
+        const relative = bloodName(bloodPart(query), sexes[sexes.length - 2], sexes.slice(0, -1), true);
+        return `${words.spouse[sex]} ${relative}`;
       }
       case "relativeOfSpouse": {
-        const relative = bloodName(bloodOf(movesKey(moves.slice(1))), sex, sexes.slice(1));
+        const relative = bloodName(bloodPart(query), sex, sexes.slice(1));
         return `${relative} ${bySex(sexes[1], "του συζύγου", "της συζύγου")}`;
       }
       case "unnamed":

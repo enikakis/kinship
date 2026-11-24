@@ -7,7 +7,11 @@ export type NameQuery = {
   kind: Kind;
   /** From the viewer to the named person. */
   moves: readonly Move[];
-  /** Generations up and down when the chain is blood, else null. */
+  /**
+   * Generations up and down of the blood part: the whole chain when it is blood; the blood
+   * relative's chain for "spouseOfRelative" (without the last, marriage step) and
+   * "relativeOfSpouse" (without the first); null for the other relations by marriage.
+   */
   blood: Blood | null;
   /** Everyone on the chain, viewer first, named person last. */
   sexes: readonly Sex[];

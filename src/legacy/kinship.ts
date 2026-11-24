@@ -1,14 +1,13 @@
 import type { Locale } from "./locale";
-import { BLOOD, lastOf, movesKey, reverseMoves, type Chain } from "../chain";
+import { lastOf, movesKey, reverseMoves, type Chain } from "../chain";
 import { findRelationships } from "../choose";
-import { bloodOf, kindOf } from "../classify";
+import { nameQuery } from "../classify";
 import { chainDiagram, type ConnectionDiagram as NewDiagram } from "../diagram";
 import { legalDegree } from "../degree";
-import type { KinshipLocale, NameQuery } from "../locale";
+import type { KinshipLocale } from "../locale";
 import { el } from "../locales/el";
 import { en } from "../locales/en";
 import type { BloodTie } from "../ties";
-import type { Move, Sex } from "../types";
 import { fullName, type TreeIndex, type TreePerson } from "./tree";
 
 /** The chain of this module's people. */
@@ -81,12 +80,8 @@ function describeChain(index: TreeIndex, connection: Connection, locale: Locale)
   const halfSibling = movesKey(moves) === "UD" && index.areHalfSiblings(from.id, to.id);
   const sexes = [from, ...steps.map((step) => step.person)].map((person) => person.sex);
   const language = locales[locale];
-  const query = (moves: Move[], sexes: Sex[]): NameQuery => {
-    const key = movesKey(moves);
-    return { kind: kindOf(moves, sexes, halfSibling), moves, blood: BLOOD.test(key) ? bloodOf(key) : null, sexes };
-  };
-  const other = language.name(query(moves, sexes));
-  const self = language.name(query(reverseMoves(moves), [...sexes].reverse()));
+  const other = language.name(nameQuery(moves, sexes, halfSibling));
+  const self = language.name(nameQuery(reverseMoves(moves), [...sexes].reverse(), halfSibling));
   const roles = other !== null && self !== null ? { other, self } : null;
   const degree = legalDegree(moves);
   return {

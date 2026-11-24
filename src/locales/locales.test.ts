@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Blood, Kind } from "../classify";
+import { nameQuery, type Blood, type Kind } from "../classify";
 import type { NameQuery } from "../locale";
 import { fromKey } from "../testing/fixtures";
 import type { Sex } from "../types";
@@ -29,5 +29,17 @@ describe("locales", () => {
     expect(en.degree({ degree: 3, line: "collateral", kind: "blood" })).toBe(
       "Related by blood in the collateral line, 3rd degree",
     );
+  });
+
+  it("names the spouse of a relative through the relative", () => {
+    const q = nameQuery(fromKey("UUDDS"), ["male", "unknown", "unknown", "unknown", "female", "male"], false);
+    expect(el.name(q)).toBe("σύζυγος της πρώτης εξαδέλφης");
+    expect(en.name(q)).toBe("husband of a first cousin");
+  });
+
+  it("names a relative of a spouse of unknown sex with both forms", () => {
+    const q = nameQuery(fromKey("SDD"), ["male", "unknown", "unknown", "female"], false);
+    expect(el.name(q)).toBe("εγγονή του συζύγου/της συζύγου");
+    expect(en.name(q)).toBe("spouse's granddaughter");
   });
 });

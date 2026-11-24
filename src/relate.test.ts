@@ -126,7 +126,9 @@ it("finds the child of two first cousins descending from the common grandparents
 
   const cousins = relate(tree, "x", "y")!;
   expect(cousins.couple).toBe(true);
-  expect(cousins.others[0]?.kind).toBe("cousin");
+  expect(cousins.others).toHaveLength(1);
+  expect(cousins.others[0]).toMatchObject({ kind: "cousin", cousin: { degree: 1, removed: 0 } });
+  expect(cousins.others[0].commonAncestors.map((ancestor) => ancestor.id).sort()).toEqual(["gm", "gp"]);
 });
 
 it("does not hang on a parent cycle in bad data", () => {
@@ -135,7 +137,8 @@ it("does not hang on a parent cycle in bad data", () => {
     parents: [["a", "b"], ["b", "a"], ["b", "c"]],
     unions: [],
   });
-  expect(relate(tree, "c", "a")).not.toBeNull();
+  // c's parent b is a's child and a's parent; the search still stops, at a as c's grandparent.
+  expect(relate(tree, "c", "a")!.main).toMatchObject({ kind: "ancestor", blood: { up: 2, down: 0 } });
 });
 
 it("gives both forms when nobody's sex is known", () => {

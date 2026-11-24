@@ -30,10 +30,11 @@ const ties = (from: string, to: string, tree: Tree<TestPerson>) => {
 
 describe("the chain between two people", () => {
   it("names each step in English too", () => {
+    // Through either parent of the wife; with no birth years, inlawDad comes first in `people`.
     expect(text("me", "wifeSister").main.chain.map((step) => step.text)).toEqual([
       "me Παπαδόπουλος",
       "wife: wife Παπαδόπουλος",
-      expect.stringMatching(/^(father: inlawDad|mother: inlawMom) Παπαδόπουλος$/),
+      "father: inlawDad Παπαδόπουλος",
       "daughter: wifeSister Παπαδόπουλος",
     ]);
   });
@@ -89,7 +90,12 @@ describe("names of relationships", () => {
   });
 
   it("names step-parents and step-children, and uncles by marriage on either side", () => {
+    expect(along("US", "female").summary).toBe("stepmother");
+    expect(along("US", "male").summary).toBe("stepfather");
     expect(along("SD", "male").summary).toBe("stepson");
+    // A wife's uncle; a niece's husband.
+    expect(along("SUUD", "male").summary).toBe("uncle by marriage");
+    expect(along("UDDS", "male").summary).toBe("nephew by marriage");
   });
 });
 

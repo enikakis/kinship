@@ -31,11 +31,11 @@ const ties = (from: string, to: string, tree: Tree<TestPerson>) => {
 describe("the chain between two people", () => {
   it("is the shortest one, through parents, children and marriages", () => {
     const { chain } = text("me", "cousin").main;
-    // Through either grandparent: both are common ancestors.
+    // Both grandparents are common ancestors; with no birth years, grandpa comes first in `people`.
     expect(chain.map((step) => step.text)).toEqual([
       "me Παπαδόπουλος",
       "πατέρας: dad Παπαδόπουλος",
-      expect.stringMatching(/^(πατέρας: grandpa|μητέρα: grandma) Παπαδόπουλος$/),
+      "πατέρας: grandpa Παπαδόπουλος",
       "κόρη: aunt Παπαδόπουλος",
       "γιος: cousin Παπαδόπουλος",
     ]);

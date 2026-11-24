@@ -22,33 +22,24 @@ Work through the steps in order; tick boxes as you go. Keep `npm test` green aft
 See "Decided design" in the design doc above and its core-API implementation plan; the boxes below are that plan's tasks 2–7.
 
 - [x] **Generic person type:** `<P extends { id: string; sex: Sex }>`, so users pass their own
-      objects and get them back typed. Name display via an option `getName?: (p: P) => string`
-      (default: `p.name ?? p.id`). Remove `given_name` / `surname` / `living` from the core.
+      objects and get them back typed. Name display via an option `name?: (p: P) => string`
+      (default: `p.name` when it is a string, else `p.id`). Remove `given_name` / `surname` /
+      `living` from the core.
 - [x] **Input shape** stays close to today:
       `{ people: P[]; parents: [parentId, childId][]; unions: { a: string; b: string }[] }`.
-- [x] **Structured result** (sketch, refine while implementing):
-      ```ts
-      const tree = createTree(input);
-      const rel = relate(tree, "maria", "nikos");   // null if unrelated / same person
-      rel.main.kind          // "parent" | "sibling" | "halfSibling" | "uncle" | "nephew" | "cousin"
-                             // | "ancestor" | "descendant" | "spouse" | "inLaw" | … | "unnamed"
-      rel.main.moves         // ["up", "up", "down", "down"]
-      rel.main.cousin        // { degree: 1, removed: 0 } (only for cousins)
-      rel.main.legalDegree   // { degree: 4, line: "collateral", byMarriage: false } | null
-      rel.main.path          // [{ person, move }, …]
-      rel.main.diagram       // { nodes, rows, lanes, links, ends }
-      rel.others             // other blood ties, each with commonAncestors
-      rel.couple             // boolean
-      ```
+- [x] **Structured result:** `relate(tree, from, to)` → `{ main, others, couple }` or null; the
+      built shape is in the design doc, "Decided design → Result".
 - [x] **Languages as separate, tree-shakeable modules:** `@enikakis/kinship/locales/el` and
       `/locales/en`, each implementing one `KinshipLocale` interface (names, ordinals, phrases).
+      The locale modules exist (`src/locales/el.ts`, `en.ts`); the package subpath exports come
+      with the build (Step 6).
       `describeRelation(tree, relation, locale)` → `{ main, others, couple }`, each with `{ roles, summary, degree, chain }` (today's `Relationship` strings).
 - [x] Keep a compatibility wrapper that reproduces the original `relationReport()` output exactly, so
       the existing tests keep passing during the refactor (delete it once tests are ported).
 - [x] Split `kinship.ts` into modules:
       ```
       src/
-      ├── index.ts        public API: createTree, relate, describeRelation, validateTree, types
+      ├── index.ts        public API: createTree, relate, describeRelation, validateTree (Step 5), types
       ├── tree.ts         indexing (parents / children / spouses as Maps)
       ├── path.ts         shortest chain (Dijkstra)
       ├── ties.ts         other blood ties, closest common ancestors

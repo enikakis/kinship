@@ -6,4 +6,4 @@ export { relationReport } from "./legacy/kinship";
 export type { ConnectionDiagram, OtherTie, RelationReport, Relationship } from "./legacy/kinship";
 export type { Locale } from "./legacy/locale";
 export { indexTree, SEXES } from "./legacy/tree";
-export type { FuzzyDate, Sex, Spouse, Tree, TreeIndex, TreePerson, TreeUnion } from "./legacy/tree";
+export type { FuzzyDate, Sex, Tree, TreeIndex, TreePerson, TreeUnion } from "./legacy/tree";

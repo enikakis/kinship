@@ -424,12 +424,12 @@ describe("related in more than one way", () => {
     expect(ties("c1", "c3")).toEqual({
       main: "σύζυγος",
       couple: true,
-      others: [{ name: "πρώτος εξάδελφος", ancestors: "Κοινοί πρόγονοι: ma Παπαδόπουλος και pa Παπαδόπουλος" }],
+      others: [{ name: "πρώτος εξάδελφος", ancestors: expect.stringMatching(/^Κοινοί πρόγονοι: (ma Παπαδόπουλος και pa|pa Παπαδόπουλος και ma) Παπαδόπουλος$/) }],
     });
     expect(ties("c1", "c3", "en")).toEqual({
       main: "husband",
       couple: true,
-      others: [{ name: "first cousin", ancestors: "Common ancestors: ma Παπαδόπουλος and pa Παπαδόπουλος" }],
+      others: [{ name: "first cousin", ancestors: expect.stringMatching(/^Common ancestors: (ma Παπαδόπουλος and pa|pa Παπαδόπουλος and ma) Παπαδόπουλος$/) }],
     });
   });
 

@@ -160,7 +160,7 @@ function findConnection(index: TreeIndex, fromId: string, toId: string): Connect
     const next: [TreePerson, Move][] = [
       ...index.parents(current.id).map((person): [TreePerson, Move] => [person, "up"]),
       ...index.children(current.id).map((person): [TreePerson, Move] => [person, "down"]),
-      ...index.spouses(current.id).map(({ person }): [TreePerson, Move] => [person, "spouse"]),
+      ...index.spouses(current.id).map((person): [TreePerson, Move] => [person, "spouse"]),
     ];
     for (const [person, move] of next) {
       const total = current.cost + (move === "spouse" ? 11 : 10);
@@ -199,7 +199,7 @@ function otherBloodTies(index: TreeIndex, main: Connection): BloodTie[] {
 
   const groups: string[][] = [];
   for (const id of closest) {
-    const spouses = new Set(index.spouses(id).map((spouse) => spouse.person.id));
+    const spouses = new Set(index.spouses(id).map((spouse) => spouse.id));
     const group = groups.find((members) => members.some((member) => spouses.has(member)));
     if (group) group.push(id);
     else groups.push([id]);

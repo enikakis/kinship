@@ -7,6 +7,8 @@
  * docs/PLAN.md.
  */
 
+import { createTree, type Tree as NewTree } from "../tree";
+
 export const SEXES = ["female", "male", "unknown"] as const;
 export type Sex = (typeof SEXES)[number];
 
@@ -32,46 +34,12 @@ export type Tree = {
   unions: TreeUnion[];
 };
 
-export type Spouse = { person: TreePerson; union: TreeUnion };
-
 /** Looks up relatives quickly in a tree of any size. */
 export function indexTree(tree: Tree) {
-  const byId = new Map(tree.people.map((person) => [person.id, person]));
-  const parentIds = new Map<string, string[]>();
-  const childIds = new Map<string, string[]>();
-  for (const [parent, child] of tree.parents) {
-    if (!byId.has(parent) || !byId.has(child)) continue;
-    (parentIds.get(child) ?? parentIds.set(child, []).get(child)!).push(parent);
-    (childIds.get(parent) ?? childIds.set(parent, []).get(parent)!).push(child);
-  }
-  const people = (ids: string[] | undefined) => (ids ?? []).map((id) => byId.get(id)!).sort(byBirth);
-
-  const parents = (id: string) => people(parentIds.get(id));
-  const children = (id: string) => people(childIds.get(id));
-  // TODO(perf, docs/PLAN.md step 4): scans every union on each call, inside the path search.
-  const spouses = (id: string): Spouse[] =>
-    tree.unions
-      .filter((union) => union.a === id || union.b === id)
-      .map((union) => ({ union, person: byId.get(union.a === id ? union.b : union.a)! }))
-      .filter((spouse) => spouse.person);
-  /**
-   * Whether two people are half-siblings: both have two recorded parents and share only one. When
-   * either one's other parent is not recorded we cannot tell, so we do not say so.
-   */
-  const areHalfSiblings = (a: string, b: string) => {
-    const ofA = parentIds.get(a) ?? [];
-    const ofB = parentIds.get(b) ?? [];
-    return ofA.length === 2 && ofB.length === 2 && ofA.filter((id) => ofB.includes(id)).length === 1;
-  };
-
-  return { byId, parents, children, spouses, areHalfSiblings };
+  return createTree(tree, { name: fullName, born: (person) => person.birth?.year });
 }
 
-export type TreeIndex = ReturnType<typeof indexTree>;
-
-/** Oldest first; people without a birth year last. */
-export const byBirth = (a: TreePerson, b: TreePerson) =>
-  (a.birth?.year ?? 9999) - (b.birth?.year ?? 9999) || a.given_name.localeCompare(b.given_name, "el");
+export type TreeIndex = NewTree<TreePerson>;
 
 export const fullName = (person: Pick<TreePerson, "given_name" | "surname">) =>
   [person.given_name, person.surname].filter(Boolean).join(" ");

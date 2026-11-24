@@ -137,11 +137,12 @@ rel.couple      // boolean
 `Relationship<P>` carries, language-neutral:
 
 - `moves`: `("up" | "down" | "spouse")[]` and `path`: `{ person: P; move }[]`;
-- `kind`: a stable string union (parent, child, sibling, halfSibling, grandparent…, uncle, nephew,
-  cousin, ancestor, descendant, spouse, parentInLaw, childInLaw, siblingInLaw, coParentInLaw,
-  coSiblingInLaw, uncleByMarriage, nephewByMarriage, stepParent, stepChild, spouseOfRelative,
-  relativeOfSpouse, unnamed); exact list is the builder's, but it must cover every case the current
-  `relationName` / `BY_MARRIAGE` covers;
+- `kind`: a stable string union (`Kind`): by blood ancestor, descendant, sibling, halfSibling,
+  uncle, nephew, cousin (how many generations up and down is in `blood`, so a parent and a
+  grandparent are both `ancestor`); by marriage spouse, parentInLaw, childInLaw, siblingInLaw,
+  coParentInLaw, coSiblingInLaw, uncleByMarriage, nephewByMarriage, stepParent, stepChild
+  (`MarriageKind`); then spouseOfRelative, relativeOfSpouse, unnamed. It covers every case the
+  original `relationName` / `BY_MARRIAGE` covered;
 - `blood`: `{ up, down }` for blood relations (null otherwise); `cousin`: `{ degree, removed }`
   for cousins;
 - `legalDegree`: `{ degree, line: "direct" | "collateral", kind: "blood" | "affinity" } | null`;

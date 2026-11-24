@@ -13,7 +13,7 @@ export type LegalDegree = { degree: number; line: "direct" | "collateral"; kind:
 export function legalDegree(moves: readonly Move[]): LegalDegree | null {
   const key = movesKey(moves);
   const blood = key.replace(/^S|S$/, "");
-  if (blood === "" || !BLOOD.test(blood) || (key !== blood && key.length - blood.length !== 1)) return null;
+  if (blood === "" || !BLOOD.test(blood)) return null;
   return {
     degree: blood.length,
     line: !blood.includes("U") || !blood.includes("D") ? "direct" : "collateral",

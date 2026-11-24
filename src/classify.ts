@@ -1,4 +1,4 @@
-import { BLOOD, lastOf, movesKey, movesOf, type Chain } from "./chain";
+import { BLOOD, lastOf, movesKey, movesOf, sexesOf, type Chain } from "./chain";
 import type { NameQuery } from "./locale";
 import type { Tree } from "./tree";
 import type { Move, Person, Sex } from "./types";
@@ -108,7 +108,6 @@ export type Classification = {
 export function classify<P extends Person>(tree: Tree<P>, chain: Chain<P>): Classification {
   const moves = movesOf(chain);
   const key = movesKey(moves);
-  const sexes = [chain.from.sex, ...chain.steps.map((step) => step.person.sex)];
   const halfSibling = key === "UD" && tree.areHalfSiblings(chain.from.id, lastOf(chain).id);
   const blood = BLOOD.test(key) ? bloodOf(key) : null;
   const cousin =
@@ -117,7 +116,7 @@ export function classify<P extends Person>(tree: Tree<P>, chain: Chain<P>): Clas
       : null;
   const parentSex = moves[0] === "up" ? chain.steps[0].person.sex : null;
   const side = parentSex === "male" ? "paternal" : parentSex === "female" ? "maternal" : null;
-  return { kind: kindOf(moves, sexes, halfSibling), blood, cousin, side, elderBranch: elderBranch(tree, chain, blood) };
+  return { kind: kindOf(moves, sexesOf(chain), halfSibling), blood, cousin, side, elderBranch: elderBranch(tree, chain, blood) };
 }
 
 /** For a collateral tie: whose branch starts with the elder of the common ancestor's two children. */

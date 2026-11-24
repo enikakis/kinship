@@ -15,6 +15,10 @@ export type TreeInput<P extends Person> = {
 export type TreeOptions<P extends Person> = {
   /** How to write a person's name. Default: their `name` property if it is a string, else their id. */
   name?: (person: P) => string;
-  /** Birth year, used to order relatives. Default: unknown for everyone. */
+  /**
+   * Birth year. Relatives are ordered by it, oldest first, which decides which of two equally
+   * short chains wins (with the order of `people` as the final tie-break), and it tells
+   * `elderBranch`. Default: unknown for everyone.
+   */
   born?: (person: P) => number | undefined;
 };

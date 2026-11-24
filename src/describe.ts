@@ -1,4 +1,4 @@
-import { reverseMoves } from "./chain";
+import { reverseMoves, sexesOf } from "./chain";
 import { nameQuery } from "./classify";
 import type { KinshipLocale } from "./locale";
 import type { OtherTie, Relation, Relationship } from "./relate";
@@ -59,7 +59,7 @@ function relationshipText<P extends Person>(
 ): RelationshipText {
   const { from, path, moves, legalDegree } = relationship;
   const halfSibling = relationship.kind === "halfSibling";
-  const sexes = [from, ...path.map((step) => step.person)].map((person) => person.sex);
+  const sexes = sexesOf({ from, steps: path });
   const other = locale.name(nameQuery(moves, sexes, halfSibling));
   const self = locale.name(nameQuery(reverseMoves(moves), [...sexes].reverse(), halfSibling));
   const roles = other !== null && self !== null ? { other, self } : null;
@@ -88,5 +88,5 @@ function marriagesOf<P extends Person>(tree: Tree<P>, { from, path }: Relationsh
 /** The common ancestors of a blood tie, named; none on a direct line, where one is the other's ancestor. */
 function commonAncestors<P extends Person>(tree: Tree<P>, tie: OtherTie<P>, locale: KinshipLocale): string | null {
   if (tie.commonAncestors.some((ancestor) => ancestor.id === tie.from.id || ancestor.id === tie.to.id)) return null;
-  return locale.commonAncestors(tie.commonAncestors.map(tree.name));
+  return locale.commonAncestors(tie.commonAncestors.map((ancestor) => tree.name(ancestor)));
 }

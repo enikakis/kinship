@@ -1,4 +1,4 @@
-import { isBloodLine, movesOf, type Chain } from "./chain";
+import { isBloodLine, movesOf, sexesOf, type Chain } from "./chain";
 import { kindOf } from "./classify";
 import { findChain } from "./path";
 import { otherBloodTies, type BloodTie } from "./ties";
@@ -38,7 +38,6 @@ const FIRST_COUSIN_STEPS = 4;
  * Both languages name the same relationships, so the main one is the same in either.
  */
 const hasName = (chain: Chain<Person>) => {
-  const sexes = [chain.from, ...chain.steps.map((step) => step.person)].map((person) => person.sex);
-  const kind = kindOf(movesOf(chain), sexes, false);
+  const kind = kindOf(movesOf(chain), sexesOf(chain), false);
   return kind !== "spouseOfRelative" && kind !== "relativeOfSpouse" && kind !== "unnamed";
 };

@@ -1,5 +1,5 @@
-import { isBloodLine, lastOf, movesKey, movesOf, type Chain } from "./chain";
-import { marriageKind } from "./classify";
+import { isBloodLine, movesOf, type Chain } from "./chain";
+import { kindOf } from "./classify";
 import { findChain } from "./path";
 import { otherBloodTies, type BloodTie } from "./ties";
 import type { Tree } from "./tree";
@@ -37,5 +37,8 @@ const FIRST_COUSIN_STEPS = 4;
  * Whether a chain has a name of its own, such as «κουνιάδος», rather than only a number of steps.
  * Both languages name the same relationships, so the main one is the same in either.
  */
-const hasName = (chain: Chain<Person>) =>
-  isBloodLine(chain) || marriageKind(movesKey(movesOf(chain)), lastOf(chain).sex, chain.from.sex) !== null;
+const hasName = (chain: Chain<Person>) => {
+  const sexes = [chain.from, ...chain.steps.map((step) => step.person)].map((person) => person.sex);
+  const kind = kindOf(movesOf(chain), sexes, false);
+  return kind !== "spouseOfRelative" && kind !== "relativeOfSpouse" && kind !== "unnamed";
+};

@@ -18,11 +18,18 @@ export type Relationship<P extends Person> = Classification & {
   diagram: ConnectionDiagram<P>;
 };
 
-/** A blood tie besides the main relationship, through its own common ancestors (a couple, often). */
-export type OtherTie<P extends Person> = Relationship<P> & { commonAncestors: P[] };
+/** A blood tie besides the main relationship, through its own common ancestors. */
+export type OtherTie<P extends Person> = Relationship<P> & {
+  /** The closest common ancestors of this tie: one person, or a couple (often). */
+  commonAncestors: P[];
+};
 
 export type Relation<P extends Person> = {
-  /** The relationship to name first (see `findRelationships`). */
+  /**
+   * The relationship to name first. Blood comes first, except that a named relation by marriage
+   * (a spouse, an aunt's husband, an in-law) comes before a blood tie more distant than first
+   * cousins: in a village an aunt's husband is often a distant cousin too, but her husband first.
+   */
   main: Relationship<P>;
   /** The other blood ties, closest first. */
   others: OtherTie<P>[];

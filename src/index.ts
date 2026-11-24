@@ -8,7 +8,7 @@ export type { Tree } from "./tree";
 export { relate } from "./relate";
 export type { OtherTie, Relation, Relationship } from "./relate";
 export { describeRelation } from "./describe";
-export type { RelationshipText, RelationText } from "./describe";
+export type { OtherTieText, RelationshipText, RelationText } from "./describe";
 export type { Blood, Kind } from "./classify";
 export type { LegalDegree } from "./degree";
 export type { ConnectionDiagram, DiagramNode } from "./diagram";

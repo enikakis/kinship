@@ -20,13 +20,22 @@ export type RelationshipText = {
   chain: { id: string; text: string }[];
 };
 
+/** A blood tie besides the main relationship, in words. */
+export type OtherTieText = RelationshipText & {
+  /**
+   * The common ancestors of this tie, e.g. «Κοινοί πρόγονοι: Στέλιος Παπαδόπουλος και Σοφία
+   * Παπαδοπούλου»; null when one of the two descends from the other.
+   */
+  commonAncestors: string | null;
+};
+
+/**
+ * A relation in words: the main relationship, the other blood ties (closest first), and whether
+ * the two are a couple.
+ */
 export type RelationText = {
   main: RelationshipText;
-  /**
-   * The other blood ties, each with its common ancestors, e.g. «Κοινοί πρόγονοι: Στέλιος
-   * Παπαδόπουλος και Σοφία Παπαδοπούλου»; null when one of the two descends from the other.
-   */
-  others: (RelationshipText & { commonAncestors: string | null })[];
+  others: OtherTieText[];
   couple: boolean;
 };
 

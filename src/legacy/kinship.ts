@@ -1,5 +1,11 @@
 import type { Locale } from "./locale";
+import { BLOOD, isBloodLine, lastOf, movesKey, reverseMoves, type Chain } from "../chain";
+import { findChain } from "../path";
+import type { Move } from "../types";
 import { fullName, type Sex, type TreeIndex, type TreePerson } from "./tree";
+
+/** The chain of this module's people. */
+type Connection = Chain<TreePerson>;
 
 /*
  * How two people of the tree are related: the shortest chain of parents, children and marriages
@@ -131,53 +137,6 @@ const phrases: Record<
   },
 };
 
-/* ---------- The chain ---------- */
-
-/** A step along the chain: to a parent (up), a child (down) or a spouse. */
-type Move = "up" | "down" | "spouse";
-
-/** The chain from one person to another: each person after the first, with how they were reached. */
-type Connection = { from: TreePerson; steps: { person: TreePerson; move: Move }[] };
-
-const lastOf = (connection: Connection) => connection.steps.at(-1)!.person;
-
-/**
- * The shortest chain between two people, preferring blood relations: with as many steps, the one
- * with fewer marriages wins. Null when they are not connected (or are the same person).
- */
-function findConnection(index: TreeIndex, fromId: string, toId: string): Connection | null {
-  const from = index.byId.get(fromId);
-  if (!from || !index.byId.get(toId) || fromId === toId) return null;
-  // Cost: 10 a step, and 1 more for a marriage, so blood relations win among equally short chains.
-  const cost = new Map<string, number>([[fromId, 0]]);
-  const previous = new Map<string, { id: string; move: Move }>();
-  const queue: { id: string; cost: number }[] = [{ id: fromId, cost: 0 }];
-  while (queue.length > 0) {
-    queue.sort((a, b) => a.cost - b.cost);
-    const current = queue.shift()!;
-    if (current.id === toId) break;
-    if (current.cost > (cost.get(current.id) ?? Infinity)) continue;
-    const next: [TreePerson, Move][] = [
-      ...index.parents(current.id).map((person): [TreePerson, Move] => [person, "up"]),
-      ...index.children(current.id).map((person): [TreePerson, Move] => [person, "down"]),
-      ...index.spouses(current.id).map((person): [TreePerson, Move] => [person, "spouse"]),
-    ];
-    for (const [person, move] of next) {
-      const total = current.cost + (move === "spouse" ? 11 : 10);
-      if (total >= (cost.get(person.id) ?? Infinity)) continue;
-      cost.set(person.id, total);
-      previous.set(person.id, { id: current.id, move });
-      queue.push({ id: person.id, cost: total });
-    }
-  }
-  if (!previous.has(toId)) return null;
-  const steps: Connection["steps"] = [];
-  for (let id = toId; id !== fromId; id = previous.get(id)!.id) {
-    steps.unshift({ person: index.byId.get(id)!, move: previous.get(id)!.move });
-  }
-  return { from, steps };
-}
-
 /* ---------- Related in more than one way ---------- */
 
 /** A blood relationship through one common ancestor (or couple of ancestors), besides the main one. */
@@ -230,7 +189,7 @@ function otherBloodTies(index: TreeIndex, main: Connection): BloodTie[] {
  * village an aunt's husband is often a distant cousin too, and he is her husband first of all.
  */
 function findRelationships(index: TreeIndex, fromId: string, toId: string) {
-  const shortest = findConnection(index, fromId, toId);
+  const shortest = findChain(index, fromId, toId);
   if (!shortest) return null;
   const ties = otherBloodTies(index, shortest);
   const couple = shortest.steps.length === 1 && shortest.steps[0].move === "spouse";
@@ -254,18 +213,6 @@ const hasName = (connection: Connection) =>
   isBloodLine(connection) ||
   marriageTerm(movesKey(connection.steps.map((step) => step.move)), lastOf(connection).sex, connection.from.sex) !==
     null;
-
-/**
- * Whether a chain is a blood relationship: up to a common ancestor, then down. A chain that goes
- * down to a child and up to the child's other parent passes through a marriage, recorded or not.
- */
-const isBloodLine = (connection: Connection) => BLOOD.test(movesKey(connection.steps.map((step) => step.move)));
-
-/** A chain as letters, e.g. "UUD" for an aunt: U up, D down, S a spouse. */
-const movesKey = (moves: Move[]) => moves.map((move) => (move === "up" ? "U" : move === "down" ? "D" : "S")).join("");
-
-/** Up to the closest common ancestor, then down. */
-const BLOOD = /^U*D*$/;
 
 /** For a person and each of their ancestors (the person included), the shortest line between them, the person first. */
 function ancestorPaths(index: TreeIndex, id: string) {
@@ -549,10 +496,6 @@ function relationDegree(moves: Move[]): Degree | null {
     degree: blood.length,
   };
 }
-
-/** The chain the other way round: from the last person back to the first. */
-const reverseMoves = (moves: Move[]): Move[] =>
-  [...moves].reverse().map((move) => (move === "up" ? "down" : move === "down" ? "up" : "spouse"));
 
 /* ---------- The chain as a small tree ---------- */
 

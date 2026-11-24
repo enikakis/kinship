@@ -134,4 +134,12 @@ describe("very distant relatives", () => {
     expect(along("U".repeat(12), "male").summary).toBe("10th great-grandfather");
     expect(along("U".repeat(8) + "D".repeat(8), "female").summary).toBe("7th cousin");
   });
+
+  it("says an before a number read with a vowel sound", () => {
+    const spouseOfCousin = (degree: number) => `${"U".repeat(degree + 1)}${"D".repeat(degree + 1)}S`;
+    expect(along(spouseOfCousin(7), "female").summary).toBe("wife of a 7th cousin");
+    expect(along(spouseOfCousin(8), "female").summary).toBe("wife of an 8th cousin");
+    expect(along(spouseOfCousin(11), "male").summary).toBe("husband of an 11th cousin");
+    expect(along(spouseOfCousin(18), "male").summary).toBe("husband of an 18th cousin");
+  });
 });

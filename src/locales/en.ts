@@ -34,6 +34,9 @@ const ORDINALS = ["first", "second", "third", "fourth", "fifth", "sixth"];
 const number = (n: number) =>
   `${n}${n % 100 >= 11 && n % 100 <= 13 ? "th" : (["th", "st", "nd", "rd"][n % 10] ?? "th")}`;
 
+/** Words said with a vowel first, which take "an": "an aunt", "an 8th cousin", "an 11th cousin". */
+const VOWEL_SOUND = /^(?:[aeiou]|8|1[18](?!\d))/;
+
 /** Spelled out here rather than taken from the value, so renaming the value cannot change the sentence. */
 const LINES = { direct: "direct", collateral: "collateral" } as const satisfies Record<LegalDegree["line"], string>;
 
@@ -57,7 +60,7 @@ export const en: KinshipLocale = {
       // the blood relative: the spouse of one's relative, or a relative of one's spouse.
       case "spouseOfRelative": {
         const relative = bloodName(bloodPart(query), sexes[sexes.length - 2]);
-        return `${words.spouse[sex]} of ${/^[aeiou]/.test(relative) ? "an" : "a"} ${relative}`;
+        return `${words.spouse[sex]} of ${VOWEL_SOUND.test(relative) ? "an" : "a"} ${relative}`;
       }
       case "relativeOfSpouse":
         return `${words.spouse[sexes[1]]}'s ${bloodName(bloodPart(query), sex)}`;

@@ -69,3 +69,8 @@ Keep it that way.
 - Commits: author is the owner (`enikakis <44342446+enikakis@users.noreply.github.com>`); Claude only as a
   `Co-Authored-By` trailer, never as the author (so commits count on their GitHub profile).
 - This is a portfolio piece: clean commit history, small focused commits, clear messages.
+- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/):
+  `type(scope): subject` in the imperative, lower case, e.g. `feat(locales): add French names`,
+  `fix(relate): …`, `test: …`, `docs(plan): …`. Types: feat, fix, refactor, test, docs, build,
+  ci, chore. Scopes are module names (tree, path, ties, choose, classify, degree, diagram, relate,
+  describe, locales, gedcom, svg) or doc names (plan, spec).

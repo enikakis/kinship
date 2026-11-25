@@ -111,10 +111,15 @@ function bloodName({ up, down }: Blood, sex: Sex, chain: readonly Sex[], of = fa
 
 /**
  * Someone of one's own generation `rung` generations below the common ancestor: a sibling (1),
- * a first cousin (2)… With `of`, «του αδελφού», «της πρώτης εξαδέλφης».
+ * a first cousin (2)… With `of`, «του αδελφού», «της πρώτης εξαδέλφης». Unknown sex gives both
+ * full forms, each with its own ordinal: «τέταρτος εξάδελφος/τέταρτη εξαδέλφη».
  */
 function kin(rung: number, sex: Sex, of = false): string {
-  if (!of) return rung === 1 ? words.sibling[sex] : `${ordinal(rung - 1, sex)} ${words.cousin[sex]}`;
+  if (!of) {
+    if (rung === 1) return words.sibling[sex];
+    const cousin = (s: Sex) => `${ordinal(rung - 1, s)} ${words.cousin[s]}`;
+    return sex === "unknown" ? bySex(sex, cousin("male"), cousin("female")) : cousin(sex);
+  }
   const one = (s: "male" | "female") => {
     const article = s === "male" ? "του" : "της";
     if (rung === 1) return `${article} ${s === "male" ? "αδελφού" : "αδελφής"}`;
@@ -133,7 +138,7 @@ function ordinal(n: number, sex: Sex, of = false) {
 /** πατέρας, παππούς, προπάππους, προ-προπάππους…; with `of`, «του πατέρα», «της γιαγιάς». */
 function ancestor(generations: number, sex: Sex, of = false): string {
   const article = (s: "male" | "female") => (of ? (s === "male" ? "του " : "της ") : "");
-  if (generations > 5) return `${of ? "του προγόνου" : words.ancestor[sex]} ${generations}ης γενιάς`;
+  if (generations > 5) return `${of ? bySex(sex, "του προγόνου", "της προγόνου") : words.ancestor[sex]} ${generations}ης γενιάς`;
   if (generations === 1 && sex === "unknown") return of ? "του γονιού" : words.parent.unknown;
   const pre = "προ-".repeat(Math.max(0, generations - 3));
   const names = {
@@ -147,10 +152,10 @@ function ancestor(generations: number, sex: Sex, of = false): string {
   return bySex(sex, one("male"), one("female"));
 }
 
-/** παιδί, εγγονός, δισέγγονος, τρισέγγονος, then «απόγονος 5ης γενιάς»; with `of`, «του γιου», «της εγγονής». */
+/** παιδί, εγγονός, δισέγγονος, τρισέγγονος, then «απόγονος 5ης γενιάς»; with `of`, «του γιου», «της εγγονής», «της απογόνου 5ης γενιάς». */
 function descendant(generations: number, sex: Sex, of = false): string {
   if (of) {
-    if (generations > 4) return `του απογόνου ${generations}ης γενιάς`;
+    if (generations > 4) return `${bySex(sex, "του απογόνου", "της απογόνου")} ${generations}ης γενιάς`;
     const [male, female, unknown] = [
       ["γιου", "κόρης", "παιδιού"],
       ["εγγονού", "εγγονής", "εγγονιού"],

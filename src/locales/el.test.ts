@@ -209,7 +209,7 @@ describe("related in more than one way", () => {
   });
 
   it("puts an old common ancestor before a closer chain through the children of a marriage", () => {
-    expect(text("me", "you", twoLines).main.summary).toBe("τέταρτος εξάδελφος/εξαδέλφη");
+    expect(text("me", "you", twoLines).main.summary).toBe("τέταρτος εξάδελφος/τέταρτη εξαδέλφη");
   });
 
   it("puts a relation by marriage with a name before a distant blood tie", () => {
@@ -244,5 +244,20 @@ describe("very distant relatives", () => {
 
   it("names an ancestor twelve generations up", () => {
     expect(name("U".repeat(12), "male")).toBe("πρόγονος 12ης γενιάς");
+  });
+});
+
+describe("people whose sex is not known, and distant women", () => {
+  it("gives both full forms for a cousin of unknown sex", () => {
+    expect(along("UUUUUDDDDD", "unknown").summary).toBe("τέταρτος εξάδελφος/τέταρτη εξαδέλφη");
+    expect(along("U".repeat(8) + "D".repeat(8), "unknown").summary).toBe("έβδομος εξάδελφος/έβδομη εξαδέλφη");
+  });
+  it("puts a distant ancestor or descendant in the right genitive", () => {
+    const sexes = (n: number, relative: Sex, last: Sex): Sex[] => [...Array(n - 1).fill("male"), relative, last];
+    expect(along("UUUUUUUS", sexes(8, "female", "male")).summary).toBe("σύζυγος της προγόνου 7ης γενιάς");
+    expect(along("UUUUUUUS", sexes(8, "male", "female")).summary).toBe("σύζυγος του προγόνου 7ης γενιάς");
+    expect(along("UUUUUUUS", sexes(8, "unknown", "male")).summary).toBe("σύζυγος του προγόνου/της προγόνου 7ης γενιάς");
+    expect(along("DDDDDS", sexes(6, "female", "male")).summary).toBe("σύζυγος της απογόνου 5ης γενιάς");
+    expect(along("DDDDDS", sexes(6, "unknown", "male")).summary).toBe("σύζυγος του απογόνου/της απογόνου 5ης γενιάς");
   });
 });

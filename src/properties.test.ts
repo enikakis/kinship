@@ -1,30 +1,14 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { movesOf, reverseMoves } from "./chain";
-import type { MarriageKind } from "./classify";
+import { isNamedKind } from "./classify";
 import { describeRelation } from "./describe";
 import { legalDegree } from "./degree";
-import { el } from "./locales/el";
-import { en } from "./locales/en";
+import { LOCALES } from "./locales";
 import { findChain } from "./path";
 import { relate, type OtherTie, type Relationship } from "./relate";
 import { arbPair, arbTree } from "./testing/arbitraries";
 import type { Move, Person } from "./types";
-
-const BLOOD_KINDS = ["ancestor", "descendant", "sibling", "halfSibling", "uncle", "nephew", "cousin"];
-const MARRIAGE_KINDS: MarriageKind[] = [
-  "spouse",
-  "parentInLaw",
-  "childInLaw",
-  "siblingInLaw",
-  "coParentInLaw",
-  "coSiblingInLaw",
-  "uncleByMarriage",
-  "nephewByMarriage",
-  "stepParent",
-  "stepChild",
-];
-const NAMED_KINDS: string[] = [...BLOOD_KINDS, ...MARRIAGE_KINDS];
 
 const arbMoves = fc.array(fc.constantFrom<Move>("up", "down", "spouse"), { maxLength: 12 });
 const pick = (ids: string[], [x, y]: [number, number]): [string, string] => [ids[x % ids.length]!, ids[y % ids.length]!];
@@ -46,6 +30,7 @@ describe("properties on random trees", () => {
         const [a, b] = pick(ids, pair);
         expect(relate(tree, a, b) === null).toBe(relate(tree, b, a) === null);
       }),
+      { numRuns: 500 },
     );
   });
 
@@ -61,6 +46,7 @@ describe("properties on random trees", () => {
         expect(forward.steps.length).toBe(back.steps.length);
         expect(marriages(movesOf(forward))).toBe(marriages(movesOf(back)));
       }),
+      { numRuns: 500 },
     );
   });
 
@@ -80,6 +66,7 @@ describe("properties on random trees", () => {
         expect(back.others).toHaveLength(there.others.length);
         expect(back.others.map(ancestorIds)).toEqual(there.others.map(ancestorIds));
       }),
+      { numRuns: 500 },
     );
   });
 
@@ -88,6 +75,7 @@ describe("properties on random trees", () => {
       fc.property(arbMoves, (moves) => {
         expect(reverseMoves(reverseMoves(moves))).toEqual(moves);
       }),
+      { numRuns: 500 },
     );
   });
 
@@ -99,17 +87,23 @@ describe("properties on random trees", () => {
         const { moves } = relation.main;
         expect(legalDegree(moves)).toEqual(legalDegree(reverseMoves(moves)));
       }),
+      { numRuns: 500 },
     );
   });
 
-  it("a blood or named marriage relationship has a name in both languages", () => {
+  it("a blood or named marriage relationship has a name in every language", () => {
     fc.assert(
       fc.property(arbTree, arbPair, ({ tree, ids }, pair) => {
         const relation = relate(tree, ...pick(ids, pair));
-        if (!relation || !NAMED_KINDS.includes(relation.main.kind)) return;
-        expect(describeRelation(tree, relation, el).main.roles).not.toBeNull();
-        expect(describeRelation(tree, relation, en).main.roles).not.toBeNull();
+        if (!relation) return;
+        for (const locale of LOCALES) {
+          const description = describeRelation(tree, relation, locale);
+          if (isNamedKind(relation.main.kind)) expect(description.main.roles).not.toBeNull();
+          // Other ties are all blood, so all have names.
+          for (const tie of description.others) expect(tie.roles).not.toBeNull();
+        }
       }),
+      { numRuns: 500 },
     );
   });
 
@@ -118,12 +112,13 @@ describe("properties on random trees", () => {
       fc.property(arbTree, arbPair, ({ tree, ids }, pair) => {
         const relation = relate(tree, ...pick(ids, pair));
         if (!relation) return;
-        for (const locale of [el, en]) {
+        for (const locale of LOCALES) {
           for (const text of strings(describeRelation(tree, relation, locale))) {
             expect(text).not.toMatch(/undefined|NaN/);
           }
         }
       }),
+      { numRuns: 500 },
     );
   });
 });

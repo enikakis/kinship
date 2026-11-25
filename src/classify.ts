@@ -54,6 +54,42 @@ export type Kind =
   | "relativeOfSpouse"
   | "unnamed";
 
+/** Every kind, by whether it is a blood tie, a named relation by marriage, or has no everyday name. */
+const GROUP: Record<Kind, "blood" | "marriage" | "none"> = {
+  ancestor: "blood",
+  descendant: "blood",
+  sibling: "blood",
+  halfSibling: "blood",
+  uncle: "blood",
+  nephew: "blood",
+  cousin: "blood",
+  spouse: "marriage",
+  parentInLaw: "marriage",
+  childInLaw: "marriage",
+  siblingInLaw: "marriage",
+  coParentInLaw: "marriage",
+  coSiblingInLaw: "marriage",
+  uncleByMarriage: "marriage",
+  nephewByMarriage: "marriage",
+  stepParent: "marriage",
+  stepChild: "marriage",
+  spouseOfRelative: "none",
+  relativeOfSpouse: "none",
+  unnamed: "none",
+};
+
+const kindsIn = (group: "blood" | "marriage") =>
+  (Object.keys(GROUP) as Kind[]).filter((kind) => GROUP[kind] === group);
+
+/** The kinds of blood tie. */
+export const BLOOD_KINDS: readonly Kind[] = kindsIn("blood");
+
+/** The ten named relations by marriage. */
+export const MARRIAGE_KINDS = kindsIn("marriage") as readonly MarriageKind[];
+
+/** Whether a relationship of this kind has an everyday name (blood, or a named relation by marriage). */
+export const isNamedKind = (kind: Kind): boolean => GROUP[kind] !== "none";
+
 /** A blood tie: generations up to the closest common ancestor, then down. */
 export type Blood = { up: number; down: number };
 

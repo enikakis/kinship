@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { classify, kindOf, nameQuery } from "./classify";
+import { BLOOD_KINDS, MARRIAGE_KINDS, classify, isNamedKind, kindOf, nameQuery } from "./classify";
 import { findChain } from "./path";
 import { createTree } from "./tree";
 import { family, fromKey, line, person, sexesFor } from "./testing/fixtures";
@@ -103,5 +103,16 @@ describe("classify", () => {
       expect(elder(build(false), "me", "cousin")).toBeNull();
       expect(elder(build(true), "me", "dad")).toBeNull();
     });
+  });
+});
+
+describe("named kinds", () => {
+  it("knows which kinds have an everyday name", () => {
+    for (const kind of [...BLOOD_KINDS, ...MARRIAGE_KINDS]) expect(isNamedKind(kind), kind).toBe(true);
+    for (const kind of ["spouseOfRelative", "relativeOfSpouse", "unnamed"] as const) {
+      expect(isNamedKind(kind), kind).toBe(false);
+    }
+    expect(BLOOD_KINDS).toHaveLength(7);
+    expect(MARRIAGE_KINDS).toHaveLength(10);
   });
 });

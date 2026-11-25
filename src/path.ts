@@ -1,4 +1,5 @@
 import type { Chain } from "./chain";
+import { CheapestFirst } from "./queue";
 import type { Tree } from "./tree";
 import type { Move, Person } from "./types";
 
@@ -12,24 +13,22 @@ export function findChain<P extends Person>(tree: Tree<P>, fromId: string, toId:
   // Cost: 10 a step, and 1 more for a marriage, so blood relations win among equally short chains.
   const cost = new Map<string, number>([[fromId, 0]]);
   const previous = new Map<string, { id: string; move: Move }>();
-  const queue: { id: string; cost: number }[] = [{ id: fromId, cost: 0 }];
-  while (queue.length > 0) {
-    queue.sort((a, b) => a.cost - b.cost);
-    const current = queue.shift()!;
-    if (current.id === toId) break;
-    if (current.cost > (cost.get(current.id) ?? Infinity)) continue;
-    const next: [P, Move][] = [
-      ...tree.parents(current.id).map((person): [P, Move] => [person, "up"]),
-      ...tree.children(current.id).map((person): [P, Move] => [person, "down"]),
-      ...tree.spouses(current.id).map((person): [P, Move] => [person, "spouse"]),
-    ];
-    for (const [person, move] of next) {
-      const total = current.cost + (move === "spouse" ? 11 : 10);
-      if (total >= (cost.get(person.id) ?? Infinity)) continue;
-      cost.set(person.id, total);
-      previous.set(person.id, { id: current.id, move });
-      queue.push({ id: person.id, cost: total });
-    }
+  // Cheapest first; among equal costs the one queued first, which decides ties between chains.
+  const queue = new CheapestFirst<string>();
+  queue.push(fromId, 0);
+  const reach = (id: string, total: number, via: string, move: Move) => {
+    if (total >= (cost.get(id) ?? Infinity)) return;
+    cost.set(id, total);
+    previous.set(id, { id: via, move });
+    queue.push(id, total);
+  };
+  for (let current = queue.pop(); current; current = queue.pop()) {
+    const { value: id, cost: here } = current;
+    if (id === toId) break;
+    if (here > (cost.get(id) ?? Infinity)) continue;
+    for (const person of tree.parents(id)) reach(person.id, here + 10, id, "up");
+    for (const person of tree.children(id)) reach(person.id, here + 10, id, "down");
+    for (const person of tree.spouses(id)) reach(person.id, here + 11, id, "spouse");
   }
   if (!previous.has(toId)) return null;
   const steps: Chain<P>["steps"] = [];

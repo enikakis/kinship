@@ -170,6 +170,7 @@ interface KinshipLocale {
   // what the last person of a chain is to the first; null = no everyday name
   name(query: NameQuery): string | null;         // NameQuery = { kind, moves, blood, sexes }
   step(move, sex): string;                       // «πατέρας», "son", for the chain
+  labelled(label: string, name: string): string; // a chain line: «πατέρας: Αντώνης»
   degree(d: LegalDegree): string;                // the degree as a sentence
   throughMarriages(couples: [string, string][]): string;
   commonAncestors(names: string[]): string;
@@ -206,6 +207,15 @@ rules:
   *experimental* in the README until a native speaker reviews each term table; reviews are invited
   through GitHub issues (also good first issues for contributors). The term table per locale is a
   single readable file so a reviewer can check it without reading the code.
+- **The shipped term tables** are in `docs/locales/{fr,de,es}.md`: each starts with the rulings and
+  implementation calls the code follows, then the research with its sources and open questions.
+  The rulings: other-generation relatives beyond the standard words (great-uncle, Großonkel, tío
+  abuelo and their great-/Ur-/bis- forms) are named through the person of the other's generation,
+  never «oncle à la mode de Bretagne», «Großcousin» or «tío segundo»; cousins by dictionary degree
+  («cousin issu de germain», «Cousin 2. Grades», «primo segundo»); the direct line past the named
+  words by legal degree («ascendant au 5e degré»); an unknown sex gives both forms except for a
+  truly neutral word (parent, Elternteil, cónyuge); composed relations by marriage use the precise
+  descriptive form («Ehefrau eines Cousins»), never «primo político».
 
 ### "What is everyone to me"
 

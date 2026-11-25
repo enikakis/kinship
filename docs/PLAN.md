@@ -64,7 +64,7 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 - [x] Make `relate` independent of direction (same main relationship, inverse roles, equal degree
       from either end); turn the `it.fails` test in relate.test.ts into a passing test
-- [ ] fr / de / es locales
+- [x] fr / de / es locales (experimental; term tables and open questions in `docs/locales/`)
 - [ ] `relateAll`
   - Reconcile with the direction rule: `relate(a, b)` searches from whichever of the two comes
     first in `people`, so a single search from `fromId` can pick a different chain than `relate`
@@ -97,9 +97,11 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 ## Step 7: Documentation
 
-- [ ] README: one-line pitch, 10-second example, table of supported relationships (el + en
-      columns), how the algorithm works (with a small diagram), legal degree explanation,
-      benchmark numbers, "add a language" guide, live demo link, badges (CI, npm, size).
+- [ ] README: one-line pitch, 10-second example, table of supported relationships (a column per
+      language: el, en, and fr, de, es marked experimental), how the algorithm works (with a small
+      diagram), legal degree explanation, benchmark numbers, "add a language" guide, live demo
+      link, badges (CI, npm, size). Note that names are in-sentence forms; capitalise the first
+      letter for display.
 - [ ] TSDoc on every public export; optional TypeDoc site.
 - [ ] `CONTRIBUTING.md` focused on adding locales (good first issues).
 

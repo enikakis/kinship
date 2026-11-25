@@ -2,7 +2,7 @@
   "name": "@enikakis/kinship",
   "version": "0.0.0",
   "private": true,
-  "description": "Find how two people in a family tree are related, and name it in Greek or English.",
+  "description": "Find how two people in a family tree are related, and name it in Greek or English (French, German and Spanish experimental).",
   "type": "module",
   "license": "MIT",
   "author": "enikakis",

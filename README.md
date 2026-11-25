@@ -2,7 +2,8 @@
 
 > 🚧 Work in progress, not published yet. See [docs/PLAN.md](docs/PLAN.md).
 
-Find how two people in a family tree are related, and name it in **Greek** or **English**:
+Find how two people in a family tree are related, and name it in **Greek** or **English** (French,
+German and Spanish experimental):
 
 - the shortest chain of parents, children and marriages between them, preferring blood ties
 - the relationship both ways, e.g. «θεία» / «ανιψιός», «πρώτος εξάδελφος του πατέρα»,

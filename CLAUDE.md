@@ -1,21 +1,21 @@
 # @enikakis/kinship
 
 A TypeScript library that finds how two people in a family tree are related and names the
-relationship in Greek or English: «θεία», «πρώτος εξάδελφος του πατέρα», "second cousin once
-removed", plus the legal degree (Greek Civil Code arts. 1463–1464), the other blood ties, and data
-for a small diagram of the chain.
+relationship in Greek or English (French, German and Spanish experimental): «θεία», «πρώτος
+εξάδελφος του πατέρα», "second cousin once removed", plus the legal degree (Greek Civil Code arts.
+1463–1464), the other blood ties, and data for a small diagram of the chain.
 
 **Status:** extracted from the author's village history site, `vrisies-history-hub`
 (`src/features/family-tree/`, commit `3433dad`), and made standalone. The core API is in place
-(`createTree` / `relate` / `describeRelation`, el + en locales). The roadmap to a published npm
-package continues in **`docs/PLAN.md`**: read it first, work through it in order, and tick the
-boxes as steps are done.
+(`createTree` / `relate` / `describeRelation`; el + en locales, and fr, de, es experimental until
+native speakers review them). The roadmap to a published npm package continues in
+**`docs/PLAN.md`**: read it first, work through it in order, and tick the boxes as steps are done.
 
 ## Commands
 
 ```sh
 npm test            # vitest, the whole suite must stay green
-npm run typecheck   # tsc --noEmit (strict)
+npm run typecheck   # tsc (strict): the library without Node types, then tests via tsconfig.test.json
 ```
 
 Node ≥ 20 (dev machine has Node 26). Tooling: TypeScript 5.9, Vitest 3.2. No runtime dependencies.
@@ -36,8 +36,11 @@ Keep it that way.
 - `src/relate.ts`: `relate()`: how two people are related, as data.
 - `src/describe.ts`: `describeRelation()`: a relation in words, in a locale.
 - `src/locale.ts`: the `KinshipLocale` interface and its `NameQuery`.
-- `src/locales/el.ts`, `src/locales/en.ts`: Greek and English (`shared.ts`: helpers for both).
+- `src/locales/el.ts`, `src/locales/en.ts`: Greek and English (`shared.ts`: helpers for all locales).
+- `src/locales/fr.ts`, `de.ts`, `es.ts`: French, German, Spanish (experimental, awaiting native
+  review). Their term tables, rulings and open questions are in `docs/locales/{fr,de,es}.md`.
 - `src/testing/fixtures.ts`: the test trees, drawn in ASCII. Read them to understand the cases.
+- `src/testing/describing.ts`: `describing(locale)` helpers shared by the locale tests.
 - `src/*.test.ts`, `src/locales/*.test.ts`: behaviour spec: data next to each module, words
   per locale.
 - Git history: the first commit holds the four original files (only the example names changed to

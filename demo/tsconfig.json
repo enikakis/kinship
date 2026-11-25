@@ -1,0 +1,17 @@
+{
+  // The demo runs in the browser, so DOM types live here only, not in the library's program.
+  // demo/vite.config.ts runs in Node and is checked by tsconfig.test.json instead.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "paths": {
+      "@enikakis/kinship": ["../src/index.ts"],
+      "@enikakis/kinship/svg": ["../src/svg.ts"],
+      "@enikakis/kinship/gedcom": ["../src/gedcom.ts"],
+      "@enikakis/kinship/locales/*": ["../src/locales/*.ts"]
+    }
+  },
+  "include": ["."],
+  "exclude": ["dist", "vite.config.ts"]
+}

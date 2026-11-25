@@ -122,7 +122,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:dist": "node scripts/smoke-dist.mjs",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json && tsc --noEmit -p demo/tsconfig.json",
     "bench": "vitest bench --run",
     "build": "tsup",
     "lint": "biome check .",
@@ -141,6 +141,7 @@
     "publint": "^0.3.25",
     "tsup": "^9.0.0",
     "typescript": "^5.9.3",
+    "vite": "^7.3.8",
     "vitest": "^3.2.7"
   }
 }

@@ -3,6 +3,6 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["src", "tsup.config.ts"],
+  "include": ["src", "tsup.config.ts", "demo/vite.config.ts"],
   "exclude": []
 }

@@ -92,11 +92,11 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 ## Step 6: Build & package
 
-- [ ] Build with `tsup` (or `tsdown`): ESM + CJS + `.d.ts`; `exports` map with `"."`,
+- [x] Build with `tsup` (or `tsdown`): ESM + CJS + `.d.ts`; `exports` map with `"."`,
       `"./locales/*"`, `"./svg"` and `"./gedcom"`; `"sideEffects": false`; `"files": ["dist"]`;
       `prepublishOnly` builds.
-- [ ] Check with `publint` and `@arethetypeswrong/cli`.
-- [ ] Lint/format: Biome (one tool, zero config).
+- [x] Check with `publint` and `@arethetypeswrong/cli`.
+- [x] Lint/format: Biome (one tool, zero config).
 - [ ] Remove `"private": true` only when ready to publish.
 
 ## Step 7: Documentation
@@ -111,7 +111,7 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 ## Step 8: CI
 
-- [ ] GitHub Actions: test (Node 20 / 22 / 24), typecheck, lint, build, publint, attw.
+- [x] GitHub Actions: test (Node 22 / 24 / 26), typecheck, lint, build, publint, attw.
 
 ## Step 9: Live demo
 

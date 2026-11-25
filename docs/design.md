@@ -70,7 +70,7 @@ site-shaped today; v1 makes it general.
 
 ## Constraints
 
-- TypeScript strict, Node ≥ 20, Vitest. Dev dependencies are fine (fast-check, tsup or tsdown,
+- TypeScript strict, Node ≥ 22.18, Vitest. Dev dependencies are fine (fast-check, tsup or tsdown,
   Biome, publint, attw, changesets); runtime dependencies are not.
 - Every commit keeps `npm test` and `npm run typecheck` green. Behaviour changes get a test first.
 - Test fixtures and doc comments use fictional people only.

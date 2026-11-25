@@ -16,14 +16,22 @@ native speakers review them). The roadmap to a published npm package continues i
 ```sh
 npm test            # vitest, the whole suite must stay green
 npm run typecheck   # tsc (strict): the library without Node types, then tests via tsconfig.test.json
+npm run lint        # biome check . (lint + format check; `npm run format` fixes formatting and import order)
+npm run build       # tsup: ESM + CJS + .d.ts in dist/
+npm run check:package  # publint + attw on the packed tarball (run after build)
+npm run test:dist   # smoke test of dist/ through the package's own name (run after build)
 npm run bench       # vitest bench --run on a generated 10,000-person tree (results in docs/benchmarks.md)
 ```
 
-Node ≥ 20 (dev machine has Node 26). Tooling: TypeScript 5.9, Vitest 3.2. No runtime dependencies.
-Keep it that way.
+Runtime: Node ≥ 22.18 (`engines`). Develop on Node 22.18+, 24 or 26, the versions CI runs (dev machine has
+Node 26). Tooling: TypeScript 5.9, Vitest 3.2, tsup 9, Biome 2.6 (pinned), publint, attw. No runtime
+dependencies. Keep it that way.
 
 ## Layout (current)
 
+- `tsup.config.ts`: the build (entries, formats); `biome.jsonc`: lint and format rules.
+- `scripts/smoke-dist.mjs`: imports and requires the built package by name (`npm run test:dist`).
+- `.github/workflows/ci.yml`: CI on Node 22/24/26: lint, typecheck, test, build, check:package, test:dist.
 - `src/index.ts`: public entry: `createTree`, `relate`, `relateAll`, `describeRelation`, `validateTree`, and
   the types.
 - `src/types.ts`: `Person`, `Sex`, `Move`, `TreeInput`, `TreeOptions`.

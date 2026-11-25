@@ -16,6 +16,7 @@ native speakers review them). The roadmap to a published npm package continues i
 ```sh
 npm test            # vitest, the whole suite must stay green
 npm run typecheck   # tsc (strict): the library without Node types, then tests via tsconfig.test.json
+npm run bench       # vitest bench --run on a generated 10,000-person tree (results in docs/benchmarks.md)
 ```
 
 Node ≥ 20 (dev machine has Node 26). Tooling: TypeScript 5.9, Vitest 3.2. No runtime dependencies.
@@ -23,18 +24,21 @@ Keep it that way.
 
 ## Layout (current)
 
-- `src/index.ts`: public entry: `createTree`, `relate`, `relateAll`, `describeRelation`, and the types.
+- `src/index.ts`: public entry: `createTree`, `relate`, `relateAll`, `describeRelation`, `validateTree`, and
+  the types.
 - `src/types.ts`: `Person`, `Sex`, `Move`, `TreeInput`, `TreeOptions`.
 - `src/tree.ts`: `createTree()`: lookups of parents, children, spouses, half-siblings, names.
 - `src/chain.ts`: a chain of moves between two people, and helpers on moves (`"UUD"` keys).
-- `src/path.ts`: the shortest chain (Dijkstra, 10 a step, 11 a marriage step).
+- `src/path.ts`: the shortest chain (Dijkstra, 10 a step, 11 a marriage step); `searchFrom`/`chainTo` for one search to everyone.
+- `src/queue.ts`: `CheapestFirst`, the binary heap the search uses (pops by cost, then insertion order).
 - `src/ties.ts`: the other blood ties, one per closest common ancestor (or couple).
-- `src/choose.ts`: which relationship is the main one (`findRelationships`).
+- `src/choose.ts`: which relationship is the main one (`findRelationships`, `chooseRelationships`).
+- `src/validate.ts`: `validateTree()`: reports broken links, cycles and duplicates in raw input.
 - `src/classify.ts`: a chain's kind, generations, cousin degree, side and elder branch.
 - `src/degree.ts`: the legal degree as data.
 - `src/diagram.ts`: the chain laid out in rows and lanes for a small diagram.
 - `src/relate.ts`: `relate()`: how two people are related, as data.
-- `src/relate-all.ts`: `relateAll()`: what everyone connected is to one person (`relate` per person).
+- `src/relate-all.ts`: `relateAll()`: what everyone connected is to one person (one search from the person, plus a search per earlier person).
 - `src/svg.ts`: `toSvg()`: a relationship diagram as an accessible SVG string (own module, no DOM).
 - `src/gedcom.ts`: `fromGedcom()`: people and families of a GEDCOM file as `createTree` input (own module).
 - `src/describe.ts`: `describeRelation()`: a relation in words, in a locale.
@@ -44,7 +48,11 @@ Keep it that way.
   review). Their term tables, rulings and open questions are in `docs/locales/{fr,de,es}.md`.
 - `src/testing/fixtures.ts`: the test trees, drawn in ASCII. Read them to understand the cases.
 - `src/testing/sample-gedcom.ts`: an invented GEDCOM file for the reader's tests.
+- `src/testing/large-tree.ts`: `largeTree(size, seed)`: a seeded, fictional tree for benchmarks and sanity tests.
+- `src/testing/reference-path.ts`: the old path search, kept verbatim as the reference for differential tests.
+- `src/testing/sample-pairs.ts`: `samplePairs(input, count, seed)`: a fixed list of pairs for the benchmark and path tests.
 - `src/testing/describing.ts`: `describing(locale)` helpers shared by the locale tests.
+- `src/bench/relate.bench.ts`: the benchmarks (`npm run bench`); not part of `npm test`.
 - `src/*.test.ts`, `src/locales/*.test.ts`: behaviour spec: data next to each module, words
   per locale.
 - Git history: the first commit holds the four original files (only the example names changed to

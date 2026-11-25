@@ -70,24 +70,25 @@ See "Decided design" in the design doc above and its core-API implementation pla
     first in `people`, so a single search from `fromId` can pick a different chain than `relate`
     when chains tie. Plan 4 must either use a tie-break that doesn't depend on direction, or search
     from the earlier person for those pairs, and keep the equality-with-`relate` property.
+    (Resolved in Step 4: people before `fromId` keep their own search.)
 - [x] `svg` entry (`toSvg`)
 - [x] `gedcom` entry (`fromGedcom`)
 
 ## Step 4: Performance
 
-- [ ] Add a benchmark (`vitest bench`) on a generated ~10,000-person tree; record the baseline.
-- [ ] `spouses()` scans every union per call, inside the path search → index unions in a `Map`.
-- [ ] Dijkstra re-sorts the whole queue each iteration → small binary heap (or a bucket queue:
+- [x] Add a benchmark (`vitest bench`) on a generated ~10,000-person tree; record the baseline.
+- [x] `spouses()` scans every union per call, inside the path search → index unions in a `Map`.
+- [x] Dijkstra re-sorts the whole queue each iteration → small binary heap (or a bucket queue:
       costs are only 10 / 11).
-- [ ] `relateAll` with one search from `fromId`, keeping the equality property with `relate` for every
+- [x] `relateAll` with one search from `fromId`, keeping the equality property with `relate` for every
       pair (see the direction rule in Step 3b); benchmark it against the per-person version.
-- [ ] Re-measure; put real before/after numbers in the README.
+- [x] Re-measured: `docs/benchmarks.md` has the before/after numbers. (Putting them in the README stays for Step 7.)
 
 ## Step 5: `validateTree()`
 
-- [ ] Report problems instead of misbehaving: cycles (own ancestor), more than two parents,
+- [x] Report problems instead of misbehaving: cycles (own ancestor), more than two parents,
       parent / union links to unknown ids, self-marriage, duplicate ids.
-- [ ] Returns `{ ok: boolean; issues: { code, message, ids }[] }`; tested.
+- [x] Returns `{ ok: boolean; issues: { code, message, ids }[] }`; tested.
 
 ## Step 6: Build & package
 
@@ -146,7 +147,7 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
 - [x] Tests still to add: `side` when the parent's sex is unknown; `elderBranch` with equal birth
       years and with three or more generations up; `el.test.ts` "goes through blood relations
       rather than marriages" still accepts either parent (pin it like the other tie-order tests).
-- [ ] With `validateTree` (Step 5): duplicate person ids (the last one wins today), a union of a
+- [x] With `validateTree` (Step 5): duplicate person ids (the last one wins today), a union of a
       person with themselves, a person recorded as their own parent.
 - [ ] README (Step 7): `relate` returns `null` both for unrelated people and for an unknown id
       (point to `validateTree`); explain that the data's `path` excludes the first person while the
@@ -157,3 +158,4 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
 - `@enikakis/kinship-react`: the diagram + relation finder UI components from the site.
 - The pedigree/descendants layout (`layout.ts` in the site).
 - More locales via contributions.
+- A tie rule that doesn't depend on direction, so relateAll needs one search for everyone (today people before fromId get their own search).

@@ -1,14 +1,14 @@
 # `@enikakis/kinship` v1: design
 
-Date: 2026-11-24 · Status: draft for the owner's approval · Supersedes the API sketch in
-`docs/PLAN.md` step 2 (the plan's later steps still apply; see "Order of work").
+Date: 2026-11-24 · Status: accepted, and kept in step with the code as it is built. The roadmap
+is `docs/PLAN.md`.
 
 ## Intent
 
 A zero-dependency TypeScript library that answers **"how are these two people related?"** for any
 family tree, in several languages, and is good enough that other developers building a family-tree
-site or app reach for it. It is the owner's main portfolio piece, so the code, API, tests, docs and
-git history are all part of the product.
+site or app reach for it. It is also a portfolio piece, so the code, API, tests, docs and git history
+are all part of the product.
 
 Why this library and not another tree drawer: drawing family trees is well served on npm
 (family-chart, Topola, relatives-tree). Naming relationships is not: the only prior art found is a
@@ -16,8 +16,8 @@ Perl module, a 2008 CodeProject article and a PHP class, none multilingual, none
 blood ties or the legal degree. The library should be *the* answer to that question and work
 **alongside** the tree drawers, not compete with them.
 
-It starts from code that already works in production on the owner's village site
-(`vrisies-history-hub`): Dijkstra path search, other blood ties, a careful main-relationship rule,
+It starts from code that already works in production on the author's village history
+site: Dijkstra path search, other blood ties, a careful main-relationship rule,
 Greek and English names with gender and genitive, legal degree, chain diagram data. That code is
 site-shaped today; v1 makes it general.
 
@@ -37,7 +37,7 @@ site-shaped today; v1 makes it general.
      marriages, the chain step by step, common ancestors, the legal degree as a sentence), for
      users who want a working page fast.
 5. **Ready languages:** Greek, English, French, German, Spanish: languages whose relatives work like
-   Greek and English (the owner's rule for v1). Each term backed by a cited source and by tests.
+   Greek and English (the rule for v1). Each term backed by a cited source and by tests.
 6. **"What is everyone to me":** the main relationship of one person to every other person, in
    one call, at roughly the cost of one search.
 7. **SVG of the chain:** a `svg` entry point that turns diagram data into an accessible SVG string,
@@ -63,8 +63,8 @@ site-shaped today; v1 makes it general.
 
 - **A wrong kinship term in a shipped language.** Worse than not shipping that language.
 - Any runtime dependency.
-- Anything in the public API that only makes sense for the vrisies site.
-- **Real names of the owner's family anywhere public**, including git history.
+- Anything in the public API that only makes sense for the original site.
+- **Real people's names** in fixtures, docs or git history.
 - Losing one of the existing subtle rules (listed under "Behaviour to keep") during the refactor.
 - A big-bang history: the commits should show the refactor step by step.
 
@@ -74,8 +74,8 @@ site-shaped today; v1 makes it general.
   Biome, publint, attw, changesets); runtime dependencies are not.
 - Every commit keeps `npm test` and `npm run typecheck` green. Behaviour changes get a test first.
 - Test fixtures and doc comments use fictional people only.
-- Commits authored by the owner (`enikakis`), Claude only as `Co-Authored-By`. Small, focused
-  commits with clear messages. No push, no GitHub repo, no npm publish without the owner's OK.
+- Small, focused commits with clear messages (Conventional Commits); Claude appears only as
+  `Co-Authored-By` where it helped.
 
 ## Approaches considered
 
@@ -122,8 +122,8 @@ const tree = createTree(input, {
 
 Ordering of relatives (which decides between equally short chains, so it must be deterministic):
 by `born` when given, then by input order. This replaces today's "birth year, then Greek
-collation of given name"; a small change in which tie wins is accepted (the owner doesn't need the
-site's output to stay identical).
+collation of given name"; a small change in which tie wins is accepted (the original site's output
+need not stay identical).
 
 ### Result
 
@@ -194,15 +194,15 @@ rules:
 - **Sources:** each new-locale term carries a citation (a dictionary or a genealogy reference:
   e.g. Larousse / CNRTL for French, Duden for German, RAE / DLE for Spanish) in a comment or in the
   test table. Greek and English keep today's terms.
-- **Which languages (owner's rule):** only languages whose kinship works like Greek and English:
+- **Which languages:** only languages whose kinship works like Greek and English:
   the same relatives are told apart (parents, siblings, uncles/aunts, cousins by degree), with no
   separate words for the father's vs the mother's side or for older vs younger siblings. French,
   German and Spanish fit; Italian, Portuguese, Dutch would too, later.
-- **No single standard term (Claude's call):** where a relation has competing conventions (removed
+- **No single standard term:** where a relation has competing conventions (removed
   and distant cousins: German "Cousin 2. Grades", French "cousin issu de germain" vs "petit-cousin"),
   name it the way Greek already does, through the person of the other's generation ("cousin germain
   du père"), rather than pick one technical convention. Safer against the worst failure.
-- **Review status (Claude's call):** el and en are stable. fr, de, es ship in 0.1.0 marked
+- **Review status:** el and en are stable. fr, de, es ship in 0.1.0 marked
   *experimental* in the README until a native speaker reviews each term table; reviews are invited
   through GitHub issues (also good first issues for contributors). The term table per locale is a
   single readable file so a reviewer can check it without reading the code.
@@ -249,13 +249,6 @@ both have two recorded parents sharing exactly one; Greek gender + genitive, `un
 forms, distant generations named through the person of the other's generation; English standard
 genealogical terms; degree rules as above. All 27 existing tests (ported) must still pass.
 
-### Git history and names
-
-Done on 2026-11-24 with the owner's OK: the two existing commits were rewritten (same messages,
-author and dates) so the history uses only fictional people (surname «Παπαδόπουλος»), and the old
-commits were purged locally. The originals remain only in `vrisies-history-hub@3433dad`. This repo
-is the clean one that will be pushed; all further work uses fictional names from the start.
-
 ## Order of work
 
 Follows `docs/PLAN.md`, with the new features slotted in. `PLAN.md` is updated to match this
@@ -264,11 +257,10 @@ document as the first commit of the work.
 1. Step 2: new API (`createTree`, `relate`, `describeRelation`, locale interface), module split,
    compatibility wrapper; el + en locales ported.
 2. Step 3: tests ported to the new API, property-based tests, edge cases; wrapper removed.
-   (Fictional names: already done.)
 3. New: fr, de, es locales; `relateAll`; `svg`; `gedcom`.
 4. Steps 4–5: performance with benchmark, `validateTree`.
 5. Steps 6–10: build, docs (README with language table, algorithm explanation, "add a language"
-   guide), CI, live demo (uses GEDCOM + SVG + all languages), publish with the owner's OK.
+   guide), CI, live demo (uses GEDCOM + SVG + all languages), publish.
 6. Step 11 (site uses the package) after publishing; the site may change as needed.
 
 ## Left to the builder

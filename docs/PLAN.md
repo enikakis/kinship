@@ -1,6 +1,6 @@
 # Plan: from extracted code to a published npm package
 
-Design: docs/superpowers/specs/2026-11-24-kinship-v1-design.md · Implementation plans: docs/superpowers/plans/
+Design: [docs/design.md](design.md)
 
 Goal: publish `@enikakis/kinship` as a polished, zero-dependency TypeScript library that works
 as a portfolio showcase (clear API, strong tests, docs, live demo, CI, verified npm provenance),

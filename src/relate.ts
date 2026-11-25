@@ -53,7 +53,8 @@ export function relate<P extends Person>(tree: Tree<P>, fromId: string, toId: st
   };
 }
 
-function relationship<P extends Person>(tree: Tree<P>, chain: Chain<P>): Relationship<P> {
+/** One relationship, as data, from the chain that makes it (`relateAll` builds its entries with it too). */
+export function relationship<P extends Person>(tree: Tree<P>, chain: Chain<P>): Relationship<P> {
   const moves = movesOf(chain);
   return {
     ...classify(tree, chain),

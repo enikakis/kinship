@@ -137,7 +137,7 @@ describe("properties on random trees", () => {
           }
         }
       }),
-      { numRuns: 100 },
+      { numRuns: 1000 },
     );
   });
 });

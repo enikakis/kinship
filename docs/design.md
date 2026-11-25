@@ -227,12 +227,16 @@ property test on random trees. Other blood ties are not included (they are per p
 `relate`). An entry with `others: []` added, `{ ...entry, others: [] }`, is accepted by
 `describeRelation`.
 
-Correctness comes before speed: it runs `relate`'s own logic once per person, after one
-breadth-first walk finds who is connected at all (so unconnected people cost nothing). This
-sidesteps the direction rule (`relate(a, b)` searches from whichever of the two comes first in
-`people`, so a single search from `fromId` could pick a different chain when chains tie). The
-single-search optimisation is left to the performance step (PLAN Step 4), behind the same equality
-property and a benchmark.
+One path search from `fromId`, run to the end instead of stopping at a target, reaches everyone
+connected (so unconnected people cost nothing) and gives every person **after** `fromId` in
+`people` exactly the chain `findChain(fromId, thatId)` finds: the search only goes on past where
+`findChain` stops, and a person's chain never changes once they are the cheapest left. The choice
+of main relationship and other ties (`chooseRelationships`, shared with `relate`) then runs on that
+chain, with `fromId`'s ancestor lines worked out once. People **before** `fromId` keep a search of
+their own: the direction rule (`relate(a, b)` searches from whichever of the two comes first in
+`people`) could pick another of several equally short chains there. The equality property with
+`relate` guards all of it, with a fixture where the two directions tie (double first cousins).
+Numbers are in `docs/benchmarks.md`.
 
 ### SVG
 

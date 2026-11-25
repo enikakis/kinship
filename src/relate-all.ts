@@ -1,4 +1,7 @@
-import { relate, type Relation } from "./relate";
+import { chooseRelationships, comesBefore, findRelationships } from "./choose";
+import { chainTo, searchFrom } from "./path";
+import { relationship, type Relation } from "./relate";
+import { ancestorPaths, type AncestorLinesOf } from "./ties";
 import type { Tree } from "./tree";
 import type { Person } from "./types";
 
@@ -14,27 +17,26 @@ export type RelationToEveryone<P extends Person> = Map<string, RelationEntry<P>>
 /**
  * For every person connected to `fromId`, the same `main` and `couple` as `relate(tree, fromId, id)`.
  * `fromId` itself and unconnected people are left out; an unknown `fromId` gives an empty map.
- * Runs `relate` per person, after one breadth-first walk finds who is connected at all.
+ *
+ * One search from `fromId` reaches everyone connected and gives each the chain `relate` would find
+ * for the people after `fromId` in `people`. For the people before it, `relate` searches from them
+ * instead (which may pick another of several equally short chains), so they get a search of their
+ * own. `fromId`'s ancestor lines are worked out once, for everyone.
  */
 export function relateAll<P extends Person>(tree: Tree<P>, fromId: string): RelationToEveryone<P> {
   const result: RelationToEveryone<P> = new Map();
-  if (!tree.byId.has(fromId)) return result;
+  const search = searchFrom(tree, fromId);
+  if (!search) return result;
 
-  const reached = new Set([fromId]);
-  const queue = [fromId];
-  for (let next = 0; next < queue.length; next++) {
-    const id = queue[next]!;
-    for (const other of [...tree.parents(id), ...tree.children(id), ...tree.spouses(id)]) {
-      if (reached.has(other.id)) continue;
-      reached.add(other.id);
-      queue.push(other.id);
-    }
-  }
-
+  const mine = ancestorPaths(tree, fromId);
+  const linesOf: AncestorLinesOf = (id) => (id === fromId ? mine : ancestorPaths(tree, id));
   for (const id of tree.byId.keys()) {
-    if (id === fromId || !reached.has(id)) continue;
-    const relation = relate(tree, fromId, id);
-    if (relation) result.set(id, { main: relation.main, couple: relation.couple });
+    const shortest = chainTo(search, id);
+    if (!shortest) continue;
+    const found = comesBefore(tree, id, fromId)
+      ? findRelationships(tree, fromId, id, linesOf)
+      : chooseRelationships(tree, shortest, linesOf);
+    if (found) result.set(id, { main: relationship(tree, found.main), couple: found.couple });
   }
   return result;
 }

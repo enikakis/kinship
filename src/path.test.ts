@@ -1,7 +1,7 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import type { Chain } from "./chain";
-import { findChain } from "./path";
+import { chainTo, findChain, searchFrom } from "./path";
 import { createTree } from "./tree";
 import { arbPair, arbTree } from "./testing/arbitraries";
 import type { TestPerson } from "./testing/fixtures";
@@ -39,4 +39,40 @@ describe("findChain against the reference copy", () => {
     // Most pairs are related, so the comparison covers real chains, not just nulls.
     expect(found).toBeGreaterThan(90);
   }, 120_000);
+});
+
+describe("one search from a person to everyone", () => {
+  it("gives every target the chain findChain finds, ties included, on random trees", () => {
+    fc.assert(
+      fc.property(arbTree, ({ tree, ids }) => {
+        for (const a of ids) {
+          const search = searchFrom(tree, a)!;
+          for (const b of ids) expect(shape(chainTo(search, b)), `${a} → ${b}`).toEqual(shape(findChain(tree, a, b)));
+        }
+      }),
+      { numRuns: 300 },
+    );
+  });
+
+  it("gives 200 people of the large tree the chain findChain finds", () => {
+    const input = largeTree();
+    const tree = createTree(input, { born: (p: TestPerson) => p.born });
+    const search = searchFrom(tree, input.people[5000]!.id)!;
+    let found = 0;
+    for (let i = 0; i < input.people.length; i += 50) {
+      const to = input.people[i]!.id;
+      const chain = chainTo(search, to);
+      expect(shape(chain), to).toEqual(shape(findChain(tree, input.people[5000]!.id, to)));
+      if (chain) found++;
+    }
+    expect(found).toBeGreaterThan(150);
+  }, 120_000);
+
+  it("is null for an unknown person, and reaches no one unknown or the person themselves", () => {
+    const { tree, ids } = fc.sample(arbTree, { numRuns: 1, seed: 1 })[0]!;
+    expect(searchFrom(tree, "ghost")).toBeNull();
+    const search = searchFrom(tree, ids[0]!)!;
+    expect(chainTo(search, ids[0]!)).toBeNull();
+    expect(chainTo(search, "ghost")).toBeNull();
+  });
 });

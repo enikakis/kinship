@@ -1,7 +1,7 @@
 import { isBloodLine, movesOf, reverseChain, sexesOf, type Chain } from "./chain";
 import { isNamedKind, kindOf } from "./classify";
 import { findChain } from "./path";
-import { otherBloodTies, type BloodTie } from "./ties";
+import { otherBloodTies, type AncestorLinesOf, type BloodTie } from "./ties";
 import { positionOf, type Tree } from "./tree";
 import type { Person } from "./types";
 
@@ -19,9 +19,10 @@ export function findRelationships<P extends Person>(
   tree: Tree<P>,
   fromId: string,
   toId: string,
-): { main: Chain<P>; others: BloodTie<P>[]; couple: boolean } | null {
+  linesOf?: AncestorLinesOf,
+): Relationships<P> | null {
   if (comesBefore(tree, toId, fromId)) {
-    const found = findRelationships(tree, toId, fromId);
+    const found = findRelationships(tree, toId, fromId, linesOf);
     if (!found) return null;
     return {
       main: reverseChain(found.main),
@@ -30,8 +31,24 @@ export function findRelationships<P extends Person>(
     };
   }
   const shortest = findChain(tree, fromId, toId);
-  if (!shortest) return null;
-  const ties = otherBloodTies(tree, shortest);
+  return shortest && chooseRelationships(tree, shortest, linesOf);
+}
+
+/** The main relationship, the other blood ties after it, and whether the two are a couple. */
+export type Relationships<P extends Person> = { main: Chain<P>; others: BloodTie<P>[]; couple: boolean };
+
+/**
+ * Given the shortest chain between two people (from the one that comes first in `people`, as
+ * `findRelationships` searches), which relationship comes first and which are the other blood
+ * ties. The chain must start at whichever person comes first in `people`, since ties depend on
+ * the direction of the search. `linesOf` may give ancestor lines worked out before.
+ */
+export function chooseRelationships<P extends Person>(
+  tree: Tree<P>,
+  shortest: Chain<P>,
+  linesOf?: AncestorLinesOf,
+): Relationships<P> {
+  const ties = otherBloodTies(tree, shortest, linesOf);
   const couple = shortest.steps.length === 1 && shortest.steps[0].move === "spouse";
   const closest = ties[0]?.chain;
   const bloodFirst =
@@ -46,7 +63,7 @@ export function findRelationships<P extends Person>(
  * Whether one person comes before another in the tree's `people`. For a tree not made by
  * `createTree` (no positions known) it compares ids, so the answer is still deterministic.
  */
-const comesBefore = (tree: Tree<Person>, a: string, b: string) => {
+export const comesBefore = (tree: Tree<Person>, a: string, b: string): boolean => {
   const [x, y] = [positionOf(tree, a), positionOf(tree, b)];
   return x !== y ? x < y : a < b;
 };

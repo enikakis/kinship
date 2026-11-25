@@ -125,6 +125,8 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json && tsc --noEmit -p demo/tsconfig.json",
     "bench": "vitest bench --run",
     "build": "tsup",
+    "demo": "vite demo",
+    "demo:build": "vite build demo",
     "lint": "biome check .",
     "format": "biome check --write .",
     "check:package": "publint && attw --pack .",

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kinship: how two people are related</title>
+    <meta
+      name="description"
+      content="Live demo of @enikakis/kinship: pick two people in an invented Greek family and see how they are related, named in Greek, English, French, German and Spanish, with the legal degree."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f3f5f1" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121718" media="(prefers-color-scheme: dark)" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='9' width='10' height='14' rx='3' fill='%234d5b1e'/%3E%3Crect x='20' y='9' width='10' height='14' rx='3' fill='%234d5b1e'/%3E%3Cpath d='M12 14h8M12 18h8' stroke='%234d5b1e' stroke-width='2'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <h1>Kinship</h1>
+      <p class="lead">
+        Pick two people. The library finds the chain between them, names what each is to the other, and gives the
+        legal degree of kinship.
+      </p>
+      <p class="about">
+        A live demo of <code>@enikakis/kinship</code>, a small TypeScript library with no dependencies.
+        <a href="https://github.com/enikakis/kinship">Source and documentation</a>.
+      </p>
+    </header>
+
+    <main>
+      <section class="pick" aria-labelledby="pick-title">
+        <h2 id="pick-title" class="visually-hidden">Choose two people</h2>
+        <p class="source" id="source">
+          The Karydas family: 38 invented people over five generations, with a remarriage, half-siblings and a marriage
+          between first cousins.
+        </p>
+
+        <div class="pair">
+          <div class="end">
+            <label for="from">First person</label>
+            <input
+              id="from"
+              type="text"
+              list="people"
+              autocomplete="off"
+              spellcheck="false"
+              aria-describedby="from-error"
+            />
+            <p class="error" id="from-error" role="alert"></p>
+            <p class="role" id="from-role" aria-live="polite"></p>
+          </div>
+
+          <div class="tie">
+            <button type="button" id="swap" class="swap" aria-label="Swap the two people">
+              <span aria-hidden="true">⇄</span> Swap
+            </button>
+          </div>
+
+          <div class="end">
+            <label for="to">Second person</label>
+            <input
+              id="to"
+              type="text"
+              list="people"
+              autocomplete="off"
+              spellcheck="false"
+              aria-describedby="to-error"
+            />
+            <p class="error" id="to-error" role="alert"></p>
+            <p class="role" id="to-role" aria-live="polite"></p>
+          </div>
+        </div>
+        <datalist id="people"></datalist>
+
+        <fieldset class="languages">
+          <legend>Names in</legend>
+          <div class="language-options" id="languages"></div>
+          <p class="note">Experimental languages are sourced from dictionaries and statutes but not yet reviewed by native speakers.</p>
+        </fieldset>
+      </section>
+
+      <section class="result" id="result" aria-labelledby="result-title">
+        <h2 id="result-title" tabindex="-1">How they are related</h2>
+        <p class="empty" id="result-status" role="status"></p>
+        <div id="result-body"></div>
+      </section>
+
+      <section class="everyone" id="everyone" aria-labelledby="everyone-title">
+        <h2 id="everyone-title" tabindex="-1">Everyone, as seen from <span id="everyone-name"></span></h2>
+        <p class="note" id="everyone-count"></p>
+        <div id="everyone-body"></div>
+      </section>
+
+      <section class="own" aria-labelledby="own-title">
+        <h2 id="own-title">Try your own tree</h2>
+        <p>
+          Open a GEDCOM file (<code>.ged</code>), the format most genealogy programs export. It is read here, in your
+          browser: nothing is uploaded.
+        </p>
+        <div class="own-controls" id="own-controls">
+          <label for="file">GEDCOM file</label>
+          <input id="file" type="file" accept=".ged,.GED,text/plain" />
+          <button type="button" id="reset" hidden>Back to the sample family</button>
+        </div>
+        <div id="file-status" role="status" tabindex="-1"></div>
+      </section>
+    </main>
+
+    <footer class="colophon">
+      <p>
+        Everyone in the sample family is invented. Legal degrees are counted as civil law counts them (Greek Civil
+        Code, arts. 1463–1464); they are not legal advice.
+      </p>
+      <p>Source on <a href="https://github.com/enikakis/kinship">GitHub</a>, under the MIT licence.</p>
+    </footer>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,649 @@
+/* Kinship demo: a quiet family-archive page. Serif for headings and names of relationships,
+   the system sans for everything you operate. No web fonts, no framework. */
+
+:root {
+  color-scheme: light dark;
+
+  --paper: #f3f5f1;
+  --sheet: #fbfcfa;
+  --ink: #1d2528;
+  --muted: #56625f;
+  --rule: #d4dad2;
+  --rule-strong: #7f8a84;
+  --accent: #4d5b1e;
+  --accent-ink: #f6f8ee;
+  --danger: #a3261b;
+
+  --serif: "Palatino Linotype", Palatino, "Book Antiqua", "URW Palladio L", P052, Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --gutter: 16px;
+  --measure: 38rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #121718;
+    --sheet: #182022;
+    --ink: #e2e7e1;
+    --muted: #9ba8a3;
+    --rule: #2b3537;
+    --rule-strong: #6a7875;
+    --accent: #b8c67c;
+    --accent-ink: #182006;
+    --danger: #f0a294;
+  }
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --gutter: 2rem;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 1rem / 1.55 var(--sans);
+}
+
+.masthead,
+main,
+.colophon {
+  max-width: 68rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.625rem;
+}
+
+h3 {
+  font-size: 1.1875rem;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+[tabindex="-1"]:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.note {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* ---- Masthead ---------------------------------------------------------------------------- */
+
+.masthead {
+  padding-block: 3rem 2rem;
+}
+
+.masthead h1 {
+  font-size: clamp(2.75rem, 9vw, 4.5rem);
+  letter-spacing: -0.015em;
+  line-height: 1;
+}
+
+.lead {
+  margin-top: 1rem;
+  max-width: var(--measure);
+  font-family: var(--serif);
+  font-size: clamp(1.1875rem, 2.6vw, 1.375rem);
+  line-height: 1.5;
+}
+
+.about {
+  margin-top: 0.75rem;
+  max-width: var(--measure);
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* ---- The two people ---------------------------------------------------------------------- */
+
+.pick {
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+
+@media (min-width: 40rem) {
+  .pick {
+    padding: 2rem;
+  }
+}
+
+.source {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  max-width: var(--measure);
+}
+
+.pair {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 46rem) {
+  .pair {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.end {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.end label,
+.own-controls label,
+.languages legend {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+input[type="text"] {
+  width: 100%;
+  min-height: 2.875rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.0625rem;
+}
+
+input[type="text"][aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.875rem;
+}
+
+.role {
+  margin-top: 0.75rem;
+  min-height: 3.5rem;
+}
+
+.role-name {
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(1.625rem, 4.2vw, 2.25rem);
+  line-height: 1.15;
+  overflow-wrap: break-word;
+}
+
+.role-of,
+.role-none {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.role-none {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-style: italic;
+}
+
+/* The swap sits on a double line, the way a family tree draws a marriage: the tie between the two. */
+.tie {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tie::before,
+.tie::after {
+  content: "";
+  flex: 1;
+  height: 5px;
+  border-block: 1.5px solid var(--rule-strong);
+}
+
+@media (min-width: 46rem) {
+  .tie {
+    align-self: start;
+    /* Level with the inputs: the label's line and the gap above them. */
+    margin-top: calc(0.875rem * 1.55 + 0.375rem);
+    min-height: 2.875rem;
+  }
+
+  .tie::before,
+  .tie::after {
+    flex: 0 0 1.25rem;
+  }
+}
+
+button {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: var(--sheet);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+.languages {
+  margin: 1.5rem 0 0;
+  padding: 1.25rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  min-width: 0;
+}
+
+.languages legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 0.625rem;
+  padding: 0;
+}
+
+.language-options {
+  clear: both;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.language {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.language input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.language:has(input:checked) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.language:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.experimental {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.languages .note {
+  margin-top: 0.75rem;
+  max-width: var(--measure);
+}
+
+/* ---- The result -------------------------------------------------------------------------- */
+
+.result,
+.everyone,
+.own {
+  margin-top: 3.5rem;
+}
+
+.facts {
+  display: grid;
+  gap: 0.25rem 2rem;
+  margin: 1.25rem 0 0;
+  max-width: 52rem;
+}
+
+.facts dt {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.facts dd {
+  margin: 0 0 0.875rem;
+}
+
+.facts .summary {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+}
+
+@media (min-width: 40rem) {
+  .facts {
+    grid-template-columns: minmax(10rem, max-content) 1fr;
+    align-items: baseline;
+  }
+
+  .facts dd {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.diagram {
+  margin: 1.75rem 0 0;
+}
+
+.drawing {
+  overflow-x: auto;
+  padding: 1rem;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+
+.drawing svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+
+  --kinship-node-fill: var(--paper);
+  --kinship-node-stroke: var(--rule-strong);
+  --kinship-text: var(--ink);
+  --kinship-link: var(--muted);
+  --kinship-end-stroke: var(--accent);
+  --kinship-font: 13px var(--sans);
+  --kinship-role-font: italic 13px var(--serif);
+}
+
+.diagram figcaption {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 2rem 3rem;
+  margin-top: 2.25rem;
+}
+
+.chain ol {
+  margin: 0.75rem 0 0;
+  padding-left: 1.5rem;
+}
+
+.chain li {
+  padding-left: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.chain li::marker {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.others > ul {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tie-other {
+  display: grid;
+  gap: 0.375rem;
+  padding-block: 0.875rem;
+  border-top: 1px solid var(--rule);
+}
+
+.others > .note {
+  margin-top: 0.75rem;
+}
+
+.tie-roles {
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 0 1rem;
+  margin: 0 0 0.25rem;
+}
+
+.tie-roles dt {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.tie-roles dd,
+.tie-name {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+
+.empty {
+  margin-top: 1rem;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-style: italic;
+  max-width: var(--measure);
+}
+
+/* Empty, the error and status regions take no room, but they stay displayed (never display: none),
+   so screen readers keep them and announce what is put in them. */
+.error:empty,
+.empty:empty {
+  margin: 0;
+}
+
+/* ---- Everyone ---------------------------------------------------------------------------- */
+
+.everyone > .note {
+  margin-top: 0.5rem;
+}
+
+.group {
+  margin-top: 1.75rem;
+}
+
+.group h3 {
+  padding-bottom: 0.375rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.count {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.875rem;
+}
+
+.group ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: 0 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.group li {
+  display: flex;
+  flex-direction: column;
+  padding-block: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.group a {
+  color: var(--ink);
+  text-decoration-color: var(--rule-strong);
+}
+
+.group a:hover {
+  text-decoration-color: currentColor;
+}
+
+.group a[aria-current] {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.relation {
+  color: var(--muted);
+  font-family: var(--serif);
+  font-size: 1rem;
+}
+
+.show-all,
+.list-everyone {
+  margin-top: 0.75rem;
+}
+
+/* ---- Your own tree ----------------------------------------------------------------------- */
+
+.own {
+  padding-top: 2rem;
+  border-top: 1px solid var(--rule);
+}
+
+.own > p {
+  margin-top: 0.75rem;
+  max-width: var(--measure);
+}
+
+.own-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.own-controls label {
+  flex-basis: 100%;
+}
+
+input[type="file"] {
+  max-width: 100%;
+  font: inherit;
+  font-size: 0.9375rem;
+}
+
+#file-status {
+  margin-top: 1rem;
+  max-width: var(--measure);
+}
+
+.issues {
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--danger);
+  background: var(--sheet);
+}
+
+.issues p {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.issues ul {
+  margin: 0.75rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.problem {
+  color: var(--danger);
+}
+
+/* ---- Colophon ---------------------------------------------------------------------------- */
+
+.colophon {
+  margin-top: 4rem;
+  padding-block: 2rem 3rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.colophon p {
+  max-width: var(--measure);
+}
+
+.colophon p + p {
+  margin-top: 0.5rem;
+}

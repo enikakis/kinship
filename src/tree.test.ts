@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { createTree } from "./tree";
 import type { Sex } from "./types";
 
-const p = (id: string, sex: Sex, extra = {}) => ({ id, sex, ...extra });
+type Dated = Record<string, unknown> & { year?: number };
+const p = <E extends Dated>(id: string, sex: Sex, extra?: E) => ({ id, sex, ...extra });
 
 describe("createTree", () => {
   it("orders relatives by birth, then as given", () => {
@@ -12,7 +13,7 @@ describe("createTree", () => {
         parents: [["mom", "c"], ["mom", "a"], ["mom", "b"]],
         unions: [],
       },
-      { born: (x) => (x as { year?: number }).year },
+      { born: (x) => x.year },
     );
     expect(tree.children("mom").map((x) => x.id)).toEqual(["b", "a", "c"]);
   });
@@ -63,5 +64,18 @@ describe("createTree", () => {
     expect(tree.spouses("a").map((x) => x.id)).toEqual(["b"]);
     expect(tree.spouses("b").map((x) => x.id)).toEqual(["a"]);
     expect(tree.areHalfSiblings("kid", "sis")).toBe(false);
+  });
+
+  it("lists spouses from either side of a union, by birth, then as given", () => {
+    const tree = createTree(
+      {
+        people: [p("x", "male"), p("w1", "female"), p("w2", "female", { year: 1960 }), p("w3", "female", { year: 1950 }), p("w4", "female")],
+        parents: [],
+        unions: [{ a: "w4", b: "x" }, { a: "x", b: "w2" }, { a: "w1", b: "x" }, { a: "x", b: "w3" }],
+      },
+      { born: (x) => x.year },
+    );
+    expect(tree.spouses("x").map((s) => s.id)).toEqual(["w3", "w2", "w1", "w4"]);
+    expect(tree.spouses("w4").map((s) => s.id)).toEqual(["x"]);
   });
 });

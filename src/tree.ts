@@ -56,24 +56,22 @@ export function createTree<P extends Person>(input: TreeInput<P>, options: TreeO
     (childIds.get(parent) ?? childIds.set(parent, []).get(parent)!).push(child);
   }
 
-  const unions: { a: string; b: string }[] = [];
+  // Each person's spouses in the order of the unions; sorted by birth on lookup, like parents.
+  const spouseIds = new Map<string, string[]>();
   const seenUnions = new Set<string>();
   for (const { a, b } of input.unions) {
     if (!byId.has(a) || !byId.has(b)) continue;
     const key = a < b ? `${a}\u0000${b}` : `${b}\u0000${a}`;
     if (seenUnions.has(key)) continue;
     seenUnions.add(key);
-    unions.push({ a, b });
+    (spouseIds.get(a) ?? spouseIds.set(a, []).get(a)!).push(b);
+    if (a !== b) (spouseIds.get(b) ?? spouseIds.set(b, []).get(b)!).push(a);
   }
 
   /** Oldest first; unknown birth last; ties as given. */
   const byBirth = (x: P, y: P) =>
     (born(x) ?? Infinity) - (born(y) ?? Infinity) || position.get(x.id)! - position.get(y.id)!;
   const people = (ids: readonly string[] | undefined) => (ids ?? []).map((id) => byId.get(id)!).sort(byBirth);
-
-  // TODO(perf, docs/PLAN.md step 4): scans every union on each call, inside the path search.
-  const spouses = (id: string) =>
-    people(unions.filter((union) => union.a === id || union.b === id).map((union) => (union.a === id ? union.b : union.a)));
 
   const areHalfSiblings = (a: string, b: string) => {
     const ofA = parentIds.get(a) ?? [];
@@ -85,7 +83,7 @@ export function createTree<P extends Person>(input: TreeInput<P>, options: TreeO
     byId,
     parents: (id) => people(parentIds.get(id)),
     children: (id) => people(childIds.get(id)),
-    spouses,
+    spouses: (id) => people(spouseIds.get(id)),
     areHalfSiblings,
     name,
     born,

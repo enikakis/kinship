@@ -12,7 +12,12 @@ export type Word = { male: string; female: string; unknown: string; neutral?: tr
 export const w = (male: string, female: string, unknown = `${male}/${female}`): Word => ({ male, female, unknown });
 
 /** A word with a neutral word for an unknown sex: «parent», «cónyuge». */
-export const neutral = (male: string, female: string, unknown: string): Word => ({ male, female, unknown, neutral: true });
+export const neutral = (male: string, female: string, unknown: string): Word => ({
+  male,
+  female,
+  unknown,
+  neutral: true,
+});
 
 /** A list of names: «A», «A and B», «A, B and C», with the language's word for "and". */
 export const list = (names: readonly string[], and: string): string =>

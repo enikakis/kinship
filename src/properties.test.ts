@@ -12,7 +12,10 @@ import { arbPair, arbTree } from "./testing/arbitraries";
 import type { Move, Person } from "./types";
 
 const arbMoves = fc.array(fc.constantFrom<Move>("up", "down", "spouse"), { maxLength: 12 });
-const pick = (ids: string[], [x, y]: [number, number]): [string, string] => [ids[x % ids.length]!, ids[y % ids.length]!];
+const pick = (ids: string[], [x, y]: [number, number]): [string, string] => [
+  ids[x % ids.length]!,
+  ids[y % ids.length]!,
+];
 
 /** Every string in a value made of strings, arrays and plain objects. */
 const strings = (value: unknown): string[] =>

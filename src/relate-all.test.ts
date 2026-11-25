@@ -46,28 +46,26 @@ it("an entry with others: [] added goes straight into describeRelation", () => {
  * first parent is auntA) and goes through grandA; a search from `me` (first parent dadB) would go
  * through grandB.
  */
-const doubleCousins = createTree(
-  {
-    people: ["grandA", "grandB", "auntA", "uncleB", "dadB", "momA", "cousin", "me", "myKid"].map((id) =>
-      person(id, id.startsWith("aunt") || id.startsWith("mom") ? "female" : "male"),
-    ),
-    parents: [
-      ["grandA", "auntA"],
-      ["grandA", "momA"],
-      ["grandB", "uncleB"],
-      ["grandB", "dadB"],
-      ["auntA", "cousin"],
-      ["uncleB", "cousin"],
-      ["dadB", "me"],
-      ["momA", "me"],
-      ["me", "myKid"],
-    ],
-    unions: [
-      { a: "auntA", b: "uncleB" },
-      { a: "dadB", b: "momA" },
-    ],
-  },
-);
+const doubleCousins = createTree({
+  people: ["grandA", "grandB", "auntA", "uncleB", "dadB", "momA", "cousin", "me", "myKid"].map((id) =>
+    person(id, id.startsWith("aunt") || id.startsWith("mom") ? "female" : "male"),
+  ),
+  parents: [
+    ["grandA", "auntA"],
+    ["grandA", "momA"],
+    ["grandB", "uncleB"],
+    ["grandB", "dadB"],
+    ["auntA", "cousin"],
+    ["uncleB", "cousin"],
+    ["dadB", "me"],
+    ["momA", "me"],
+    ["me", "myKid"],
+  ],
+  unions: [
+    { a: "auntA", b: "uncleB" },
+    { a: "dadB", b: "momA" },
+  ],
+});
 
 it("follows relate's direction rule for a tie with someone earlier in people", () => {
   const ids = (path: { person: { id: string } }[]) => path.map((step) => step.person.id);

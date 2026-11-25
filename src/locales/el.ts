@@ -138,7 +138,8 @@ function ordinal(n: number, sex: Sex, of = false) {
  */
 function ancestor(generations: number, sex: Sex, of = false): string {
   const article = (s: "male" | "female") => (of ? (s === "male" ? "του " : "της ") : "");
-  if (generations > 5) return `${of ? bySex(sex, "του προγόνου", "της προγόνου") : words.ancestor[sex]} ${generations}ης γενιάς`;
+  if (generations > 5)
+    return `${of ? bySex(sex, "του προγόνου", "της προγόνου") : words.ancestor[sex]} ${generations}ης γενιάς`;
   if (generations === 1 && sex === "unknown") return of ? "του γονιού" : words.parent.unknown;
   const pre = "προ-".repeat(Math.max(0, generations - 3));
   const names = {

@@ -11,10 +11,13 @@ const arbSex: fc.Arbitrary<Sex> = fc.constantFrom("female", "male", "unknown");
  */
 export const arbTree: fc.Arbitrary<{ tree: Tree<TestPerson>; ids: string[] }> = fc
   .record({
-    people: fc.array(fc.record({ sex: arbSex, born: fc.option(fc.integer({ min: 1700, max: 2020 }), { nil: undefined }) }), {
-      minLength: 2,
-      maxLength: 30,
-    }),
+    people: fc.array(
+      fc.record({ sex: arbSex, born: fc.option(fc.integer({ min: 1700, max: 2020 }), { nil: undefined }) }),
+      {
+        minLength: 2,
+        maxLength: 30,
+      },
+    ),
     // Indices are reduced to the people's range below.
     parentPicks: fc.array(fc.tuple(fc.nat(), fc.nat(), fc.nat()), { maxLength: 60 }),
     unionPicks: fc.array(fc.tuple(fc.nat(), fc.nat()), { maxLength: 10 }),
@@ -30,7 +33,9 @@ export const arbTree: fc.Arbitrary<{ tree: Tree<TestPerson>; ids: string[] }> = 
       if (set.size < 2) set.add(parent);
       parents.set(child, set);
     }
-    const parentLinks = [...parents].flatMap(([child, set]) => [...set].map((p): [string, string] => [ids[p]!, ids[child]!]));
+    const parentLinks = [...parents].flatMap(([child, set]) =>
+      [...set].map((p): [string, string] => [ids[p]!, ids[child]!]),
+    );
     const unions = unionPicks.flatMap(([x, y]) => {
       const a = x % n;
       const b = y % n;

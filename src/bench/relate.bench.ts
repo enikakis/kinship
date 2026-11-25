@@ -27,19 +27,35 @@ const sources = [smallInput.people[0].id, smallInput.people[500].id, smallInput.
 const options = { iterations: 5, warmupIterations: 1, time: 0, warmupTime: 0 };
 
 describe("10,000 people", () => {
-  bench("createTree", () => {
-    createTree(input, { born });
-  }, options);
-  bench("relate, 200 pairs", () => {
-    for (const [a, b] of pairs) relate(tree, a, b);
-  }, options);
-  bench(`describeRelation (el), ${relations.length} relations`, () => {
-    for (const r of relations) describeRelation(tree, r, el);
-  }, options);
+  bench(
+    "createTree",
+    () => {
+      createTree(input, { born });
+    },
+    options,
+  );
+  bench(
+    "relate, 200 pairs",
+    () => {
+      for (const [a, b] of pairs) relate(tree, a, b);
+    },
+    options,
+  );
+  bench(
+    `describeRelation (el), ${relations.length} relations`,
+    () => {
+      for (const r of relations) describeRelation(tree, r, el);
+    },
+    options,
+  );
 });
 
 describe("1,000 people", () => {
-  bench("relateAll, 3 people", () => {
-    for (const id of sources) relateAll(smallTree, id);
-  }, { ...options, iterations: 3 });
+  bench(
+    "relateAll, 3 people",
+    () => {
+      for (const id of sources) relateAll(smallTree, id);
+    },
+    { ...options, iterations: 3 },
+  );
 });

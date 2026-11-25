@@ -107,7 +107,8 @@ export const fr: KinshipLocale = {
   throughMarriages: (couples) =>
     `Liés par ${couples.length > 1 ? "les mariages" : "le mariage"} de ${couples.map((couple) => couple.join(" et ")).join(`${NBSP}; `)}.`,
 
-  commonAncestors: (names) => `${names.length > 1 ? "Ancêtres communs" : "Ancêtre commun"}${NBSP}: ${list(names, "et")}`,
+  commonAncestors: (names) =>
+    `${names.length > 1 ? "Ancêtres communs" : "Ancêtre commun"}${NBSP}: ${list(names, "et")}`,
 };
 
 /** How a name is said: on its own; after «de», «du père», «de l'oncle»; or after «d'un», «d'une sœur». */

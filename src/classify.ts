@@ -78,8 +78,7 @@ const GROUP: Record<Kind, "blood" | "marriage" | "none"> = {
   unnamed: "none",
 };
 
-const kindsIn = (group: "blood" | "marriage") =>
-  (Object.keys(GROUP) as Kind[]).filter((kind) => GROUP[kind] === group);
+const kindsIn = (group: "blood" | "marriage") => (Object.keys(GROUP) as Kind[]).filter((kind) => GROUP[kind] === group);
 
 /** The kinds of blood tie. */
 export const BLOOD_KINDS: readonly Kind[] = kindsIn("blood");
@@ -125,8 +124,7 @@ export function kindOf(moves: readonly Move[], sexes: readonly Sex[], halfSiblin
 export function nameQuery(moves: readonly Move[], sexes: readonly Sex[], halfSibling: boolean): NameQuery {
   const kind = kindOf(moves, sexes, halfSibling);
   const key = movesKey(moves);
-  const bloodPart =
-    kind === "spouseOfRelative" ? key.slice(0, -1) : kind === "relativeOfSpouse" ? key.slice(1) : key;
+  const bloodPart = kind === "spouseOfRelative" ? key.slice(0, -1) : kind === "relativeOfSpouse" ? key.slice(1) : key;
   return { kind, moves, blood: BLOOD.test(bloodPart) ? bloodOf(bloodPart) : null, sexes };
 }
 
@@ -152,7 +150,13 @@ export function classify<P extends Person>(tree: Tree<P>, chain: Chain<P>): Clas
       : null;
   const parentSex = moves[0] === "up" ? chain.steps[0].person.sex : null;
   const side = parentSex === "male" ? "paternal" : parentSex === "female" ? "maternal" : null;
-  return { kind: kindOf(moves, sexesOf(chain), halfSibling), blood, cousin, side, elderBranch: elderBranch(tree, chain, blood) };
+  return {
+    kind: kindOf(moves, sexesOf(chain), halfSibling),
+    blood,
+    cousin,
+    side,
+    elderBranch: elderBranch(tree, chain, blood),
+  };
 }
 
 /** For a collateral tie: whose branch starts with the elder of the common ancestor's two children. */

@@ -114,7 +114,9 @@ describe("uncles, aunts, nephews and nieces", () => {
   });
 
   it("names those beyond through the person of the other's generation", () => {
-    expect(along("UUUUUD", "male").summary).toBe("frère de l'arrière-arrière-grand-père/de l'arrière-arrière-grand-mère");
+    expect(along("UUUUUD", "male").summary).toBe(
+      "frère de l'arrière-arrière-grand-père/de l'arrière-arrière-grand-mère",
+    );
     expect(along("UUUUUD", males("UUUUUD", { 4: "female", 6: "female" })).summary).toBe(
       "sœur de l'arrière-arrière-grand-mère",
     );
@@ -165,7 +167,9 @@ describe("cousins", () => {
   it("names a grandparent's second cousin through the grandparent", () => {
     const key = "UUUUUDDD";
     expect(along(key, all(key, "male")).summary).toBe("cousin issu de germain du grand-père");
-    expect(along(key, males(key, { 2: "female", 8: "female" })).summary).toBe("cousine issue de germain de la grand-mère");
+    expect(along(key, males(key, { 2: "female", 8: "female" })).summary).toBe(
+      "cousine issue de germain de la grand-mère",
+    );
     expect(along(key, males(key, { 2: "female", 8: "unknown" })).summary).toBe(
       "cousin issu de germain/cousine issue de germain de la grand-mère",
     );
@@ -203,7 +207,10 @@ describe("relations by marriage with a name", () => {
   });
 
   it("names a child's parents-in-law by the child and the child's spouse", () => {
-    expect(roles("dad", "inlawMom")).toEqual({ other: "mère de l'épouse du fils", self: "père de l'époux de la fille" });
+    expect(roles("dad", "inlawMom")).toEqual({
+      other: "mère de l'épouse du fils",
+      self: "père de l'époux de la fille",
+    });
     // «parent» only on its own: as the head of a longer name it would read "relative of".
     expect(along("DSU", "unknown").roles).toEqual({
       other: "père/mère du conjoint de l'enfant",

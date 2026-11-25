@@ -12,7 +12,14 @@ const input = (
 
 describe("validateTree", () => {
   it("accepts a valid tree", () => {
-    const tree = input(["mum", "dad", "kid"], [["mum", "kid"], ["dad", "kid"]], [{ a: "mum", b: "dad" }]);
+    const tree = input(
+      ["mum", "dad", "kid"],
+      [
+        ["mum", "kid"],
+        ["dad", "kid"],
+      ],
+      [{ a: "mum", b: "dad" }],
+    );
     expect(validateTree(tree)).toEqual({ ok: true, issues: [] });
   });
 
@@ -29,7 +36,16 @@ describe("validateTree", () => {
   });
 
   it("reports links to unknown ids, naming the unknown ones", () => {
-    const result = validateTree(input(["a", "b"], [["a", "ghost"], ["x", "y"]], [{ a: "b", b: "nobody" }]));
+    const result = validateTree(
+      input(
+        ["a", "b"],
+        [
+          ["a", "ghost"],
+          ["x", "y"],
+        ],
+        [{ a: "b", b: "nobody" }],
+      ),
+    );
     expect(result.issues.map((i) => [i.code, i.ids])).toEqual([
       ["unknownId", ["ghost"]],
       ["unknownId", ["x", "y"]],
@@ -59,36 +75,83 @@ describe("validateTree", () => {
   });
 
   it("reports more than two parents, child first", () => {
-    const result = validateTree(input(["p1", "p2", "p3", "kid"], [["p1", "kid"], ["p2", "kid"], ["p3", "kid"]]));
+    const result = validateTree(
+      input(
+        ["p1", "p2", "p3", "kid"],
+        [
+          ["p1", "kid"],
+          ["p2", "kid"],
+          ["p3", "kid"],
+        ],
+      ),
+    );
     expect(result.issues).toHaveLength(1);
     expect(result.issues[0]).toMatchObject({ code: "tooManyParents", ids: ["kid", "p1", "p2", "p3"] });
     expect(result.issues[0]!.message).toContain("kid");
   });
 
   it("does not count a repeated link as another parent", () => {
-    const tree = input(["p1", "p2", "kid"], [["p1", "kid"], ["p2", "kid"], ["p1", "kid"]]);
+    const tree = input(
+      ["p1", "p2", "kid"],
+      [
+        ["p1", "kid"],
+        ["p2", "kid"],
+        ["p1", "kid"],
+      ],
+    );
     expect(validateTree(tree)).toEqual({ ok: true, issues: [] });
   });
 
   it("reports a cycle of three once, people in order", () => {
-    const result = validateTree(input(["a", "b", "c"], [["a", "b"], ["b", "c"], ["c", "a"]]));
+    const result = validateTree(
+      input(
+        ["a", "b", "c"],
+        [
+          ["a", "b"],
+          ["b", "c"],
+          ["c", "a"],
+        ],
+      ),
+    );
     expect(result.issues).toHaveLength(1);
     expect(result.issues[0]).toMatchObject({ code: "cycle", ids: ["a", "b", "c"] });
     for (const id of ["a", "b", "c"]) expect(result.issues[0]!.message).toContain(`"${id}"`);
   });
 
   it("reports a cycle of two", () => {
-    const result = validateTree(input(["a", "b"], [["a", "b"], ["b", "a"]]));
+    const result = validateTree(
+      input(
+        ["a", "b"],
+        [
+          ["a", "b"],
+          ["b", "a"],
+        ],
+      ),
+    );
     expect(result.issues.map((i) => [i.code, i.ids])).toEqual([["cycle", ["a", "b"]]]);
   });
 
   it("reports a cycle reached through a tail, without the tail", () => {
-    const result = validateTree(input(["x", "a", "b"], [["x", "a"], ["a", "b"], ["b", "a"]]));
+    const result = validateTree(
+      input(
+        ["x", "a", "b"],
+        [
+          ["x", "a"],
+          ["a", "b"],
+          ["b", "a"],
+        ],
+      ),
+    );
     expect(result.issues.map((i) => [i.code, i.ids])).toEqual([["cycle", ["a", "b"]]]);
   });
 
   it("reports overlapping cycles in one component as one issue per cycle found", () => {
-    const links: [string, string][] = [["a", "b"], ["b", "a"], ["b", "c"], ["c", "b"]];
+    const links: [string, string][] = [
+      ["a", "b"],
+      ["b", "a"],
+      ["b", "c"],
+      ["c", "b"],
+    ];
     const result = validateTree(input(["a", "b", "c"], links));
     expect(result.issues.map((i) => [i.code, i.ids])).toEqual([
       ["cycle", ["a", "b"]],
@@ -98,17 +161,51 @@ describe("validateTree", () => {
 
   it("lists several issues in input order", () => {
     const result = validateTree(
-      input(["a", "b", "a"], [["b", "zzz"], ["b", "b"]], [{ a: "a", b: "a" }, { a: "q", b: "b" }]),
+      input(
+        ["a", "b", "a"],
+        [
+          ["b", "zzz"],
+          ["b", "b"],
+        ],
+        [
+          { a: "a", b: "a" },
+          { a: "q", b: "b" },
+        ],
+      ),
     );
-    expect(result.issues.map((i) => i.code)).toEqual(["duplicateId", "unknownId", "selfParent", "selfUnion", "unknownId"]);
+    expect(result.issues.map((i) => i.code)).toEqual([
+      "duplicateId",
+      "unknownId",
+      "selfParent",
+      "selfUnion",
+      "unknownId",
+    ]);
   });
 
   it("never throws on garbage", () => {
     const garbage = [
       input([]),
       input([], [["", ""]], [{ a: "", b: "" }]),
-      input(["", ""], [["", ""], ["", "x"]], [{ a: "", b: "" }]),
-      input(["a"], [["ghost", "ghost"], ["a", "a"], ["a", "nobody"]], [{ a: "ghost", b: "ghost" }, { a: "a", b: "a" }]),
+      input(
+        ["", ""],
+        [
+          ["", ""],
+          ["", "x"],
+        ],
+        [{ a: "", b: "" }],
+      ),
+      input(
+        ["a"],
+        [
+          ["ghost", "ghost"],
+          ["a", "a"],
+          ["a", "nobody"],
+        ],
+        [
+          { a: "ghost", b: "ghost" },
+          { a: "a", b: "a" },
+        ],
+      ),
     ];
     for (const tree of garbage) expect(() => validateTree(tree)).not.toThrow();
     expect(validateTree(input([], [["", ""]], [{ a: "", b: "" }])).ok).toBe(false);

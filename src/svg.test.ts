@@ -175,7 +175,10 @@ describe("toSvg", () => {
   ])("keeps the role labels clear of the links (%s to %s)", (from, to) => {
     const { diagram: d, roles: r } = chain(from, to);
     const s = toSvg(d, { name, roles: r });
-    const labels = [...s.matchAll(/class="kinship-role" x="([\d.]+)" y="([\d.]+)"/g)].map((m) => [Number(m[1]), Number(m[2])]);
+    const labels = [...s.matchAll(/class="kinship-role" x="([\d.]+)" y="([\d.]+)"/g)].map((m) => [
+      Number(m[1]),
+      Number(m[2]),
+    ]);
     expect(labels).toHaveLength(2);
     const paths = [...s.matchAll(/kinship-link-parent" d="M([\d.]+) ([\d.]+)V([\d.]+)H([\d.]+)V([\d.]+)"/g)];
     for (const [x, y] of labels) {

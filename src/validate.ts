@@ -25,7 +25,8 @@ export function validateTree<P extends Person>(input: TreeInput<P>): TreeValidat
   const issues: TreeIssue[] = [];
   const known = new Set<string>();
   for (const { id } of input.people) {
-    if (known.has(id)) issues.push({ code: "duplicateId", message: `Person id "${id}" is used more than once.`, ids: [id] });
+    if (known.has(id))
+      issues.push({ code: "duplicateId", message: `Person id "${id}" is used more than once.`, ids: [id] });
     known.add(id);
   }
 
@@ -34,7 +35,11 @@ export function validateTree<P extends Person>(input: TreeInput<P>): TreeValidat
   for (const [parent, child] of input.parents) {
     const unknown = unique([parent, child].filter((id) => !known.has(id)));
     if (unknown.length > 0) {
-      issues.push({ code: "unknownId", message: `A parent link names unknown ${unknown.length > 1 ? "ids" : "id"} ${quoted(unknown)}.`, ids: unknown });
+      issues.push({
+        code: "unknownId",
+        message: `A parent link names unknown ${unknown.length > 1 ? "ids" : "id"} ${quoted(unknown)}.`,
+        ids: unknown,
+      });
     } else if (parent === child) {
       issues.push({ code: "selfParent", message: `"${parent}" is recorded as their own parent.`, ids: [parent] });
     } else {
@@ -48,7 +53,11 @@ export function validateTree<P extends Person>(input: TreeInput<P>): TreeValidat
   for (const { a, b } of input.unions) {
     const unknown = unique([a, b].filter((id) => !known.has(id)));
     if (unknown.length > 0) {
-      issues.push({ code: "unknownId", message: `A union names unknown ${unknown.length > 1 ? "ids" : "id"} ${quoted(unknown)}.`, ids: unknown });
+      issues.push({
+        code: "unknownId",
+        message: `A union names unknown ${unknown.length > 1 ? "ids" : "id"} ${quoted(unknown)}.`,
+        ids: unknown,
+      });
     } else if (a === b) {
       issues.push({ code: "selfUnion", message: `"${a}" is recorded as married to themselves.`, ids: [a] });
     }
@@ -56,11 +65,20 @@ export function validateTree<P extends Person>(input: TreeInput<P>): TreeValidat
 
   for (const [child, parents] of parentsOf) {
     if (parents.size > 2) {
-      issues.push({ code: "tooManyParents", message: `"${child}" has ${parents.size} parents: ${quoted([...parents])}.`, ids: [child, ...parents] });
+      issues.push({
+        code: "tooManyParents",
+        message: `"${child}" has ${parents.size} parents: ${quoted([...parents])}.`,
+        ids: [child, ...parents],
+      });
     }
   }
 
-  issues.push(...findCycles(input.people.map((person) => person.id), childrenOf));
+  issues.push(
+    ...findCycles(
+      input.people.map((person) => person.id),
+      childrenOf,
+    ),
+  );
   return { ok: issues.length === 0, issues };
 }
 

@@ -13,7 +13,16 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-const SURNAMES = ["Παπαδόπουλος", "Γεωργίου", "Ιωάννου", "Δημητρίου", "Αντωνίου", "Κωνσταντίνου", "Νικολάου", "Βασιλείου"];
+const SURNAMES = [
+  "Παπαδόπουλος",
+  "Γεωργίου",
+  "Ιωάννου",
+  "Δημητρίου",
+  "Αντωνίου",
+  "Κωνσταντίνου",
+  "Νικολάου",
+  "Βασιλείου",
+];
 
 /**
  * A large, realistic, fictional family tree for benchmarks and sanity tests: `size` people in
@@ -86,7 +95,9 @@ export function largeTree(size = 10_000, seed = 20_251_125): TreeInput<TestPerso
         mate = children
           .slice(int(children.length))
           .concat(children)
-          .find((o) => single.has(o.id) && o.sex === opposite(c.sex) && !parentsOf.get(o.id)!.some((p) => mine.includes(p)));
+          .find(
+            (o) => single.has(o.id) && o.sex === opposite(c.sex) && !parentsOf.get(o.id)!.some((p) => mine.includes(p)),
+          );
       }
       if (mate) {
         single.delete(mate.id);

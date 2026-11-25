@@ -98,7 +98,9 @@ describe("related in more than one way", () => {
       others: [
         {
           name: "first cousin",
-          ancestors: expect.stringMatching(/^Common ancestors: (ma Παπαδόπουλος and pa|pa Παπαδόπουλος and ma) Παπαδόπουλος$/),
+          ancestors: expect.stringMatching(
+            /^Common ancestors: (ma Παπαδόπουλος and pa|pa Παπαδόπουλος and ma) Παπαδόπουλος$/,
+          ),
         },
       ],
     });

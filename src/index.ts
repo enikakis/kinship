@@ -17,4 +17,3 @@ export type { KinshipLocale, NameQuery } from "./locale";
 export { validateTree } from "./validate";
 export type { TreeIssue, TreeValidation } from "./validate";
 export type { Move, Person, Sex, TreeInput, TreeOptions } from "./types";
-

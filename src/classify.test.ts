@@ -12,12 +12,31 @@ const cousinOf = (key: string) => {
 
 describe("classify", () => {
   it.each([
-    ["U", "ancestor"], ["UUUU", "ancestor"], ["D", "descendant"], ["UD", "sibling"], ["UUD", "uncle"],
-    ["UUUD", "uncle"], ["UDD", "nephew"], ["UUDD", "cousin"], ["UUUDD", "cousin"],
-    ["S", "spouse"], ["SU", "parentInLaw"], ["DS", "childInLaw"], ["SUD", "siblingInLaw"], ["UDS", "siblingInLaw"],
-    ["DSU", "coParentInLaw"], ["US", "stepParent"], ["SD", "stepChild"], ["UUDS", "uncleByMarriage"],
-    ["SUUD", "uncleByMarriage"], ["SUDD", "nephewByMarriage"], ["UDDS", "nephewByMarriage"],
-    ["UUDDS", "spouseOfRelative"], ["UUS", "spouseOfRelative"], ["SDD", "relativeOfSpouse"], ["UDSUD", "unnamed"],
+    ["U", "ancestor"],
+    ["UUUU", "ancestor"],
+    ["D", "descendant"],
+    ["UD", "sibling"],
+    ["UUD", "uncle"],
+    ["UUUD", "uncle"],
+    ["UDD", "nephew"],
+    ["UUDD", "cousin"],
+    ["UUUDD", "cousin"],
+    ["S", "spouse"],
+    ["SU", "parentInLaw"],
+    ["DS", "childInLaw"],
+    ["SUD", "siblingInLaw"],
+    ["UDS", "siblingInLaw"],
+    ["DSU", "coParentInLaw"],
+    ["US", "stepParent"],
+    ["SD", "stepChild"],
+    ["UUDS", "uncleByMarriage"],
+    ["SUUD", "uncleByMarriage"],
+    ["SUDD", "nephewByMarriage"],
+    ["UDDS", "nephewByMarriage"],
+    ["UUDDS", "spouseOfRelative"],
+    ["UUS", "spouseOfRelative"],
+    ["SDD", "relativeOfSpouse"],
+    ["UDSUD", "unnamed"],
   ])("calls %s a %s", (key, kind) => expect(kindOf(fromKey(key), sexesFor(key, "male"), false)).toBe(kind));
 
   it("gives a name query the generations of the blood part, if any", () => {

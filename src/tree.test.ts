@@ -10,7 +10,11 @@ describe("createTree", () => {
     const tree = createTree(
       {
         people: [p("mom", "female"), p("c", "male"), p("a", "female", { year: 1950 }), p("b", "male", { year: 1940 })],
-        parents: [["mom", "c"], ["mom", "a"], ["mom", "b"]],
+        parents: [
+          ["mom", "c"],
+          ["mom", "a"],
+          ["mom", "b"],
+        ],
         unions: [],
       },
       { born: (x) => x.year },
@@ -21,7 +25,11 @@ describe("createTree", () => {
   it("keeps the given order without birth years", () => {
     const tree = createTree({
       people: [p("mom", "female"), p("c", "male"), p("a", "female"), p("b", "male")],
-      parents: [["mom", "c"], ["mom", "a"], ["mom", "b"]],
+      parents: [
+        ["mom", "c"],
+        ["mom", "a"],
+        ["mom", "b"],
+      ],
       unions: [],
     });
     expect(tree.children("mom").map((x) => x.id)).toEqual(["c", "a", "b"]);
@@ -46,7 +54,10 @@ describe("createTree", () => {
   it("skips links to people it does not know", () => {
     const tree = createTree({
       people: [p("a", "male"), p("b", "female")],
-      parents: [["ghost", "a"], ["b", "ghost"]],
+      parents: [
+        ["ghost", "a"],
+        ["b", "ghost"],
+      ],
       unions: [{ a: "a", b: "ghost" }],
     });
     expect(tree.parents("a")).toEqual([]);
@@ -56,9 +67,26 @@ describe("createTree", () => {
 
   it("counts a repeated link once", () => {
     const tree = createTree({
-      people: [p("dad", "male"), p("mom", "female"), p("kid", "male"), p("sis", "female"), p("a", "male"), p("b", "female")],
-      parents: [["dad", "kid"], ["dad", "kid"], ["mom", "kid"], ["dad", "sis"], ["mom", "sis"], ["mom", "sis"]],
-      unions: [{ a: "a", b: "b" }, { a: "b", b: "a" }],
+      people: [
+        p("dad", "male"),
+        p("mom", "female"),
+        p("kid", "male"),
+        p("sis", "female"),
+        p("a", "male"),
+        p("b", "female"),
+      ],
+      parents: [
+        ["dad", "kid"],
+        ["dad", "kid"],
+        ["mom", "kid"],
+        ["dad", "sis"],
+        ["mom", "sis"],
+        ["mom", "sis"],
+      ],
+      unions: [
+        { a: "a", b: "b" },
+        { a: "b", b: "a" },
+      ],
     });
     expect(tree.parents("kid").map((x) => x.id)).toEqual(["dad", "mom"]);
     expect(tree.spouses("a").map((x) => x.id)).toEqual(["b"]);
@@ -69,9 +97,20 @@ describe("createTree", () => {
   it("lists spouses from either side of a union, by birth, then as given", () => {
     const tree = createTree(
       {
-        people: [p("x", "male"), p("w1", "female"), p("w2", "female", { year: 1960 }), p("w3", "female", { year: 1950 }), p("w4", "female")],
+        people: [
+          p("x", "male"),
+          p("w1", "female"),
+          p("w2", "female", { year: 1960 }),
+          p("w3", "female", { year: 1950 }),
+          p("w4", "female"),
+        ],
         parents: [],
-        unions: [{ a: "w4", b: "x" }, { a: "x", b: "w2" }, { a: "w1", b: "x" }, { a: "x", b: "w3" }],
+        unions: [
+          { a: "w4", b: "x" },
+          { a: "x", b: "w2" },
+          { a: "w1", b: "x" },
+          { a: "x", b: "w3" },
+        ],
       },
       { born: (x) => x.year },
     );
@@ -80,13 +119,27 @@ describe("createTree", () => {
   });
 
   it("skips a person recorded as their own parent", () => {
-    const tree = createTree({ people: [p("a", "male"), p("b", "female")], parents: [["a", "a"], ["a", "b"]], unions: [] });
+    const tree = createTree({
+      people: [p("a", "male"), p("b", "female")],
+      parents: [
+        ["a", "a"],
+        ["a", "b"],
+      ],
+      unions: [],
+    });
     expect(tree.parents("a")).toEqual([]);
     expect(tree.children("a").map((x) => x.id)).toEqual(["b"]);
   });
 
   it("skips a union of a person with themselves", () => {
-    const tree = createTree({ people: [p("a", "male"), p("b", "female")], parents: [], unions: [{ a: "a", b: "a" }, { a: "a", b: "b" }] });
+    const tree = createTree({
+      people: [p("a", "male"), p("b", "female")],
+      parents: [],
+      unions: [
+        { a: "a", b: "a" },
+        { a: "a", b: "b" },
+      ],
+    });
     expect(tree.spouses("a").map((x) => x.id)).toEqual(["b"]);
   });
 });

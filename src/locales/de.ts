@@ -133,7 +133,8 @@ export const de: KinshipLocale = {
   throughMarriages: (couples) =>
     `Verbunden über die ${couples.length > 1 ? "Ehen" : "Ehe"} von ${couples.map((couple) => couple.join(" und ")).join("; ")}.`,
 
-  commonAncestors: (names) => `${names.length > 1 ? "Gemeinsame Vorfahren" : "Gemeinsamer Vorfahr"}: ${list(names, "und")}`,
+  commonAncestors: (names) =>
+    `${names.length > 1 ? "Gemeinsame Vorfahren" : "Gemeinsamer Vorfahr"}: ${list(names, "und")}`,
 };
 
 /** How a name is said: on its own; in the genitive, «des Vaters»; or in the genitive with «ein», «einer Cousine». */

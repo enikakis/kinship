@@ -115,9 +115,7 @@ describe("uncles, aunts, nephews and nieces", () => {
 
   it("names those beyond through the person of the other's generation", () => {
     expect(along("UUUUUD", "male").summary).toBe("Bruder des Ururgroßvaters/der Ururgroßmutter");
-    expect(along("UUUUUD", males("UUUUUD", { 4: "female", 6: "female" })).summary).toBe(
-      "Schwester der Ururgroßmutter",
-    );
+    expect(along("UUUUUD", males("UUUUUD", { 4: "female", 6: "female" })).summary).toBe("Schwester der Ururgroßmutter");
     expect(along("UDDDDD", all("UDDDDD", "male")).summary).toBe("Ururenkel des Bruders");
     expect(along("UDDDDD", males("UDDDDD", { 2: "female", 6: "female" })).summary).toBe("Ururenkelin der Schwester");
   });
@@ -173,9 +171,7 @@ describe("cousins", () => {
     expect(along("UUUUDD", all("UUUUDD", "male")).summary).toBe("Cousin des Großvaters");
     expect(along("UUUUDD", "male").summary).toBe("Cousin des Großvaters/der Großmutter");
     expect(along("UUDDDD", males("UUDDDD", { 4: "female" })).summary).toBe("Enkel der Cousine");
-    expect(along("UUUUUUDDD", males("UUUUUUDDD", { 3: "female" })).summary).toBe(
-      "Cousin 2. Grades der Urgroßmutter",
-    );
+    expect(along("UUUUUUDDD", males("UUUUUUDDD", { 3: "female" })).summary).toBe("Cousin 2. Grades der Urgroßmutter");
     expect(along("UUUDDDDDD", males("UUUDDDDDD", { 9: "female" })).summary).toBe("Urenkelin des Cousins 2. Grades");
     expect(along("UUUUUDD", all("UUUUUDD", "male")).summary).toBe("Cousin des Urgroßvaters");
   });

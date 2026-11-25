@@ -134,10 +134,19 @@ it("finds the child of two first cousins descending from the common grandparents
   const tree = createTree({
     people: ["gp", "gm", "a", "b", "x", "y", "kid"].map((id) => ({ id, sex: "unknown" as const })),
     parents: [
-      ["gp", "a"], ["gm", "a"], ["gp", "b"], ["gm", "b"],
-      ["a", "x"], ["b", "y"], ["x", "kid"], ["y", "kid"],
+      ["gp", "a"],
+      ["gm", "a"],
+      ["gp", "b"],
+      ["gm", "b"],
+      ["a", "x"],
+      ["b", "y"],
+      ["x", "kid"],
+      ["y", "kid"],
     ],
-    unions: [{ a: "gp", b: "gm" }, { a: "x", b: "y" }],
+    unions: [
+      { a: "gp", b: "gm" },
+      { a: "x", b: "y" },
+    ],
   });
   const rel = relate(tree, "kid", "gp")!;
   expect(rel.main).toMatchObject({ kind: "ancestor", blood: { up: 3, down: 0 } });
@@ -153,7 +162,11 @@ it("finds the child of two first cousins descending from the common grandparents
 it("does not hang on a parent cycle in bad data", () => {
   const tree = createTree({
     people: ["a", "b", "c"].map((id) => ({ id, sex: "unknown" as const })),
-    parents: [["a", "b"], ["b", "a"], ["b", "c"]],
+    parents: [
+      ["a", "b"],
+      ["b", "a"],
+      ["b", "c"],
+    ],
     unions: [],
   });
   // c's parent b is a's child and a's parent, so the bad data gives two equally short chains,

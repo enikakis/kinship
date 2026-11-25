@@ -5,8 +5,8 @@ relationship in Greek or English: «θεία», «πρώτος εξάδελφο�
 removed", plus the legal degree (Greek Civil Code arts. 1463–1464), the other blood ties, and data
 for a small diagram of the chain.
 
-**Status:** extracted from the owner's site `~/Developer/personal/vrisies-history-hub`
-(`src/features/family-tree/`, commit `3433dad`) and made standalone. The core API is in place
+**Status:** extracted from the author's village history site, `vrisies-history-hub`
+(`src/features/family-tree/`, commit `3433dad`), and made standalone. The core API is in place
 (`createTree` / `relate` / `describeRelation`, el + en locales). The roadmap to a published npm
 package continues in **`docs/PLAN.md`**: read it first, work through it in order, and tick the
 boxes as steps are done.
@@ -66,11 +66,12 @@ Keep it that way.
 - Test fixtures and doc comments must use **fictional** people (surname «Παπαδόπουλος»), never the
   owner's family or other real people.
 - Don't publish to npm, create GitHub repos, or push without the owner's explicit OK.
-- Commits: author is the owner (`enikakis <44342446+enikakis@users.noreply.github.com>`); Claude only as a
-  `Co-Authored-By` trailer, never as the author (so commits count on their GitHub profile).
+- Commits: author is the owner (`enikakis`, with the GitHub noreply email set in this repo's git
+  config); Claude only as a `Co-Authored-By` trailer, never as the author (so commits count on
+  their GitHub profile).
 - This is a portfolio piece: clean commit history, small focused commits, clear messages.
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/):
   `type(scope): subject` in the imperative, lower case, e.g. `feat(locales): add French names`,
   `fix(relate): …`, `test: …`, `docs(plan): …`. Types: feat, fix, refactor, test, docs, build,
   ci, chore. Scopes are module names (tree, path, ties, choose, classify, degree, diagram, relate,
-  describe, locales, gedcom, svg) or doc names (plan, spec).
+  describe, locales, gedcom, svg) or doc names (plan, design).

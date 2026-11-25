@@ -7,6 +7,7 @@ import { legalDegree } from "./degree";
 import { LOCALES } from "./locales";
 import { findChain } from "./path";
 import { relate, type OtherTie, type Relationship } from "./relate";
+import { relateAll } from "./relate-all";
 import { arbPair, arbTree } from "./testing/arbitraries";
 import type { Move, Person } from "./types";
 
@@ -120,6 +121,23 @@ describe("properties on random trees", () => {
         }
       }),
       { numRuns: 500 },
+    );
+  });
+
+  it("relateAll gives what relate gives, for exactly the people relate connects", () => {
+    fc.assert(
+      fc.property(arbTree, ({ tree, ids }) => {
+        for (const a of ids) {
+          const all = relateAll(tree, a);
+          const connected = ids.filter((b) => b !== a && relate(tree, a, b) !== null);
+          expect([...all.keys()]).toEqual(connected);
+          for (const [id, entry] of all) {
+            const { main, couple } = relate(tree, a, id)!;
+            expect(entry).toEqual({ main, couple });
+          }
+        }
+      }),
+      { numRuns: 100 },
     );
   });
 });

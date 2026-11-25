@@ -219,15 +219,20 @@ rules:
 
 ### "What is everyone to me"
 
-`relateAll(tree, fromId)` returns, for every connected person, the same `main` (and `couple`) that
-`relate(tree, fromId, thatId)` would. Done with one search from `fromId` plus shared ancestor
-data, not N separate calls. **Spec: equality with `relate` for every pair**, checked by a property
-test on random trees. Other blood ties are not included (they are per pair; call `relate`).
+`relateAll(tree, fromId)` returns a `Map<string, RelationEntry>` (`{ main, couple }`) with, for
+every connected person, the same `main` and `couple` that `relate(tree, fromId, thatId)` would.
+Keys are person ids in the order of `people`, without `fromId` and without unconnected people; an
+unknown `fromId` gives an empty map. **Spec: equality with `relate` for every pair**, checked by a
+property test on random trees. Other blood ties are not included (they are per pair; call
+`relate`). An entry with `others: []` added, `{ ...entry, others: [] }`, is accepted by
+`describeRelation`.
 
-This has to be reconciled with the direction rule: `relate(a, b)` searches from whichever of the
-two comes first in `people`, so a single search from `fromId` can pick a different chain than
-`relate` when chains tie. Plan 4 must either use a tie-break that doesn't depend on direction, or
-search from the earlier person for those pairs, and keep the equality-with-`relate` property.
+Correctness comes before speed: it runs `relate`'s own logic once per person, after one
+breadth-first walk finds who is connected at all (so unconnected people cost nothing). This
+sidesteps the direction rule (`relate(a, b)` searches from whichever of the two comes first in
+`people`, so a single search from `fromId` could pick a different chain when chains tie). The
+single-search optimisation is left to the performance step (PLAN Step 4), behind the same equality
+property and a benchmark.
 
 ### SVG
 

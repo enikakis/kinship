@@ -6,6 +6,8 @@ export { createTree } from "./tree";
 export type { Tree } from "./tree";
 export { relate } from "./relate";
 export type { OtherTie, Relation, Relationship } from "./relate";
+export { relateAll } from "./relate-all";
+export type { RelationEntry, RelationToEveryone } from "./relate-all";
 export { describeRelation } from "./describe";
 export type { OtherTieText, RelationshipText, RelationText } from "./describe";
 export type { Blood, Classification, Kind, MarriageKind } from "./classify";

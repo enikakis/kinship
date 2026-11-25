@@ -18,7 +18,9 @@ export type TreeOptions<P extends Person> = {
   /**
    * Birth year. Relatives are ordered by it, oldest first, which decides which of two equally
    * short chains wins (with the order of `people` as the final tie-break), and it tells
-   * `elderBranch`. Default: unknown for everyone.
+   * `elderBranch`. The search always runs from whichever of the two people comes first in
+   * `people`, so when chains tie the answer is the same from either end. Default: unknown for
+   * everyone.
    */
   born?: (person: P) => number | undefined;
 };

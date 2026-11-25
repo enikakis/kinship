@@ -62,7 +62,7 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 ## Step 3b: New features
 
-- [ ] Make `relate` independent of direction (same main relationship, inverse roles, equal degree
+- [x] Make `relate` independent of direction (same main relationship, inverse roles, equal degree
       from either end); turn the `it.fails` test in relate.test.ts into a passing test
 - [ ] fr / de / es locales
 - [ ] `relateAll`

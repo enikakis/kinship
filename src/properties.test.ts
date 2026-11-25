@@ -7,9 +7,9 @@ import { legalDegree } from "./degree";
 import { el } from "./locales/el";
 import { en } from "./locales/en";
 import { findChain } from "./path";
-import { relate } from "./relate";
+import { relate, type OtherTie, type Relationship } from "./relate";
 import { arbPair, arbTree } from "./testing/arbitraries";
-import type { Move } from "./types";
+import type { Move, Person } from "./types";
 
 const BLOOD_KINDS = ["ancestor", "descendant", "sibling", "halfSibling", "uncle", "nephew", "cousin"];
 const MARRIAGE_KINDS: MarriageKind[] = [
@@ -60,6 +60,25 @@ describe("properties on random trees", () => {
         const marriages = (moves: Move[]) => moves.filter((move) => move === "spouse").length;
         expect(forward.steps.length).toBe(back.steps.length);
         expect(marriages(movesOf(forward))).toBe(marriages(movesOf(back)));
+      }),
+    );
+  });
+
+  it("gives the same relationship from either end", () => {
+    const people = (r: Relationship<Person>) => [r.from, ...r.path.map((step) => step.person)].map((p) => p.id);
+    const ancestorIds = (tie: OtherTie<Person>) => tie.commonAncestors.map((p) => p.id).sort();
+    fc.assert(
+      fc.property(arbTree, arbPair, ({ tree, ids }, pair) => {
+        const [a, b] = pick(ids, pair);
+        const there = relate(tree, a, b);
+        const back = relate(tree, b, a);
+        if (!there || !back) return;
+        expect(people(back.main)).toEqual(people(there.main).reverse());
+        expect(back.main.moves).toEqual(reverseMoves(there.main.moves));
+        expect(back.main.legalDegree).toEqual(there.main.legalDegree);
+        expect(back.couple).toBe(there.couple);
+        expect(back.others).toHaveLength(there.others.length);
+        expect(back.others.map(ancestorIds)).toEqual(there.others.map(ancestorIds));
       }),
     );
   });

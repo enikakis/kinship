@@ -40,7 +40,8 @@ export type Relation<P extends Person> = {
 /**
  * How two people of the tree are related: the main relationship and the other blood ties, as
  * data, with the caller's own person objects. Null when they are not connected (or are the same
- * person). `describeRelation` puts it into words.
+ * person). `describeRelation` puts it into words. `relate(tree, b, a)` is `relate(tree, a, b)`
+ * read backwards: the same relationship, from the other end.
  */
 export function relate<P extends Person>(tree: Tree<P>, fromId: string, toId: string): Relation<P> | null {
   const found = findRelationships(tree, fromId, toId);

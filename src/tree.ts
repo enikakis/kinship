@@ -1,5 +1,6 @@
 import type { Person, TreeInput, TreeOptions } from "./types";
 
+/** Only trees made by `createTree` know the order of the input `people`; any other object falls back to id order. */
 export type Tree<P extends Person> = {
   readonly byId: ReadonlyMap<string, P>;
   /** Ordered by birth year (unknown last), then as given in `people`. */
@@ -14,6 +15,14 @@ export type Tree<P extends Person> = {
   name(person: P): string;
   born(person: P): number | undefined;
 };
+
+/** Where each person stands in the input's `people`, for every tree made by `createTree`. */
+const positions = new WeakMap<Tree<Person>, ReadonlyMap<string, number>>();
+
+/** Where a person stands in the input's `people` (0-based); Infinity for unknown ids. */
+export function positionOf(tree: Tree<Person>, id: string): number {
+  return positions.get(tree)?.get(id) ?? Infinity;
+}
 
 const defaultName = (person: Person) => {
   const name = (person as { name?: unknown }).name;
@@ -69,7 +78,7 @@ export function createTree<P extends Person>(input: TreeInput<P>, options: TreeO
     return ofA.length === 2 && ofB.length === 2 && ofA.filter((id) => ofB.includes(id)).length === 1;
   };
 
-  return {
+  const tree: Tree<P> = {
     byId,
     parents: (id) => people(parentIds.get(id)),
     children: (id) => people(childIds.get(id)),
@@ -78,4 +87,6 @@ export function createTree<P extends Person>(input: TreeInput<P>, options: TreeO
     name,
     born,
   };
+  positions.set(tree, position);
+  return tree;
 }

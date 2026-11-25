@@ -1,8 +1,8 @@
-import { isBloodLine, movesOf, sexesOf, type Chain } from "./chain";
+import { isBloodLine, movesOf, reverseChain, sexesOf, type Chain } from "./chain";
 import { kindOf } from "./classify";
 import { findChain } from "./path";
 import { otherBloodTies, type BloodTie } from "./ties";
-import type { Tree } from "./tree";
+import { positionOf, type Tree } from "./tree";
 import type { Person } from "./types";
 
 /**
@@ -11,12 +11,24 @@ import type { Person } from "./types";
  * marriage), even a shorter one. But a relation by marriage with an everyday name (a couple, an
  * uncle by marriage, in-laws) comes before a distant blood tie, one beyond first cousins: in a
  * village an aunt's husband is often a distant cousin too, and he is her husband first of all.
+ *
+ * The search runs from whichever of the two comes first in the tree's `people`, and the answer is
+ * read backwards for the other direction, so it is the same relationship from either end.
  */
 export function findRelationships<P extends Person>(
   tree: Tree<P>,
   fromId: string,
   toId: string,
 ): { main: Chain<P>; others: BloodTie<P>[]; couple: boolean } | null {
+  if (comesBefore(tree, toId, fromId)) {
+    const found = findRelationships(tree, toId, fromId);
+    if (!found) return null;
+    return {
+      main: reverseChain(found.main),
+      others: found.others.map((tie) => ({ ...tie, chain: reverseChain(tie.chain) })),
+      couple: found.couple,
+    };
+  }
   const shortest = findChain(tree, fromId, toId);
   if (!shortest) return null;
   const ties = otherBloodTies(tree, shortest);
@@ -29,6 +41,15 @@ export function findRelationships<P extends Person>(
     !(hasName(shortest) && closest.steps.length > FIRST_COUSIN_STEPS);
   return bloodFirst ? { main: closest, others: ties.slice(1), couple } : { main: shortest, others: ties, couple };
 }
+
+/**
+ * Whether one person comes before another in the tree's `people`. For a tree not made by
+ * `createTree` (no positions known) it compares ids, so the answer is still deterministic.
+ */
+const comesBefore = (tree: Tree<Person>, a: string, b: string) => {
+  const [x, y] = [positionOf(tree, a), positionOf(tree, b)];
+  return x !== y ? x < y : a < b;
+};
 
 /** Steps between first cousins (up twice, down twice): blood ties this close always come first. */
 const FIRST_COUSIN_STEPS = 4;

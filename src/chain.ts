@@ -27,3 +27,10 @@ export const isBloodLine = (chain: Chain<Person>): boolean => BLOOD.test(movesKe
 /** The chain the other way round: from the last person back to the first. */
 export const reverseMoves = (moves: readonly Move[]): Move[] =>
   [...moves].reverse().map((move) => (move === "up" ? "down" : move === "down" ? "up" : "spouse"));
+
+/** The same chain read from its last person back to the first. */
+export function reverseChain<P extends Person>(chain: Chain<P>): Chain<P> {
+  const people = [chain.from, ...chain.steps.map((step) => step.person)].reverse();
+  const moves = reverseMoves(movesOf(chain));
+  return { from: people[0], steps: moves.map((move, index) => ({ person: people[index + 1], move })) };
+}

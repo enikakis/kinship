@@ -79,9 +79,7 @@ it("puts a relation by marriage with a name before a distant blood tie", () => {
   expect(back.others).toHaveLength(1);
 });
 
-// Known to fail: from Bob the first equally short chain goes through his grandfather's marriage
-// and has no name. Making `relate` independent of direction is in docs/PLAN.md, Step 3b.
-it.fails("gives the same relationship from either end", () => {
+it("gives the same relationship from either end", () => {
   // gm → kate, aunt; kate → anna; hal → hank → bob; kate ═ hal (her later marriage); bob ═ aunt
   const tree = createTree({
     people: [
@@ -108,6 +106,11 @@ it.fails("gives the same relationship from either end", () => {
   const degree = { degree: 3, line: "collateral", kind: "affinity" };
   expect(relate(tree, "anna", "bob")!.main).toMatchObject({ kind: "uncleByMarriage", legalDegree: degree });
   expect(relate(tree, "bob", "anna")!.main).toMatchObject({ kind: "nephewByMarriage", legalDegree: degree });
+  const there = relate(tree, "anna", "bob")!.main;
+  const back = relate(tree, "bob", "anna")!.main;
+  const people = (r: typeof there) => [r.from, ...r.path.map((step) => step.person)].map((p) => p.id);
+  expect(people(back)).toEqual(people(there).reverse());
+  expect(back.diagram.nodes.map((node) => node.person.id)).toEqual(people(back));
 });
 
 it("finds the child of two first cousins descending from the common grandparents", () => {
@@ -137,8 +140,9 @@ it("does not hang on a parent cycle in bad data", () => {
     parents: [["a", "b"], ["b", "a"], ["b", "c"]],
     unions: [],
   });
-  // c's parent b is a's child and a's parent; the search still stops, at a as c's grandparent.
-  expect(relate(tree, "c", "a")!.main).toMatchObject({ kind: "ancestor", blood: { up: 2, down: 0 } });
+  // c's parent b is a's child and a's parent, so the bad data gives two equally short chains,
+  // c↑b↑a and c↑b↓a. The search still stops; it starts from a, which comes first in `people`.
+  expect(relate(tree, "c", "a")!.main).toMatchObject({ kind: "sibling", blood: { up: 1, down: 1 } });
 });
 
 it("gives both forms when nobody's sex is known", () => {

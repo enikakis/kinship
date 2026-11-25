@@ -475,6 +475,8 @@ npm run build           # tsup: ESM, CommonJS and types in dist/
 npm run check:package   # publint and are-the-types-wrong, after a build
 npm run test:dist       # smoke test of the built package
 npm run bench           # the benchmarks in docs/benchmarks.md
+npm run demo            # the live demo, served from the source by Vite
+npm run demo:build      # the demo as a static site in demo/dist
 ```
 
 The design and its reasoning are in [docs/design.md](docs/design.md), the roadmap in

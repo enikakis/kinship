@@ -13,15 +13,16 @@ Node 22.18 or later. There are no runtime dependencies and there should not be a
 ```sh
 npm install
 npm test            # Vitest: every test must pass
-npm run typecheck   # tsc, strict, for the library and for the tests
+npm run typecheck   # tsc, strict, for the library, the tests and the demo
 npm run lint        # Biome (npm run format fixes what it can)
 npm run build       # tsup, to dist/
 npm run check:package   # publint and are-the-types-wrong, after a build
 npm run test:dist   # smoke test of the built package, after a build
+npm run demo        # the live demo, served locally by Vite
 ```
 
 Run `npm test`, `npm run typecheck` and `npm run lint` before every commit. CI runs them, and the
-build and package checks, on Node 22, 24 and 26.
+build and package checks, on Node 22, 24 and 26, and builds the demo on Node 24.
 
 ## Commits
 

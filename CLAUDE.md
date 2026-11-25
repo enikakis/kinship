@@ -15,23 +15,26 @@ native speakers review them). The roadmap to a published npm package continues i
 
 ```sh
 npm test            # vitest, the whole suite must stay green
-npm run typecheck   # tsc (strict): the library without Node types, then tests via tsconfig.test.json
+npm run typecheck   # tsc (strict): the library without Node types, tests via tsconfig.test.json, the demo via demo/tsconfig.json
 npm run lint        # biome check . (lint + format check; `npm run format` fixes formatting and import order)
 npm run build       # tsup: ESM + CJS + .d.ts in dist/
 npm run check:package  # publint + attw on the packed tarball (run after build)
 npm run test:dist   # smoke test of dist/ through the package's own name (run after build)
 npm run bench       # vitest bench --run on a generated 10,000-person tree (results in docs/benchmarks.md)
+npm run demo        # Vite dev server for the live demo in demo/ (http://localhost:5173/kinship/)
+npm run demo:build  # the demo as a static site in demo/dist (base /kinship/, for GitHub Pages)
 ```
 
 Runtime: Node ≥ 22.18 (`engines`). Develop on Node 22.18+, 24 or 26, the versions CI runs (dev machine has
-Node 26). Tooling: TypeScript 5.9, Vitest 3.2, tsup 9, Biome 2.6 (pinned), publint, attw. No runtime
-dependencies. Keep it that way.
+Node 26). Tooling: TypeScript 5.9, Vitest 3.2, tsup 9, Biome 2.6 (pinned), publint, attw, Vite 7 (demo
+only). No runtime dependencies. Keep it that way.
 
 ## Layout (current)
 
 - `tsup.config.ts`: the build (entries, formats); `biome.jsonc`: lint and format rules.
 - `scripts/smoke-dist.mjs`: imports and requires the built package by name (`npm run test:dist`).
 - `.github/workflows/ci.yml`: CI on Node 22/24/26: lint, typecheck, test, build, check:package, test:dist.
+- `.github/workflows/pages.yml`: builds the demo and deploys it to GitHub Pages on push to main.
 - `src/index.ts`: public entry: `createTree`, `relate`, `relateAll`, `describeRelation`, `validateTree`, and
   the types.
 - `src/types.ts`: `Person`, `Sex`, `Move`, `TreeInput`, `TreeOptions`.
@@ -61,6 +64,11 @@ dependencies. Keep it that way.
 - `src/testing/sample-pairs.ts`: `samplePairs(input, count, seed)`: a fixed list of pairs for the benchmark and path tests.
 - `src/testing/describing.ts`: `describing(locale)` helpers shared by the locale tests.
 - `src/bench/relate.bench.ts`: the benchmarks (`npm run bench`); not part of `npm test`.
+- `demo/`: the live demo, a Vite page with no framework. `index.html`, `style.css` (light and dark,
+  works from 360px), `main.ts` (the DOM: pickers, language switch, result, everyone list, GEDCOM
+  file input), `logic.ts` (pure: URL hash, picker labels, grouping of `relateAll`; tested in
+  `logic.test.ts`), `family.ged` (the invented Karydas family, 38 people). `vite.config.ts` aliases
+  `@enikakis/kinship/*` to `src/`; `demo/tsconfig.json` holds the DOM types, apart from the library.
 - `src/*.test.ts`, `src/locales/*.test.ts`: behaviour spec: data next to each module, words
   per locale.
 - Git history: the first commit holds the four original files (only the example names changed to

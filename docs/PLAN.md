@@ -116,9 +116,14 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 ## Step 9: Live demo
 
-- [ ] Small Vite page in `demo/` with a **fictional** family: pick two people → names both ways
-      (el / en toggle), legal degree, other ties, and the diagram drawn as SVG.
+- [x] Small Vite page in `demo/` with a **fictional** family: pick two people → names both ways
+      (el / en toggle), legal degree, other ties, and the diagram drawn as SVG. Done with all five
+      languages, "everyone, as seen from" one person (`relateAll`), a shareable URL hash, and the
+      visitor's own GEDCOM file read in the browser with `validateTree` issues shown.
 - [ ] Deploy to GitHub Pages (or Vercel); link from README and the GitHub repo "website" field.
+      The workflow is ready (`.github/workflows/pages.yml`, `npm run demo:build` with base
+      `/kinship/`); it runs once the public repo exists and Pages is set to "GitHub Actions". The
+      README already links https://enikakis.github.io/kinship/ (marked "coming soon").
 
 ## Step 10: Publish
 
@@ -126,6 +131,9 @@ See "Decided design" in the design doc above and its core-API implementation pla
 - [ ] Changesets for versioning + CHANGELOG.
 - [ ] npm trusted publishing from GitHub Actions with provenance (verified badge on npm).
 - [ ] Publish `0.1.0`; pin the repo on the GitHub profile.
+- [ ] Create the `language` label (the issue templates use it); set Pages to GitHub Actions; fill
+      the repo's website field with the demo's URL; add the npm and bundlephobia badges to the
+      README once published.
 
 ## Step 11: Dogfooding
 
@@ -154,6 +162,8 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
       (point to `validateTree`); explain that the data's `path` excludes the first person while the
       text's `chain` includes them.
 - [ ] Before 0.1.0: decide whether to align the names `path` and `chain`.
+- [ ] `ancestorPaths` keeps a full line per ancestor (O(depth²) memory): a crafted
+      200,000-generation chain exhausts memory. Store parent pointers instead.
 
 ## Later (not v1)
 

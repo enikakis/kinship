@@ -123,6 +123,30 @@ export const twice: Tree<TestPerson> = build({
 });
 
 /*
+ *   mom     dad     otherMom
+ *     └──┬──┘ └──┬──┘
+ *        x       y
+ *
+ * x and y, both of unknown sex, have two recorded parents each and share one, dad: half-siblings.
+ */
+export const halfSiblings: Tree<TestPerson> = build({
+  people: [
+    person("dad", "male"),
+    person("mom", "female"),
+    person("otherMom", "female"),
+    person("x", "unknown"),
+    person("y", "unknown"),
+  ],
+  parents: [
+    ["dad", "x"],
+    ["mom", "x"],
+    ["dad", "y"],
+    ["otherMom", "y"],
+  ],
+  unions: [],
+});
+
+/*
  * old has two lines. On one, gm's son u (my mother's brother) married a (your father's sister),
  * a daughter of gf on the other line. Their child k is a cousin to both of us. Going down to k and
  * up again is shorter than going up to old, but only a marriage links us there, not blood.

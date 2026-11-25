@@ -5,6 +5,13 @@ import type { Tree } from "../tree";
 import type { Sex } from "../types";
 import { family, line, type TestPerson } from "./fixtures";
 
+/** Everyone on a chain with the given key of the same sex. */
+export const all = (key: string, sex: Sex): Sex[] => Array<Sex>(key.length + 1).fill(sex);
+
+/** The sexes of a chain: all male, but for the people at the given places. */
+export const males = (key: string, others: Record<number, Sex>): Sex[] =>
+  all(key, "male").map((sex, i) => others[i] ?? sex);
+
 /** The test helpers for one locale, so every locale's tests read the same way. */
 export function describing(locale: KinshipLocale) {
   /** How `to` is related to `from` in `tree` (the `family` tree by default). */

@@ -2,11 +2,21 @@ import type { Blood } from "../classify";
 import type { NameQuery } from "../locale";
 import type { Move, Sex } from "../types";
 
-/** A word in its three forms, by the sex of the person it names. */
-export type Word = { male: string; female: string; unknown: string };
+/**
+ * A word in its three forms, by the sex of the person it names. `neutral` marks an unknown form
+ * that is one word rather than both («parent», «cónyuge»), for locales that put articles before it.
+ */
+export type Word = { male: string; female: string; unknown: string; neutral?: true };
 
 /** A word; with no form for an unknown sex, both forms: «θείος/θεία». */
 export const w = (male: string, female: string, unknown = `${male}/${female}`): Word => ({ male, female, unknown });
+
+/** A word with a neutral word for an unknown sex: «parent», «cónyuge». */
+export const neutral = (male: string, female: string, unknown: string): Word => ({ male, female, unknown, neutral: true });
+
+/** A list of names: «A», «A and B», «A, B and C», with the language's word for "and". */
+export const list = (names: readonly string[], and: string): string =>
+  names.length > 1 ? `${names.slice(0, -1).join(", ")} ${and} ${names[names.length - 1]}` : names[0];
 
 /** The word for a single step of a chain: the next person is a parent, a child or a spouse. */
 export const STEP_TERMS = { up: "parent", down: "child", spouse: "spouse" } as const satisfies Record<Move, string>;

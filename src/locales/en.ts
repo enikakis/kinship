@@ -73,6 +73,8 @@ export const en: KinshipLocale = {
 
   step: (move, sex) => words[STEP_TERMS[move]][sex],
 
+  labelled: (label, name) => `${label}: ${name}`,
+
   degree: ({ kind, line, degree }) =>
     `Related ${kind === "affinity" ? "by marriage (affinity)" : "by blood"} in the ${LINES[line]} line, ${number(degree)} degree`,
 

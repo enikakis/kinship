@@ -72,7 +72,7 @@ function relationshipText<P extends Person>(
       { id: from.id, text: tree.name(from) },
       ...path.map(({ person, move }) => ({
         id: person.id,
-        text: `${locale.step(move, person.sex)}: ${tree.name(person)}`,
+        text: locale.labelled(locale.step(move, person.sex), tree.name(person)),
       })),
     ],
   };

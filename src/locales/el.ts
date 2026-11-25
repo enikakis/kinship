@@ -80,6 +80,8 @@ export const el: KinshipLocale = {
 
   step: (move, sex) => words[STEP_TERMS[move]][sex],
 
+  labelled: (label, name) => `${label}: ${name}`,
+
   degree: ({ kind, line, degree }) =>
     `Συγγένεια ${kind === "affinity" ? "εξ αγχιστείας" : "εξ αίματος"} ${line === "direct" ? "σε ευθεία γραμμή" : "εκ πλαγίου"}, ${degree}ου βαθμού`,
 

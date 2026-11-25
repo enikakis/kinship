@@ -25,6 +25,8 @@ export interface KinshipLocale {
   name(query: NameQuery): string | null;
   /** One step of a chain: the next person is a parent, a child or a spouse, e.g. «πατέρας», "son". */
   step(move: Move, sex: Sex): string;
+  /** One line of a chain: a step's word and the person's name, e.g. «πατέρας: Αντώνης». */
+  labelled(label: string, name: string): string;
   /** The legal degree in a line, e.g. «Συγγένεια εξ αίματος εκ πλαγίου, 3ου βαθμού». */
   degree(degree: LegalDegree): string;
   /** Two people related only through marriages, each couple as the names of the two spouses. */

@@ -214,6 +214,11 @@ rules:
 data, not N separate calls. **Spec: equality with `relate` for every pair**, checked by a property
 test on random trees. Other blood ties are not included (they are per pair; call `relate`).
 
+This has to be reconciled with the direction rule: `relate(a, b)` searches from whichever of the
+two comes first in `people`, so a single search from `fromId` can pick a different chain than
+`relate` when chains tie. Plan 4 must either use a tie-break that doesn't depend on direction, or
+search from the earlier person for those pairs, and keep the equality-with-`relate` property.
+
 ### SVG
 
 `toSvg(diagram, { name, roles?, ... })` returns an SVG string. Accessible: `role="img"`, a

@@ -66,6 +66,10 @@ See "Decided design" in the design doc above and its core-API implementation pla
       from either end); turn the `it.fails` test in relate.test.ts into a passing test
 - [ ] fr / de / es locales
 - [ ] `relateAll`
+  - Reconcile with the direction rule: `relate(a, b)` searches from whichever of the two comes
+    first in `people`, so a single search from `fromId` can pick a different chain than `relate`
+    when chains tie. Plan 4 must either use a tie-break that doesn't depend on direction, or search
+    from the earlier person for those pairs, and keep the equality-with-`relate` property.
 - [ ] `svg` entry
 - [ ] `gedcom` entry
 
@@ -129,6 +133,7 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
       «του προγόνου … γενιάς» / «του απογόνου …», also for a woman («της προγόνου») and for unknown
       sex (elsewhere both forms); and an 8th cousin of unknown sex reads «έβδομος εξάδελφος/εξαδέλφη»
       (masculine ordinal, both nouns), the same pattern the original code used for 1st–6th.
+      Decided: both full forms for unknown sex; «της προγόνου» / «της απογόνου» for women.
 - [x] Before fr / de / es (Step 3b): an exhaustive `isNamedKind(kind)` in `classify.ts`, used by
       `hasName` and by the property tests (today both list kinds by hand); a test helper that takes
       the locale, so each new locale doesn't copy the `el` / `en` test helpers; property tests over

@@ -4,6 +4,10 @@
   "private": true,
   "description": "Find how two people in a family tree are related, and name it in Greek or English (French, German and Spanish experimental).",
   "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "license": "MIT",
   "author": "enikakis",
   "keywords": [
@@ -15,10 +19,101 @@
     "greek",
     "συγγένεια"
   ],
+  "typesVersions": {
+    "*": {
+      "svg": [
+        "./dist/svg.d.ts"
+      ],
+      "gedcom": [
+        "./dist/gedcom.d.ts"
+      ],
+      "locales/*": [
+        "./dist/locales/*.d.ts"
+      ]
+    }
+  },
   "exports": {
-    ".": "./src/index.ts",
-    "./svg": "./src/svg.ts",
-    "./gedcom": "./src/gedcom.ts"
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./svg": {
+      "import": {
+        "types": "./dist/svg.d.ts",
+        "default": "./dist/svg.js"
+      },
+      "require": {
+        "types": "./dist/svg.d.cts",
+        "default": "./dist/svg.cjs"
+      }
+    },
+    "./gedcom": {
+      "import": {
+        "types": "./dist/gedcom.d.ts",
+        "default": "./dist/gedcom.js"
+      },
+      "require": {
+        "types": "./dist/gedcom.d.cts",
+        "default": "./dist/gedcom.cjs"
+      }
+    },
+    "./locales/el": {
+      "import": {
+        "types": "./dist/locales/el.d.ts",
+        "default": "./dist/locales/el.js"
+      },
+      "require": {
+        "types": "./dist/locales/el.d.cts",
+        "default": "./dist/locales/el.cjs"
+      }
+    },
+    "./locales/en": {
+      "import": {
+        "types": "./dist/locales/en.d.ts",
+        "default": "./dist/locales/en.js"
+      },
+      "require": {
+        "types": "./dist/locales/en.d.cts",
+        "default": "./dist/locales/en.cjs"
+      }
+    },
+    "./locales/fr": {
+      "import": {
+        "types": "./dist/locales/fr.d.ts",
+        "default": "./dist/locales/fr.js"
+      },
+      "require": {
+        "types": "./dist/locales/fr.d.cts",
+        "default": "./dist/locales/fr.cjs"
+      }
+    },
+    "./locales/de": {
+      "import": {
+        "types": "./dist/locales/de.d.ts",
+        "default": "./dist/locales/de.js"
+      },
+      "require": {
+        "types": "./dist/locales/de.d.cts",
+        "default": "./dist/locales/de.cjs"
+      }
+    },
+    "./locales/es": {
+      "import": {
+        "types": "./dist/locales/es.d.ts",
+        "default": "./dist/locales/es.js"
+      },
+      "require": {
+        "types": "./dist/locales/es.d.cts",
+        "default": "./dist/locales/es.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
@@ -26,15 +121,22 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:dist": "node scripts/smoke-dist.mjs",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
-    "bench": "vitest bench --run"
+    "bench": "vitest bench --run",
+    "build": "tsup",
+    "check:package": "publint && attw --pack .",
+    "prepublishOnly": "npm test && npm run build && npm run check:package && npm run test:dist"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.18"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@types/node": "^20.19.43",
     "fast-check": "^4.11.0",
+    "publint": "^0.3.25",
+    "tsup": "^9.0.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7"
   }

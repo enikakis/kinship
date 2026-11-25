@@ -44,6 +44,12 @@ check(
 
 const cjs = {};
 for (const name of localeNames) cjs[name] = require(`@enikakis99/kinship/locales/${name}`)[name];
-check("cjs", require("@enikakis99/kinship"), cjs, require("@enikakis99/kinship/svg"), require("@enikakis99/kinship/gedcom"));
+check(
+  "cjs",
+  require("@enikakis99/kinship"),
+  cjs,
+  require("@enikakis99/kinship/svg"),
+  require("@enikakis99/kinship/gedcom"),
+);
 
 console.log("dist smoke test passed");

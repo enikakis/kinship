@@ -78,4 +78,15 @@ describe("createTree", () => {
     expect(tree.spouses("x").map((s) => s.id)).toEqual(["w3", "w2", "w1", "w4"]);
     expect(tree.spouses("w4").map((s) => s.id)).toEqual(["x"]);
   });
+
+  it("skips a person recorded as their own parent", () => {
+    const tree = createTree({ people: [p("a", "male"), p("b", "female")], parents: [["a", "a"], ["a", "b"]], unions: [] });
+    expect(tree.parents("a")).toEqual([]);
+    expect(tree.children("a").map((x) => x.id)).toEqual(["b"]);
+  });
+
+  it("skips a union of a person with themselves", () => {
+    const tree = createTree({ people: [p("a", "male"), p("b", "female")], parents: [], unions: [{ a: "a", b: "a" }, { a: "a", b: "b" }] });
+    expect(tree.spouses("a").map((x) => x.id)).toEqual(["b"]);
+  });
 });

@@ -48,7 +48,7 @@ export function createTree<P extends Person>(input: TreeInput<P>, options: TreeO
   const childIds = new Map<string, string[]>();
   const seenLinks = new Set<string>();
   for (const [parent, child] of input.parents) {
-    if (!byId.has(parent) || !byId.has(child)) continue;
+    if (parent === child || !byId.has(parent) || !byId.has(child)) continue;
     const key = `${parent}\u0000${child}`;
     if (seenLinks.has(key)) continue;
     seenLinks.add(key);
@@ -60,12 +60,12 @@ export function createTree<P extends Person>(input: TreeInput<P>, options: TreeO
   const spouseIds = new Map<string, string[]>();
   const seenUnions = new Set<string>();
   for (const { a, b } of input.unions) {
-    if (!byId.has(a) || !byId.has(b)) continue;
+    if (a === b || !byId.has(a) || !byId.has(b)) continue;
     const key = a < b ? `${a}\u0000${b}` : `${b}\u0000${a}`;
     if (seenUnions.has(key)) continue;
     seenUnions.add(key);
     (spouseIds.get(a) ?? spouseIds.set(a, []).get(a)!).push(b);
-    if (a !== b) (spouseIds.get(b) ?? spouseIds.set(b, []).get(b)!).push(a);
+    (spouseIds.get(b) ?? spouseIds.set(b, []).get(b)!).push(a);
   }
 
   /** Oldest first; unknown birth last; ties as given. */

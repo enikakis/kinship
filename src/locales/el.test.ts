@@ -22,9 +22,10 @@ describe("the chain between two people", () => {
   });
 
   it("goes through blood relations rather than marriages", () => {
+    // Through dad, who comes before mom in `people`.
     expect(text("me", "sis").main.chain.map((step) => step.text)).toEqual([
       "me Παπαδόπουλος",
-      expect.stringMatching(/^(πατέρας: dad|μητέρα: mom) Παπαδόπουλος$/),
+      "πατέρας: dad Παπαδόπουλος",
       "κόρη: sis Παπαδόπουλος",
     ]);
   });

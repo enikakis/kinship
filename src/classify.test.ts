@@ -60,6 +60,7 @@ describe("classify", () => {
     };
     expect(sideOf("UU", ["male", "male", "female"])).toBe("paternal");
     expect(sideOf("UU", ["male", "female", "female"])).toBe("maternal");
+    expect(sideOf("UU", ["male", "unknown", "female"])).toBeNull();
     expect(sideOf("SU", "male")).toBeNull();
     expect(sideOf("D", "male")).toBeNull();
   });
@@ -102,6 +103,57 @@ describe("classify", () => {
     it("is unknown without birth years, and for other chains", () => {
       expect(elder(build(false), "me", "cousin")).toBeNull();
       expect(elder(build(true), "me", "dad")).toBeNull();
+    });
+
+    it("is unknown when both branches were born in the same year", () => {
+      const tree = createTree(
+        {
+          people: [
+            person("grandpa", "male"),
+            person("dad", "male", 1950),
+            person("aunt", "female", 1950),
+            person("me", "male", 1980),
+            person("cousin", "male", 1975),
+          ],
+          parents: [
+            ["grandpa", "dad"],
+            ["grandpa", "aunt"],
+            ["dad", "me"],
+            ["aunt", "cousin"],
+          ],
+          unions: [],
+        },
+        { born: (p) => p.born },
+      );
+      expect(elder(tree, "me", "cousin")).toBeNull();
+    });
+
+    it("looks three generations up", () => {
+      const tree = createTree(
+        {
+          people: [
+            person("great", "male"),
+            person("b1", "male", 1900),
+            person("b2", "male", 1905),
+            person("a1", "male", 1930),
+            person("a2", "male", 1925),
+            person("me", "male", 1955),
+            person("cousin", "male", 1950),
+          ],
+          parents: [
+            ["great", "b1"],
+            ["great", "b2"],
+            ["b1", "a1"],
+            ["b2", "a2"],
+            ["a1", "me"],
+            ["a2", "cousin"],
+          ],
+          unions: [],
+        },
+        { born: (p) => p.born },
+      );
+      expect(elder(tree, "me", "cousin")).toBe("from");
+      expect(elder(tree, "cousin", "me")).toBe("to");
     });
   });
 });

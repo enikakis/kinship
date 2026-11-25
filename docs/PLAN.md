@@ -125,15 +125,15 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 Smaller findings from the reviews of the core API work, each to be taken up in the step named.
 
-- [ ] **Owner to decide (Greek):** the genitive of a distant ancestor or descendant is always
+- [x] **Owner to decide (Greek):** the genitive of a distant ancestor or descendant is always
       «του προγόνου … γενιάς» / «του απογόνου …», also for a woman («της προγόνου») and for unknown
       sex (elsewhere both forms); and an 8th cousin of unknown sex reads «έβδομος εξάδελφος/εξαδέλφη»
       (masculine ordinal, both nouns), the same pattern the original code used for 1st–6th.
-- [ ] Before fr / de / es (Step 3b): an exhaustive `isNamedKind(kind)` in `classify.ts`, used by
+- [x] Before fr / de / es (Step 3b): an exhaustive `isNamedKind(kind)` in `classify.ts`, used by
       `hasName` and by the property tests (today both list kinds by hand); a test helper that takes
       the locale, so each new locale doesn't copy the `el` / `en` test helpers; property tests over
       every locale, also checking the roles of the other ties, with more runs.
-- [ ] Tests still to add: `side` when the parent's sex is unknown; `elderBranch` with equal birth
+- [x] Tests still to add: `side` when the parent's sex is unknown; `elderBranch` with equal birth
       years and with three or more generations up; `el.test.ts` "goes through blood relations
       rather than marriages" still accepts either parent (pin it like the other tie-order tests).
 - [ ] With `validateTree` (Step 5): duplicate person ids (the last one wins today), a union of a

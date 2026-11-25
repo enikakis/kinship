@@ -27,9 +27,10 @@ export type OtherTie<P extends Person> = Relationship<P> & {
 /** How two people are related: the main relationship, the other blood ties, and whether they are a couple. */
 export type Relation<P extends Person> = {
   /**
-   * The relationship to name first. Blood comes first, except that a named relation by marriage
-   * (a spouse, an aunt's husband, an in-law) comes before a blood tie more distant than first
-   * cousins: in a village an aunt's husband is often a distant cousin too, but her husband first.
+   * The relationship to name first. Blood comes first, with two exceptions: a couple always comes
+   * first as a couple, and another named relation by marriage (an aunt's husband, an in-law) comes
+   * before a blood tie more distant than first cousins: in a village an aunt's husband is often a
+   * distant cousin too, but her husband first.
    */
   main: Relationship<P>;
   /** The other blood ties, closest first. */

@@ -8,9 +8,10 @@ import type { Person } from "./types";
 /**
  * Everything that relates two people: the main relationship, and the other blood ties after it.
  * A blood tie usually comes before a chain through marriages (or through the child of a
- * marriage), even a shorter one. But a relation by marriage with an everyday name (a couple, an
- * uncle by marriage, in-laws) comes before a distant blood tie, one beyond first cousins: in a
- * village an aunt's husband is often a distant cousin too, and he is her husband first of all.
+ * marriage), even a shorter one. Two exceptions: a couple always comes first, whatever their blood
+ * ties; and another relation by marriage with an everyday name (an uncle by marriage, in-laws)
+ * comes before a distant blood tie, one beyond first cousins: in a village an aunt's husband is
+ * often a distant cousin too, and he is her husband first of all.
  *
  * The search runs from whichever of the two comes first in the tree's `people`, and the answer is
  * read backwards for the other direction, so it is the same relationship from either end.

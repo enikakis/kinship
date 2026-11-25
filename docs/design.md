@@ -158,9 +158,10 @@ when `born` allows telling; null otherwise).
 ### The legal degree
 
 Computed as today (one degree per generation through the common ancestor; affinity through one
-marriage at either end only; couples and multi-marriage chains have none). Presented in docs and
-types as the **civil-law (Roman) computation**, with the Greek Civil Code arts. 1463–1464 as the
-worked example, not as a Greece-only feature. Wording of the degree sentence is per locale.
+marriage at either end only; couples, chains with their one marriage in the middle, and
+multi-marriage chains have none). Presented in docs and types as the **civil-law (Roman)
+computation**, with the Greek Civil Code arts. 1463–1464 as the worked example, not as a
+Greece-only feature. Wording of the degree sentence is per locale.
 
 ### Languages
 
@@ -311,11 +312,12 @@ the last person wins. `validateTree` tells you why.
 
 ### Behaviour to keep (existing rules, do not "fix")
 
-Costs 10 per step and 11 per marriage step; blood relation ⇔ moves match `/^U*D*$/`; a named
-relation by marriage beats a blood tie more distant than first cousins; half-siblings only when
-both have two recorded parents sharing exactly one; Greek gender + genitive, `unknown` gives both
-forms, distant generations named through the person of the other's generation; English standard
-genealogical terms; degree rules as above. All 27 existing tests (ported) must still pass.
+Costs 10 per step and 11 per marriage step; blood relation ⇔ moves match `/^U*D*$/`; a couple
+is always named as a couple first, and another named relation by marriage beats a blood tie more
+distant than first cousins; half-siblings only when both have two recorded parents sharing exactly
+one; Greek gender + genitive, `unknown` gives both forms, distant generations named through the
+person of the other's generation; English standard genealogical terms; degree rules as above.
+All 27 existing tests (ported) must still pass.
 
 ## Order of work
 

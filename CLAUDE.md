@@ -71,9 +71,10 @@ dependencies. Keep it that way.
 - Moves are `up` (to a parent), `down` (to a child), `spouse`, written as keys like `"UUD"` (aunt).
   Blood relation ⇔ key matches `/^U*D*$/`.
 - Path cost: 10 per step, 11 per marriage step, so blood wins among equally short chains.
-- Main relationship choice (`findRelationships`): blood usually first, but a *named* relation by
-  marriage (spouse, uncle by marriage, in-laws) beats a blood tie more distant than first cousins
-  (in a village an aunt's husband is often also a distant cousin; he is her husband first).
+- Main relationship choice (`findRelationships`): blood usually first, but a couple always comes
+  first as a couple, and another *named* relation by marriage (uncle by marriage, in-laws) beats a
+  blood tie more distant than first cousins (in a village an aunt's husband is often also a distant
+  cousin; he is her husband first).
 - Half-siblings are only claimed when both people have two recorded parents sharing exactly one.
 - Greek names need gender **and** the genitive case («του πρώτου εξαδέλφου», «της γιαγιάς»);
   `sex: "unknown"` gives both forms («θείος/θεία»). Generations beyond θείος/ανιψιός are named
@@ -81,7 +82,8 @@ dependencies. Keep it that way.
 - English uses standard genealogical terms (great-great-grandfather, then 3rd great-grandfather;
   first cousin once removed).
 - Legal degree: one per generation through the common ancestor; affinity (αγχιστεία) only through
-  one marriage at either end; couples and multi-marriage chains have no degree (null).
+  one marriage at either end; couples, chains whose one marriage is in the middle, and chains with
+  more than one marriage have no degree (null).
 
 ## Rules
 

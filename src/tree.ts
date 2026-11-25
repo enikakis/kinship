@@ -1,6 +1,9 @@
 import type { Person, TreeInput, TreeOptions } from "./types";
 
-/** Only trees made by `createTree` know the order of the input `people`; any other object falls back to id order. */
+/**
+ * The lookups `relate` needs; make one with `createTree`. Only trees made by `createTree` know the
+ * order of the input `people`; any other object falls back to id order.
+ */
 export type Tree<P extends Person> = {
   readonly byId: ReadonlyMap<string, P>;
   /** Ordered by birth year (unknown last), then as given in `people`. */

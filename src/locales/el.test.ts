@@ -241,4 +241,7 @@ describe("people whose sex is not known, and distant women", () => {
     expect(along("DDDDDS", sexes(6, "female", "male")).summary).toBe("σύζυγος της απογόνου 5ης γενιάς");
     expect(along("DDDDDS", sexes(6, "unknown", "male")).summary).toBe("σύζυγος του απογόνου/της απογόνου 5ης γενιάς");
   });
+  it("keeps the neuter genitive for a near descendant of unknown sex", () => {
+    expect(along("DDS", ["male", "male", "unknown", "male"]).summary).toBe("σύζυγος του εγγονιού");
+  });
 });

@@ -117,8 +117,8 @@ function bloodName({ up, down }: Blood, sex: Sex, chain: readonly Sex[], of = fa
 function kin(rung: number, sex: Sex, of = false): string {
   if (!of) {
     if (rung === 1) return words.sibling[sex];
-    const cousin = (s: Sex) => `${ordinal(rung - 1, s)} ${words.cousin[s]}`;
-    return sex === "unknown" ? bySex(sex, cousin("male"), cousin("female")) : cousin(sex);
+    const cousin = (s: "male" | "female") => `${ordinal(rung - 1, s)} ${words.cousin[s]}`;
+    return bySex(sex, cousin("male"), cousin("female"));
   }
   const one = (s: "male" | "female") => {
     const article = s === "male" ? "του" : "της";
@@ -135,7 +135,10 @@ function ordinal(n: number, sex: Sex, of = false) {
   return list[n - 1] ?? `${n}${of ? (female ? "ης" : "ου") : female ? "η" : "ος"}`;
 }
 
-/** πατέρας, παππούς, προπάππους, προ-προπάππους…; with `of`, «του πατέρα», «της γιαγιάς». */
+/**
+ * πατέρας, παππούς, προπάππους, προ-προπάππους…, then «πρόγονος 7ης γενιάς»; with `of`, «του
+ * πατέρα», «της γιαγιάς», «του/της προγόνου 7ης γενιάς».
+ */
 function ancestor(generations: number, sex: Sex, of = false): string {
   const article = (s: "male" | "female") => (of ? (s === "male" ? "του " : "της ") : "");
   if (generations > 5) return `${of ? bySex(sex, "του προγόνου", "της προγόνου") : words.ancestor[sex]} ${generations}ης γενιάς`;

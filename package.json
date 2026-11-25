@@ -136,7 +136,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@biomejs/biome": "2.6.9",
-    "@types/node": "^20.19.43",
+    "@types/node": "^22.20.7",
     "fast-check": "^4.11.0",
     "publint": "^0.3.25",
     "tsup": "^9.0.0",

@@ -10,7 +10,7 @@ Give it a tree and two people. It finds the chain between them and tells you wha
 other («θεία» / «ανιψιά», "aunt" / "niece"), every other way they are related by blood, and the
 legal degree of kinship. Zero runtime dependencies, fully typed, ESM and CommonJS.
 
-**[Live demo](https://enikakis.github.io/kinship/)** (coming soon) · [Design](docs/design.md) ·
+**[Live demo](https://enikakis.github.io/kinship/)** · [Design](docs/design.md) ·
 [Benchmarks](docs/benchmarks.md) · [Contributing](CONTRIBUTING.md)
 
 ## Install
@@ -18,10 +18,6 @@ legal degree of kinship. Zero runtime dependencies, fully typed, ESM and CommonJ
 ```sh
 npm install @enikakis/kinship
 ```
-
-> **Not published yet.** The package goes to npm with its first release (step 10 of
-> [docs/PLAN.md](docs/PLAN.md)), and the demo link goes live with the public repository. Until then,
-> clone the repository and build it with `npm run build`.
 
 Node 22.18 or later, or any modern browser. Each language is its own entry point, so a bundle
 carries only the languages you import. Minified and gzipped (esbuild, measured 2026-11-25):

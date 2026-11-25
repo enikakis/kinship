@@ -32,6 +32,10 @@ Use [Conventional Commits](https://www.conventionalcommits.org/): `feat: …`, `
 not obvious. A change of behaviour comes with a test that fails first. Tests and examples use
 fictional people only.
 
+A change that users will notice also gets a changeset: run `npm run changeset`, pick the bump
+(patch for fixes, minor for features and, below 1.0, for breaking changes) and write a sentence or
+two for the changelog. Releases are made from those by the release workflow.
+
 ## Adding a language
 
 A language is one module in `src/locales/` with one exported constant: `el`, `en`, `fr`, `de`, `es`

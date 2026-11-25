@@ -65,6 +65,7 @@ describe("properties on random trees", () => {
         expect(back.couple).toBe(there.couple);
         expect(back.others).toHaveLength(there.others.length);
         expect(back.others.map(ancestorIds)).toEqual(there.others.map(ancestorIds));
+        back.others.forEach((tie, i) => expect(people(tie)).toEqual(people(there.others[i]!).reverse()));
       }),
       { numRuns: 500 },
     );

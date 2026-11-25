@@ -164,7 +164,18 @@ describe("named kinds", () => {
     for (const kind of ["spouseOfRelative", "relativeOfSpouse", "unnamed"] as const) {
       expect(isNamedKind(kind), kind).toBe(false);
     }
-    expect(BLOOD_KINDS).toHaveLength(7);
-    expect(MARRIAGE_KINDS).toHaveLength(10);
+    expect(BLOOD_KINDS).toEqual(["ancestor", "descendant", "sibling", "halfSibling", "uncle", "nephew", "cousin"]);
+    expect(MARRIAGE_KINDS).toEqual([
+      "spouse",
+      "parentInLaw",
+      "childInLaw",
+      "siblingInLaw",
+      "coParentInLaw",
+      "coSiblingInLaw",
+      "uncleByMarriage",
+      "nephewByMarriage",
+      "stepParent",
+      "stepChild",
+    ]);
   });
 });

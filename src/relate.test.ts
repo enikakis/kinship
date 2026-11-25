@@ -2,9 +2,10 @@ import { expect, it } from "vitest";
 import { describeRelation } from "./describe";
 import { el } from "./locales/el";
 import { en } from "./locales/en";
-import { relate } from "./relate";
+import { relate, type Relationship } from "./relate";
 import { family, line, person, twice, twoLines, village } from "./testing/fixtures";
 import { createTree } from "./tree";
+import type { Person } from "./types";
 
 it("relates two people with plain objects, in a few lines", () => {
   const tree = createTree({
@@ -79,38 +80,53 @@ it("puts a relation by marriage with a name before a distant blood tie", () => {
   expect(back.others).toHaveLength(1);
 });
 
+// gm → kate, aunt; kate → anna; hal → hank → bob; kate ═ hal (her later marriage); bob ═ aunt.
+// anna and bob are joined by two equally short chains with one marriage each.
+const tiedChains = {
+  people: [
+    person("gm", "female"),
+    person("kate", "female"),
+    person("aunt", "female"),
+    person("anna", "female"),
+    person("hal", "male"),
+    person("hank", "male"),
+    person("bob", "male"),
+  ],
+  parents: [
+    ["gm", "kate"],
+    ["gm", "aunt"],
+    ["kate", "anna"],
+    ["hal", "hank"],
+    ["hank", "bob"],
+  ] as [string, string][],
+  unions: [
+    { a: "kate", b: "hal" },
+    { a: "bob", b: "aunt" },
+  ],
+};
+const chainPeople = (r: Relationship<Person>) => [r.from, ...r.path.map((step) => step.person)].map((p) => p.id);
+
 it("gives the same relationship from either end", () => {
-  // gm → kate, aunt; kate → anna; hal → hank → bob; kate ═ hal (her later marriage); bob ═ aunt
-  const tree = createTree({
-    people: [
-      person("gm", "female"),
-      person("kate", "female"),
-      person("aunt", "female"),
-      person("anna", "female"),
-      person("hal", "male"),
-      person("hank", "male"),
-      person("bob", "male"),
-    ],
-    parents: [
-      ["gm", "kate"],
-      ["gm", "aunt"],
-      ["kate", "anna"],
-      ["hal", "hank"],
-      ["hank", "bob"],
-    ],
-    unions: [
-      { a: "kate", b: "hal" },
-      { a: "bob", b: "aunt" },
-    ],
-  });
+  const tree = createTree(tiedChains);
   const degree = { degree: 3, line: "collateral", kind: "affinity" };
   expect(relate(tree, "anna", "bob")!.main).toMatchObject({ kind: "uncleByMarriage", legalDegree: degree });
   expect(relate(tree, "bob", "anna")!.main).toMatchObject({ kind: "nephewByMarriage", legalDegree: degree });
   const there = relate(tree, "anna", "bob")!.main;
   const back = relate(tree, "bob", "anna")!.main;
-  const people = (r: typeof there) => [r.from, ...r.path.map((step) => step.person)].map((p) => p.id);
-  expect(people(back)).toEqual(people(there).reverse());
-  expect(back.diagram.nodes.map((node) => node.person.id)).toEqual(people(back));
+  expect(chainPeople(back)).toEqual(chainPeople(there).reverse());
+  expect(back.diagram.nodes.map((node) => node.person.id)).toEqual(chainPeople(back));
+});
+
+it("gives the same relationship from either end on a tree not made by createTree, by id order", () => {
+  // With the people reversed, createTree would search from bob; a copy knows no order, so it
+  // searches from anna, whose id comes first, as the tree with anna first in `people` does.
+  const reversed = createTree({ ...tiedChains, people: [...tiedChains.people].reverse() });
+  const copy = { ...reversed };
+  const there = relate(copy, "anna", "bob")!.main;
+  const back = relate(copy, "bob", "anna")!.main;
+  expect(chainPeople(back)).toEqual(chainPeople(there).reverse());
+  expect(chainPeople(there)).toEqual(chainPeople(relate(createTree(tiedChains), "anna", "bob")!.main));
+  expect(chainPeople(there)).not.toEqual(chainPeople(relate(reversed, "anna", "bob")!.main));
 });
 
 it("finds the child of two first cousins descending from the common grandparents", () => {

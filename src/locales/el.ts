@@ -1,7 +1,6 @@
-import type { Blood } from "../classify";
 import type { KinshipLocale } from "../locale";
 import type { Sex } from "../types";
-import { bloodPart, STEP_TERMS, w } from "./shared";
+import { bloodName, bloodPart, STEP_TERMS, w, type BloodParts } from "./shared";
 
 /*
  * Greek. Names need the sex of the person named and, inside longer names, the genitive case:
@@ -60,15 +59,15 @@ export const el: KinshipLocale = {
       case "uncle":
       case "nephew":
       case "cousin":
-        return bloodName(bloodPart(query), sex, sexes);
+        return bloodName(BLOOD, bloodPart(query), sex, sexes, false);
       // The relatives by marriage the law counts (αγχιστεία) that have no word of their own are
       // named through the blood relative: the spouse of one's relative, or a relative of one's spouse.
       case "spouseOfRelative": {
-        const relative = bloodName(bloodPart(query), sexes[sexes.length - 2], sexes.slice(0, -1), true);
+        const relative = bloodName(BLOOD, bloodPart(query), sexes[sexes.length - 2], sexes.slice(0, -1), true);
         return `${words.spouse[sex]} ${relative}`;
       }
       case "relativeOfSpouse": {
-        const relative = bloodName(bloodPart(query), sex, sexes.slice(1));
+        const relative = bloodName(BLOOD, bloodPart(query), sex, sexes.slice(1), false);
         return `${relative} ${bySex(sexes[1], "του συζύγου", "της συζύγου")}`;
       }
       case "unnamed":
@@ -96,20 +95,16 @@ export const el: KinshipLocale = {
  * (πρώτος, δεύτερος εξάδελφος). Relatives of different generations beyond θείος and ανιψιός have
  * no single word, so they are named through the person of the same generation as the other one:
  * «πρώτος εξάδελφος του πατέρα», «αδελφός της γιαγιάς», «γιος της πρώτης εξαδέλφης», «εγγονός
- * του αδελφού». `chain` is the sex of everyone on the chain, the first person first; with `of`,
- * the name is in the genitive: «της πρώτης εξαδέλφης του πατέρα».
+ * του αδελφού». The form is whether the name is in the genitive: «της πρώτης εξαδέλφης του πατέρα».
  */
-function bloodName({ up, down }: Blood, sex: Sex, chain: readonly Sex[], of = false): string {
-  if (down === 0) return ancestor(up, sex, of);
-  if (up === 0) return descendant(down, sex, of);
-  if (up === down) return kin(up, sex, of);
-  if (up === 2 && down === 1) return of ? bySex(sex, "του θείου", "της θείας") : words.uncle[sex];
-  if (up === 1 && down === 2) return of ? bySex(sex, "του ανιψιού", "της ανιψιάς") : words.nephew[sex];
-  // The first person's ancestor `apart` generations up, or the last person's.
-  const apart = Math.abs(up - down);
-  if (up > down) return `${kin(down, sex, of)} ${ancestor(apart, chain[apart] ?? "unknown", true)}`;
-  return `${descendant(apart, sex, of)} ${kin(up, chain[chain.length - 1 - apart] ?? "unknown", true)}`;
-}
+const BLOOD: BloodParts<boolean> = {
+  of: true,
+  ancestor,
+  descendant,
+  kin,
+  uncle: (up, sex, of) => (up > 2 ? null : of ? bySex(sex, "του θείου", "της θείας") : words.uncle[sex]),
+  nephew: (down, sex, of) => (down > 2 ? null : of ? bySex(sex, "του ανιψιού", "της ανιψιάς") : words.nephew[sex]),
+};
 
 /**
  * Someone of one's own generation `rung` generations below the common ancestor: a sibling (1),

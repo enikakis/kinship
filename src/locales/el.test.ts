@@ -1,32 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { describeRelation } from "../describe";
-import { relate } from "../relate";
-import { family, line, tangled, twice, twoLines, village, type TestPerson } from "../testing/fixtures";
-import type { Tree } from "../tree";
+import { describing } from "../testing/describing";
+import { tangled, twice, twoLines, village } from "../testing/fixtures";
 import type { Sex } from "../types";
 import { el } from "./el";
 
 /* Relations in Greek words. The test trees are drawn in ../testing/fixtures.ts. */
 
-/** How `to` is related to `from` in `tree`, in Greek. */
-const text = (from: string, to: string, tree: Tree<TestPerson> = family) =>
-  describeRelation(tree, relate(tree, from, to)!, el);
-
-/** What `to` is to `from`, and what `from` is to `to`. */
-const roles = (from: string, to: string) => text(from, to).main.roles;
-
-/** The main relationship along a line of people p0, p1… linked by `key`: what the last is to p0. */
-const along = (key: string, sexes: readonly Sex[] | Sex) => {
-  const { tree, from, to } = line(key, sexes);
-  return text(from, to, tree).main;
-};
-
-/** The main relationship and the other blood ties, in a line each. */
-const ties = (from: string, to: string, tree: Tree<TestPerson>) => {
-  const { main, others, couple } = text(from, to, tree);
-  const tieTexts = others.map((tie) => ({ name: tie.summary, ancestors: tie.commonAncestors }));
-  return { main: main.summary, couple, others: tieTexts };
-};
+const { text, roles, along, ties } = describing(el);
 
 describe("the chain between two people", () => {
   it("is the shortest one, through parents, children and marriages", () => {

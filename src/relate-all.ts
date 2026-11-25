@@ -1,7 +1,7 @@
 import { chooseRelationships, comesBefore, findRelationships } from "./choose";
 import { chainTo, searchFrom } from "./path";
-import { relationship, type Relation } from "./relate";
-import { ancestorPaths, type AncestorLinesOf } from "./ties";
+import { type Relation, relationship } from "./relate";
+import { type AncestorLinesOf, ancestorPaths } from "./ties";
 import type { Tree } from "./tree";
 import type { Person } from "./types";
 

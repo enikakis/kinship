@@ -1,4 +1,4 @@
-import { isBloodLine, lastOf, type Chain } from "./chain";
+import { type Chain, isBloodLine, lastOf } from "./chain";
 import type { Tree } from "./tree";
 import type { Person } from "./types";
 

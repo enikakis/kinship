@@ -1,6 +1,6 @@
 import type { KinshipLocale } from "../locale";
 import type { Sex } from "../types";
-import { bloodName, bloodPart, STEP_TERMS, w, type BloodParts } from "./shared";
+import { type BloodParts, bloodName, bloodPart, STEP_TERMS, w } from "./shared";
 
 /*
  * Greek. Names need the sex of the person named and, inside longer names, the genitive case:

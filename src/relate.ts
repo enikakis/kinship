@@ -1,8 +1,8 @@
-import { lastOf, movesOf, type Chain } from "./chain";
+import { type Chain, lastOf, movesOf } from "./chain";
 import { findRelationships } from "./choose";
-import { classify, type Classification } from "./classify";
-import { legalDegree, type LegalDegree } from "./degree";
-import { chainDiagram, type ConnectionDiagram } from "./diagram";
+import { type Classification, classify } from "./classify";
+import { type LegalDegree, legalDegree } from "./degree";
+import { type ConnectionDiagram, chainDiagram } from "./diagram";
 import type { Tree } from "./tree";
 import type { Move, Person } from "./types";
 

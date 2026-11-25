@@ -1,12 +1,12 @@
 import { bench, describe } from "vitest";
 import { describeRelation } from "../describe";
 import { el } from "../locales/el";
-import { relate, type Relation } from "../relate";
+import { type Relation, relate } from "../relate";
 import { relateAll } from "../relate-all";
-import { createTree } from "../tree";
-import { largeTree } from "../testing/large-tree";
 import type { TestPerson } from "../testing/fixtures";
+import { largeTree } from "../testing/large-tree";
 import { samplePairs } from "../testing/sample-pairs";
+import { createTree } from "../tree";
 
 const input = largeTree();
 const born = (p: TestPerson) => p.born;

@@ -1,4 +1,4 @@
-import { BLOOD, lastOf, movesKey, movesOf, sexesOf, type Chain } from "./chain";
+import { BLOOD, type Chain, lastOf, movesKey, movesOf, sexesOf } from "./chain";
 import type { NameQuery } from "./locale";
 import type { Tree } from "./tree";
 import type { Move, Person, Sex } from "./types";

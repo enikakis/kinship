@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import type { ConnectionDiagram } from "./diagram";
 import { describeRelation } from "./describe";
+import type { ConnectionDiagram } from "./diagram";
 import { en } from "./locales/en";
 import { relate } from "./relate";
 import { toSvg } from "./svg";
-import { family, twice, type TestPerson } from "./testing/fixtures";
+import { family, type TestPerson, twice } from "./testing/fixtures";
 
 const count = (text: string, pattern: RegExp) => text.match(pattern)?.length ?? 0;
 const idPrefixOf = (svg: string) => svg.match(/<title id="([^"]*)-title"/)![1];

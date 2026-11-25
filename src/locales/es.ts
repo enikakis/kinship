@@ -1,7 +1,7 @@
 import type { LegalDegree } from "../degree";
 import type { KinshipLocale } from "../locale";
 import type { Sex } from "../types";
-import { bloodName, bloodPart, list, neutral, STEP_TERMS, w, type BloodParts, type Word } from "./shared";
+import { type BloodParts, bloodName, bloodPart, list, neutral, STEP_TERMS, type Word, w } from "./shared";
 
 /*
  * Spanish. Experimental: the terms come from the sources in docs/locales/es.md and await a native

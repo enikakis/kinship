@@ -1,7 +1,7 @@
-import { isBloodLine, movesOf, reverseChain, sexesOf, type Chain } from "./chain";
+import { type Chain, isBloodLine, movesOf, reverseChain, sexesOf } from "./chain";
 import { isNamedKind, kindOf } from "./classify";
 import { findChain } from "./path";
-import { otherBloodTies, type AncestorLinesOf, type BloodTie } from "./ties";
+import { type AncestorLinesOf, type BloodTie, otherBloodTies } from "./ties";
 import { positionOf, type Tree } from "./tree";
 import type { Person } from "./types";
 

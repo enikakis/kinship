@@ -2,7 +2,7 @@ import { expect, it } from "vitest";
 import { describeRelation } from "./describe";
 import { el } from "./locales/el";
 import { en } from "./locales/en";
-import { relate, type Relationship } from "./relate";
+import { type Relationship, relate } from "./relate";
 import { family, line, person, twice, twoLines, village } from "./testing/fixtures";
 import { createTree } from "./tree";
 import type { Person } from "./types";

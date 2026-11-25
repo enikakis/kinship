@@ -2,11 +2,11 @@ import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { movesOf, reverseMoves } from "./chain";
 import { isNamedKind } from "./classify";
-import { describeRelation } from "./describe";
 import { legalDegree } from "./degree";
+import { describeRelation } from "./describe";
 import { LOCALES } from "./locales";
 import { findChain } from "./path";
-import { relate, type OtherTie, type Relationship } from "./relate";
+import { type OtherTie, type Relationship, relate } from "./relate";
 import { relateAll } from "./relate-all";
 import { arbPair, arbTree } from "./testing/arbitraries";
 import type { Move, Person } from "./types";
@@ -69,7 +69,9 @@ describe("properties on random trees", () => {
         expect(back.couple).toBe(there.couple);
         expect(back.others).toHaveLength(there.others.length);
         expect(back.others.map(ancestorIds)).toEqual(there.others.map(ancestorIds));
-        back.others.forEach((tie, i) => expect(people(tie)).toEqual(people(there.others[i]!).reverse()));
+        back.others.forEach((tie, i) => {
+          expect(people(tie)).toEqual(people(there.others[i]!).reverse());
+        });
       }),
       { numRuns: 500 },
     );

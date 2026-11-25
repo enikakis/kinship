@@ -2,12 +2,12 @@ import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import type { Chain } from "./chain";
 import { chainTo, findChain, searchFrom } from "./path";
-import { createTree } from "./tree";
 import { arbPair, arbTree } from "./testing/arbitraries";
 import type { TestPerson } from "./testing/fixtures";
 import { largeTree } from "./testing/large-tree";
 import { referenceFindChain } from "./testing/reference-path";
 import { samplePairs } from "./testing/sample-pairs";
+import { createTree } from "./tree";
 import type { Person } from "./types";
 
 /** A chain as the people on it and how each was reached, so a mismatch reads well. */

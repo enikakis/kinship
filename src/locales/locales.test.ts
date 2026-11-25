@@ -1,6 +1,6 @@
 import { readdirSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { nameQuery, type Blood, type Kind } from "../classify";
+import { type Blood, type Kind, nameQuery } from "../classify";
 import type { KinshipLocale, NameQuery } from "../locale";
 import { fromKey } from "../testing/fixtures";
 import type { Sex } from "../types";

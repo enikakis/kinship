@@ -4,9 +4,9 @@ import { el } from "./locales/el";
 import { chainTo, searchFrom } from "./path";
 import { relate } from "./relate";
 import { relateAll } from "./relate-all";
-import { createTree } from "./tree";
 import { family, person, type TestPerson } from "./testing/fixtures";
 import { largeTree } from "./testing/large-tree";
+import { createTree } from "./tree";
 
 const everyone = relateAll(family, "me");
 

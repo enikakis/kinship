@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { BLOOD_KINDS, MARRIAGE_KINDS, classify, isNamedKind, kindOf, nameQuery } from "./classify";
+import { BLOOD_KINDS, classify, isNamedKind, kindOf, MARRIAGE_KINDS, nameQuery } from "./classify";
 import { findChain } from "./path";
-import { createTree } from "./tree";
 import { family, fromKey, line, person, sexesFor } from "./testing/fixtures";
+import { createTree } from "./tree";
 import type { Sex } from "./types";
 
 const cousinOf = (key: string) => {

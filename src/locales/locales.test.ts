@@ -1,10 +1,12 @@
+import { readdirSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { nameQuery, type Blood, type Kind } from "../classify";
-import type { NameQuery } from "../locale";
+import type { KinshipLocale, NameQuery } from "../locale";
 import { fromKey } from "../testing/fixtures";
 import type { Sex } from "../types";
 import { el } from "./el";
 import { en } from "./en";
+import { LOCALES } from "./index";
 
 const query = (kind: Kind, key: string, sexes: Sex[], blood: Blood | null = null): NameQuery => ({
   kind,
@@ -41,5 +43,25 @@ describe("locales", () => {
     const q = nameQuery(fromKey("SDD"), ["male", "unknown", "unknown", "female"], false);
     expect(el.name(q)).toBe("εγγονή του συζύγου/της συζύγου");
     expect(en.name(q)).toBe("spouse's granddaughter");
+  });
+});
+
+describe("the list of locales", () => {
+  const isLocale = (value: unknown): value is KinshipLocale =>
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as KinshipLocale).code === "string" &&
+    typeof (value as KinshipLocale).name === "function";
+
+  it("has every locale in this directory", async () => {
+    // Every module here but the list itself, the shared helpers and the tests.
+    const files = readdirSync(new URL(".", import.meta.url)).filter(
+      (file) => file.endsWith(".ts") && !file.endsWith(".test.ts") && file !== "index.ts" && file !== "shared.ts",
+    );
+    const modules: Record<string, unknown>[] = await Promise.all(
+      files.map((file) => import(/* @vite-ignore */ new URL(file, import.meta.url).href)),
+    );
+    const found = modules.flatMap((exports) => Object.values(exports).filter(isLocale));
+    expect(LOCALES.map((locale) => locale.code).sort()).toEqual(found.map((locale) => locale.code).sort());
   });
 });

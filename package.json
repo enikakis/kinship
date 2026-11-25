@@ -125,6 +125,8 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "bench": "vitest bench --run",
     "build": "tsup",
+    "lint": "biome check .",
+    "format": "biome check --write .",
     "check:package": "publint && attw --pack .",
     "prepublishOnly": "npm test && npm run build && npm run check:package && npm run test:dist"
   },
@@ -133,6 +135,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
+    "@biomejs/biome": "2.6.9",
     "@types/node": "^20.19.43",
     "fast-check": "^4.11.0",
     "publint": "^0.3.25",

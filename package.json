@@ -16,7 +16,9 @@
     "συγγένεια"
   ],
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./svg": "./src/svg.ts",
+    "./gedcom": "./src/gedcom.ts"
   },
   "files": [
     "dist"

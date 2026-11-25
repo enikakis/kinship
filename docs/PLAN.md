@@ -65,13 +65,13 @@ See "Decided design" in the design doc above and its core-API implementation pla
 - [x] Make `relate` independent of direction (same main relationship, inverse roles, equal degree
       from either end); turn the `it.fails` test in relate.test.ts into a passing test
 - [x] fr / de / es locales (experimental; term tables and open questions in `docs/locales/`)
-- [ ] `relateAll`
+- [x] `relateAll` (one `relate` per connected person; the single-search speed-up is in Step 4)
   - Reconcile with the direction rule: `relate(a, b)` searches from whichever of the two comes
     first in `people`, so a single search from `fromId` can pick a different chain than `relate`
     when chains tie. Plan 4 must either use a tie-break that doesn't depend on direction, or search
     from the earlier person for those pairs, and keep the equality-with-`relate` property.
-- [ ] `svg` entry
-- [ ] `gedcom` entry
+- [x] `svg` entry (`toSvg`)
+- [x] `gedcom` entry (`fromGedcom`)
 
 ## Step 4: Performance
 
@@ -79,6 +79,8 @@ See "Decided design" in the design doc above and its core-API implementation pla
 - [ ] `spouses()` scans every union per call, inside the path search → index unions in a `Map`.
 - [ ] Dijkstra re-sorts the whole queue each iteration → small binary heap (or a bucket queue:
       costs are only 10 / 11).
+- [ ] `relateAll` with one search from `fromId`, keeping the equality property with `relate` for every
+      pair (see the direction rule in Step 3b); benchmark it against the per-person version.
 - [ ] Re-measure; put real before/after numbers in the README.
 
 ## Step 5: `validateTree()`
@@ -89,8 +91,9 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 ## Step 6: Build & package
 
-- [ ] Build with `tsup` (or `tsdown`): ESM + CJS + `.d.ts`; `exports` map with `"."` and
-      `"./locales/*"`; `"sideEffects": false`; `"files": ["dist"]`; `prepublishOnly` builds.
+- [ ] Build with `tsup` (or `tsdown`): ESM + CJS + `.d.ts`; `exports` map with `"."`,
+      `"./locales/*"`, `"./svg"` and `"./gedcom"`; `"sideEffects": false`; `"files": ["dist"]`;
+      `prepublishOnly` builds.
 - [ ] Check with `publint` and `@arethetypeswrong/cli`.
 - [ ] Lint/format: Biome (one tool, zero config).
 - [ ] Remove `"private": true` only when ready to publish.
@@ -99,9 +102,9 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 - [ ] README: one-line pitch, 10-second example, table of supported relationships (a column per
       language: el, en, and fr, de, es marked experimental), how the algorithm works (with a small
-      diagram), legal degree explanation, benchmark numbers, "add a language" guide, live demo
-      link, badges (CI, npm, size). Note that names are in-sentence forms; capitalise the first
-      letter for display.
+      diagram), legal degree explanation, `relateAll`, `toSvg` (`/svg`) and `fromGedcom`
+      (`/gedcom`), benchmark numbers, "add a language" guide, live demo link, badges (CI, npm,
+      size). Note that names are in-sentence forms; capitalise the first letter for display.
 - [ ] TSDoc on every public export; optional TypeDoc site.
 - [ ] `CONTRIBUTING.md` focused on adding locales (good first issues).
 

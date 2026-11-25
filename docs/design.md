@@ -236,19 +236,57 @@ property and a benchmark.
 
 ### SVG
 
-`toSvg(diagram, { name, roles?, ... })` returns an SVG string. Accessible: `role="img"`, a
-`<title>`, and a text description of the chain. Styled through CSS classes / custom properties so it
-fits light and dark pages; no inline colours that can't be overridden. No DOM APIs, so it runs in
-Node (server rendering) and in the browser. Diagram data stays public for users who draw their own.
+`toSvg(diagram, options)` (own module, `src/svg.ts`) returns an SVG string from `relate(...).main.diagram` (or an other tie's `diagram`).
+Options (all optional): `name(person)` (the text of a box; defaults like `createTree`, a string
+`name` property, else the id; pass `name: tree.name` for a tree with a custom `name`), `roles`
+(`{ self, other } | null`, the shape `describeRelation(...).main.roles` returns; `self` labels the
+first node, `other` the last), `title` (default "first — last"), `description` (default: the names
+along the chain joined by " → ", with the roles in parentheses at the two ends: "A (nephew) → … →
+B (aunt)"), `idPrefix` (default `kinship-<hash>`, the FNV-1a 32-bit hash in base 36 of every id
+along the chain, so the main and another tie of one pair, or chains of non-Latin ids, get
+different ids, the same on the server and in the browser; a given prefix has characters outside
+`[A-Za-z0-9_-]` turned into "-"). `toSvg` knows no language: the caller passes locale text, e.g.
+`title: text.main.summary` and a `description` built from `text.main.chain`, where
+`text = describeRelation(tree, relation, locale)`. Text is XML-escaped and not measured: long names
+are the caller's concern. A diagram with no people throws a `RangeError`.
+
+Look: fixed geometry (box 140×40, lane pitch 180, row pitch 90, margin 20), rounded boxes with the
+name centred, parent links as elbows, marriages as double horizontal lines. The two ends have class
+`kinship-end` with their role in a label: above the box when a parent link leaves the box downward,
+below otherwise, so the label stays clear of the links.
+
+Accessible: `role="img"` and `aria-labelledby` pointing at a `<title>` and a `<desc>` with unique
+ids. Styling hooks: the root has class `kinship`, one `<style>` inside it is scoped under
+`svg.kinship`, every element has a `kinship-*` class (`kinship-node`, `-box`, `-name`, `-role`,
+`-end`, `-link`, `-link-parent`, `-link-spouse`), and colours are CSS custom properties with
+system-colour fallbacks: `--kinship-node-fill`, `--kinship-node-stroke`, `--kinship-text`,
+`--kinship-link`, `--kinship-end-stroke`; fonts are `--kinship-font` (default `14px sans-serif`)
+and `--kinship-role-font` (default `12px sans-serif`). The system colours follow the page's
+`color-scheme`, so it fits light and dark pages when the page sets one, and it can be restyled.
+No DOM APIs: it builds a string, so it runs in Node (server rendering) and in the browser. Diagram
+data stays public for users who draw their own.
 
 ### GEDCOM
 
-`fromGedcom(text)` returns `{ people, parents, unions }` with people as
-`{ id, sex, name, born? }` (id = the GEDCOM xref, name from `NAME` without slashes, sex `M`/`F`/
-otherwise unknown, `born` = year of `BIRT DATE` when parseable). Families: `HUSB`/`WIFE` become a
-union, each `CHIL` a parent link to each partner. Supports the common subset of GEDCOM 5.5.1 and
-7.0; ignores everything else; never throws on unknown tags. Lines may end in `\n` or `\r\n`.
-Tested on small handwritten files and one real-world-shaped fictional sample.
+`fromGedcom(text)` (own module, `src/gedcom.ts`) takes a decoded string and returns
+`TreeInput<GedcomPerson>`, with `GedcomPerson = { id, sex, name, born? }`. It never throws.
+
+Subset read:
+- `INDI`: the first usable `NAME` (slashes removed, spaces collapsed, `@@` read as `@`; an empty
+  one such as `//` is skipped; a person with no name gets their id), `SEX` (`M`/`F`, otherwise
+  unknown), and `BIRT` > `DATE`: `born` is the first 3-4 digit number bounded by non-digits
+  ("ABT 1850", "BET 1850 AND 1860", "1850/51" give 1850; "12345" gives none). Only a `DATE` directly
+  under `BIRT` counts, the first usable one wins, and `born` is left out when unknown.
+- Calendars: Gregorian and Julian dates give a year; Hebrew and French Republican dates (5.5.1
+  `@#DHEBREW@`, 7.0 `HEBREW`) and years BC (`B.C.`, `BC`, `BCE`) give none.
+- `FAM`: `HUSB`/`WIFE` (both present: a union), `CHIL` (a parent link from each partner present).
+  A GEDCOM 7 `@VOID@` pointer is ignored. A `CHIL` that is not in the file stays; `createTree` skips it.
+- Ids are the xrefs without `@`. Everything else is ignored: unknown tags, `CONC`/`CONT`, malformed
+  lines.
+- Input: GEDCOM 5.5.1 and 7.0, UTF-8 already decoded; a byte order mark, leading whitespace, blank
+  lines and `\n`, `\r\n` or `\r` line ends are accepted.
+
+Tested on small handwritten files and one fictional sample (`src/testing/sample-gedcom.ts`).
 
 ### Validation
 

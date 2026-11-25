@@ -23,7 +23,7 @@ Keep it that way.
 
 ## Layout (current)
 
-- `src/index.ts`: public entry: `createTree`, `relate`, `describeRelation`, and the types.
+- `src/index.ts`: public entry: `createTree`, `relate`, `relateAll`, `describeRelation`, and the types.
 - `src/types.ts`: `Person`, `Sex`, `Move`, `TreeInput`, `TreeOptions`.
 - `src/tree.ts`: `createTree()`: lookups of parents, children, spouses, half-siblings, names.
 - `src/chain.ts`: a chain of moves between two people, and helpers on moves (`"UUD"` keys).
@@ -34,12 +34,16 @@ Keep it that way.
 - `src/degree.ts`: the legal degree as data.
 - `src/diagram.ts`: the chain laid out in rows and lanes for a small diagram.
 - `src/relate.ts`: `relate()`: how two people are related, as data.
+- `src/relate-all.ts`: `relateAll()`: what everyone connected is to one person (`relate` per person).
+- `src/svg.ts`: `toSvg()`: a relationship diagram as an accessible SVG string (own module, no DOM).
+- `src/gedcom.ts`: `fromGedcom()`: people and families of a GEDCOM file as `createTree` input (own module).
 - `src/describe.ts`: `describeRelation()`: a relation in words, in a locale.
 - `src/locale.ts`: the `KinshipLocale` interface and its `NameQuery`.
 - `src/locales/el.ts`, `src/locales/en.ts`: Greek and English (`shared.ts`: helpers for all locales).
 - `src/locales/fr.ts`, `de.ts`, `es.ts`: French, German, Spanish (experimental, awaiting native
   review). Their term tables, rulings and open questions are in `docs/locales/{fr,de,es}.md`.
 - `src/testing/fixtures.ts`: the test trees, drawn in ASCII. Read them to understand the cases.
+- `src/testing/sample-gedcom.ts`: an invented GEDCOM file for the reader's tests.
 - `src/testing/describing.ts`: `describing(locale)` helpers shared by the locale tests.
 - `src/*.test.ts`, `src/locales/*.test.ts`: behaviour spec: data next to each module, words
   per locale.

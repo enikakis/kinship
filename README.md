@@ -4,6 +4,8 @@ Name how two people in a family tree are related, in Greek and English, with Fre
 Spanish experimental.
 
 [![CI](https://img.shields.io/github/actions/workflow/status/enikakis/kinship/ci.yml?branch=main&label=CI)](https://github.com/enikakis/kinship/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/@enikakis99/kinship)](https://www.npmjs.com/package/@enikakis99/kinship)
+[![minzipped size](https://img.shields.io/bundlephobia/minzip/@enikakis99/kinship)](https://bundlephobia.com/package/@enikakis99/kinship)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 Give it a tree and two people. It finds the chain between them and tells you what each is to the

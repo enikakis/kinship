@@ -8,8 +8,11 @@ relationship in Greek or English (French, German and Spanish experimental): «θ
 **Status:** extracted from the author's village history site, `vrisies-history-hub`
 (`src/features/family-tree/`, commit `3433dad`), and made standalone. The core API is in place
 (`createTree` / `relate` / `describeRelation`; el + en locales, and fr, de, es experimental until
-native speakers review them). The roadmap to a published npm package continues in
-**`docs/PLAN.md`**: read it first, work through it in order, and tick the boxes as steps are done.
+native speakers review them). Published on npm as `@enikakis99/kinship` (0.1.0; the `@enikakis`
+scope belongs to another npm account), repository `github.com/enikakis/kinship`, demo on GitHub
+Pages. Releases go through Changesets (`npm run changeset`) and `.github/workflows/release.yml`.
+The roadmap continues in **`docs/PLAN.md`**: read it first, work through it in order, and tick the
+boxes as steps are done.
 
 ## Commands
 
@@ -35,6 +38,9 @@ only). No runtime dependencies. Keep it that way.
 - `scripts/smoke-dist.mjs`: imports and requires the built package by name (`npm run test:dist`).
 - `.github/workflows/ci.yml`: CI on Node 22/24/26: lint, typecheck, test, build, check:package, test:dist.
 - `.github/workflows/pages.yml`: builds the demo and deploys it to GitHub Pages on push to main.
+- `.github/workflows/release.yml`: Changesets on push to main: a "chore: release" pull request,
+  and on its merge a publish to npm through trusted publishing. `.changeset/`: config and pending
+  changesets; `CHANGELOG.md` is written by `changeset version`.
 - `src/index.ts`: public entry: `createTree`, `relate`, `relateAll`, `describeRelation`, `validateTree`, and
   the types.
 - `src/types.ts`: `Person`, `Sex`, `Move`, `TreeInput`, `TreeOptions`.

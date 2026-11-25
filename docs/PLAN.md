@@ -120,18 +120,23 @@ See "Decided design" in the design doc above and its core-API implementation pla
       (el / en toggle), legal degree, other ties, and the diagram drawn as SVG. Done with all five
       languages, "everyone, as seen from" one person (`relateAll`), a shareable URL hash, and the
       visitor's own GEDCOM file read in the browser with `validateTree` issues shown.
-- [ ] Deploy to GitHub Pages (or Vercel); link from README and the GitHub repo "website" field.
-      The workflow is ready (`.github/workflows/pages.yml`, `npm run demo:build` with base
-      `/kinship/`); it runs once the public repo exists and Pages is set to "GitHub Actions". The
-      README already links https://enikakis.github.io/kinship/ (marked "coming soon").
+- [x] Deploy to GitHub Pages (or Vercel); link from README and the GitHub repo "website" field.
+      Live at https://enikakis.github.io/kinship/, deployed by `.github/workflows/pages.yml` on
+      every push to main.
 
 ## Step 10: Publish
 
-- [ ] Create the public GitHub repo `enikakis/kinship` (owner's OK first), add topics.
-- [ ] Changesets for versioning + CHANGELOG.
-- [ ] npm trusted publishing from GitHub Actions with provenance (verified badge on npm).
-- [ ] Publish `0.1.0`; pin the repo on the GitHub profile.
-- [ ] Create the `language` label (the issue templates use it); set Pages to GitHub Actions; fill
+- [x] Create the public GitHub repo `enikakis/kinship` (owner's OK first), add topics.
+- [x] Changesets for versioning + CHANGELOG.
+- [ ] npm trusted publishing from GitHub Actions with provenance (verified badge on npm). The
+      release workflow is ready (`.github/workflows/release.yml`); before the first release from CI,
+      add the trusted publisher on npmjs.com (package settings: GitHub Actions, repository
+      `enikakis/kinship`, workflow `release.yml`). A new trusted publisher that sees no successful
+      publish within two days expires, so add it right before merging a release pull request.
+- [x] Publish `0.1.0` (as `@enikakis99/kinship`: the `@enikakis` scope on npm belongs to another
+      account). Published from the owner's machine, so without provenance.
+- [ ] Pin the repo on the GitHub profile.
+- [x] Create the `language` label (the issue templates use it); set Pages to GitHub Actions; fill
       the repo's website field with the demo's URL; add the npm and bundlephobia badges to the
       README once published.
 
@@ -164,6 +169,8 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
 - [ ] Before 0.1.0: decide whether to align the names `path` and `chain`.
 - [ ] `ancestorPaths` keeps a full line per ancestor (O(depth²) memory): a crafted
       200,000-generation chain exhausts memory. Store parent pointers instead.
+- [ ] `createTree` in plain JavaScript: a missing `parents` or `unions` throws "is not iterable".
+      Treat a missing list as empty (or throw a clear message); found by installing 0.1.0.
 
 ## Later (not v1)
 

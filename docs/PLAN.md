@@ -101,13 +101,14 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 ## Step 7: Documentation
 
-- [ ] README: one-line pitch, 10-second example, table of supported relationships (a column per
+- [x] README: one-line pitch, 10-second example, table of supported relationships (a column per
       language: el, en, and fr, de, es marked experimental), how the algorithm works (with a small
       diagram), legal degree explanation, `relateAll`, `toSvg` (`/svg`) and `fromGedcom`
       (`/gedcom`), benchmark numbers, "add a language" guide, live demo link, badges (CI, npm,
       size). Note that names are in-sentence forms; capitalise the first letter for display.
-- [ ] TSDoc on every public export; optional TypeDoc site.
-- [ ] `CONTRIBUTING.md` focused on adding locales (good first issues).
+- [x] TSDoc on every public export.
+- [ ] Optional: a TypeDoc site.
+- [x] `CONTRIBUTING.md` focused on adding locales (good first issues).
 
 ## Step 8: CI
 
@@ -149,9 +150,10 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
       rather than marriages" still accepts either parent (pin it like the other tie-order tests).
 - [x] With `validateTree` (Step 5): duplicate person ids (the last one wins today), a union of a
       person with themselves, a person recorded as their own parent.
-- [ ] README (Step 7): `relate` returns `null` both for unrelated people and for an unknown id
+- [x] README (Step 7): `relate` returns `null` both for unrelated people and for an unknown id
       (point to `validateTree`); explain that the data's `path` excludes the first person while the
-      text's `chain` includes them, and decide before 0.1.0 whether to align the names.
+      text's `chain` includes them.
+- [ ] Before 0.1.0: decide whether to align the names `path` and `chain`.
 
 ## Later (not v1)
 

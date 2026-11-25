@@ -17,8 +17,8 @@ const tree = createTree(input, { born });
 const pairs = samplePairs(input, 200, 12345);
 const relations = pairs.map(([a, b]) => relate(tree, a, b)).filter((r): r is Relation<TestPerson> => r !== null);
 
-// relateAll on the 10,000-person tree took about 540 s per call before the speed-ups (it runs one
-// full path search per person), so its benchmark uses a 1,000-person tree.
+// relateAll on the 10,000-person tree took about 540 s per call before the speed-ups (it ran one
+// full path search per person; it still takes seconds), so its benchmark uses a 1,000-person tree.
 const smallInput = largeTree(1000);
 const smallTree = createTree(smallInput, { born });
 const sources = [smallInput.people[0].id, smallInput.people[500].id, smallInput.people[999].id];

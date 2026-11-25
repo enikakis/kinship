@@ -19,7 +19,7 @@ The slow cases run 5 iterations (relateAll: 3) after 1 warm-up, because a time-b
 | `describeRelation` (el), 198 relations | 10,000 people | 1,024.66 | 0.98 ms |
 | `relateAll`, 3 people | 1,000 people | 0.5869 | 1,704 ms |
 
-`relateAll` runs one full path search per person, so on the 10,000-person tree a single call
+`relateAll` then ran one full path search per person, so on the 10,000-person tree a single call
 (`relateAll(tree, "p5000")`, 9,855 relatives) took 540 s in a separate one-off run. That is too long
 for a repeatable benchmark, so its case uses a 1,000-person tree (`largeTree(1000)`).
 
@@ -27,12 +27,15 @@ for a repeatable benchmark, so its case uses a 1,000-person tree (`largeTree(100
 
 Mean time per run, at each step of the speed-ups (same machine, same day):
 
-| Case | Tree | Baseline | After the heap and spouse index |
-| --- | --- | ---: | ---: |
-| `createTree` | 10,000 people | 3.01 ms | 3.08 ms |
-| `relate`, 200 pairs | 10,000 people | 5,040 ms | 198 ms |
-| `describeRelation` (el), 198 relations | 10,000 people | 0.98 ms | 0.47 ms |
-| `relateAll`, 3 people | 1,000 people | 1,704 ms | 305 ms |
+| Case | Tree | Baseline | After the heap and spouse index | After the single relateAll search |
+| --- | --- | ---: | ---: | ---: |
+| `createTree` | 10,000 people | 3.01 ms | 3.08 ms | 3.11 ms |
+| `relate`, 200 pairs | 10,000 people | 5,040 ms | 198 ms | 199 ms |
+| `describeRelation` (el), 198 relations | 10,000 people | 0.98 ms | 0.47 ms | 0.45 ms |
+| `relateAll`, 3 people | 1,000 people | 1,704 ms | 305 ms | 158 ms |
+| `relateAll(tree, "p5000")`, one call (one-off run) | 10,000 people | 540 s | 18.5 s | 9.3 s |
+
+The last row is not part of `npm run bench`: it was timed once per version in a separate run.
 
 ### After the heap and spouse index
 
@@ -53,3 +56,33 @@ noise. `describeRelation` does no path search and its code did not change: its d
 With only 5 samples right after the slow `relate` case its spread is wide; a re-run of the old code
 in the same session gave 1.17 ms with samples from 0.49 to 3.12 ms (that re-run also gave 4,600 ms
 for `relate` and 1,569 ms for `relateAll`).
+
+### After the single relateAll search
+
+`relateAll` used to run a whole `relate`, with its own path search, for each person. Now one search
+from the person, run to the end instead of stopping at a target, gives everyone after them in
+`people` the chain `relate` finds. Everyone before them still gets a search of their own, because
+`relate` searches from whichever of the two comes first and could pick another of several equally
+short chains. The person's ancestor lines are worked out once. Every result is the same as before
+(the equality property with `relate`, a fixture with such a tie, and a 1,000-person check).
+
+| Case | Tree | ops/s | mean |
+| --- | --- | ---: | ---: |
+| `createTree` | 10,000 people | 321.99 | 3.11 ms |
+| `relate`, 200 pairs | 10,000 people | 5.0324 | 199 ms |
+| `describeRelation` (el), 198 relations | 10,000 people | 2,215.94 | 0.45 ms |
+| `relateAll`, 3 people | 1,000 people | 6.3205 | 158 ms |
+
+The code before this step, run in the same session, gave 305.59 ms for `relateAll` (and 198.63 ms
+for `relate`, 3.16 ms for `createTree`, 0.80 ms for `describeRelation`). `relateAll` is about 1.9
+times faster. The gain depends on where the person stands in `people`: one call each, before and
+after, in a separate run on the 1,000-person tree:
+
+| Person | Where in `people` | Before | After |
+| --- | --- | ---: | ---: |
+| `p0` | first | 98 ms | 5 ms |
+| `p500` | middle | 113 ms | 66 ms |
+| `p999` | last | 85 ms | 87 ms |
+
+On the 10,000-person tree one call for `p5000` (9,855 relatives) took 18.5 s before and 9.3 s
+after, in the same run; 4,894 of its relatives come before it and still need a search each.

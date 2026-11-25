@@ -97,7 +97,7 @@ See "Decided design" in the design doc above and its core-API implementation pla
       `prepublishOnly` builds.
 - [x] Check with `publint` and `@arethetypeswrong/cli`.
 - [x] Lint/format: Biome (one tool, zero config).
-- [ ] Remove `"private": true` only when ready to publish.
+- [x] Remove `"private": true` only when ready to publish.
 
 ## Step 7: Documentation
 

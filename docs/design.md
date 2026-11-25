@@ -294,9 +294,20 @@ Tested on small handwritten files and one fictional sample (`src/testing/sample-
 
 ### Validation
 
-As PLAN step 5: cycles (own ancestor), more than two parents, links to unknown ids, self-marriage,
-duplicate ids. `{ ok, issues: { code, message, ids }[] }`. `createTree` does not throw on bad
-input; it behaves as today (skips links to unknown ids) and `validateTree` tells you why.
+`validateTree(input)` takes the raw `TreeInput` (not a `Tree`, which has already dropped bad links)
+and returns `{ ok, issues }`, with `issues: { code, message, ids }[]`. It never throws. One issue per
+problem, in input order: repeated person ids (`duplicateId`, `ids: [id]`, once per repeat), then each
+entry of `parents` and `unions` (`unknownId` with the unknown ids, `selfParent`, `selfUnion`), then
+people with more than two distinct parents (`tooManyParents`, `ids: [child, ...parents]`, in the
+order of each child's first valid parent link), then cycles (`cycle`: someone is their own ancestor;
+reported once, `ids` are the people of the cycle in order, each a parent of the next and the last a
+parent of the first; found by an iterative depth-first search, so it is linear and safe on very deep
+trees). Messages are short English sentences naming the ids. Overlapping cycles in one component
+may be reported as more than one issue, depending on search order.
+
+`createTree` does not throw on bad input and behaves as before: it skips links to unknown ids,
+a person recorded as their own parent and a union of a person with themselves; with duplicate ids
+the last person wins. `validateTree` tells you why.
 
 ### Behaviour to keep (existing rules, do not "fix")
 

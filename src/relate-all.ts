@@ -22,6 +22,23 @@ export type RelationToEveryone<P extends Person> = Map<string, RelationEntry<P>>
  * for the people after `fromId` in `people`. For the people before it, `relate` searches from them
  * instead (which may pick another of several equally short chains), so they get a search of their
  * own. `fromId`'s ancestor lines are worked out once, for everyone.
+ *
+ * @param tree A tree made by `createTree`.
+ * @param fromId The id of the viewer.
+ * @returns A map from each connected person's id to what they are to the viewer.
+ *
+ * @example
+ * ```ts
+ * // `tree` as in `createTree`. Entries come in the order of `people`.
+ * for (const [id, entry] of relateAll(tree, "anna")) {
+ *   const { main } = describeRelation(tree, { ...entry, others: [] }, en);
+ *   console.log(id, main.summary);
+ * }
+ * // maria grandmother
+ * // dafni mother
+ * // petros uncle
+ * // kostas first cousin
+ * ```
  */
 export function relateAll<P extends Person>(tree: Tree<P>, fromId: string): RelationToEveryone<P> {
   const result: RelationToEveryone<P> = new Map();

@@ -40,6 +40,7 @@ const VOWEL_SOUND = /^(?:[aeiou]|8|1[18](?!\d))/;
 /** Spelled out here rather than taken from the value, so renaming the value cannot change the sentence. */
 const LINES = { direct: "direct", collateral: "collateral" } as const satisfies Record<LegalDegree["line"], string>;
 
+/** English, by the standard genealogical terms: "first cousin once removed", "great-grandfather". */
 export const en: KinshipLocale = {
   code: "en",
 

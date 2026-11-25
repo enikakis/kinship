@@ -5,17 +5,22 @@ import type { Person, TreeInput, TreeOptions } from "./types";
  * order of the input `people`; any other object falls back to id order.
  */
 export type Tree<P extends Person> = {
+  /** Every person, by id. */
   readonly byId: ReadonlyMap<string, P>;
-  /** Ordered by birth year (unknown last), then as given in `people`. */
+  /** The recorded parents of a person, ordered by birth year (unknown last), then as given in `people`; empty for an unknown id. */
   parents(id: string): P[];
+  /** The recorded children of a person, ordered by birth year (unknown last), then as given in `people`; empty for an unknown id. */
   children(id: string): P[];
+  /** The spouses of a person, ordered by birth year (unknown last), then as given in `people`; empty for an unknown id. */
   spouses(id: string): P[];
   /**
    * Whether two people are half-siblings: both have two recorded parents and share only one. When
    * either one's other parent is not recorded we cannot tell, so we do not say so.
    */
   areHalfSiblings(a: string, b: string): boolean;
+  /** How a person's name is written, as `TreeOptions.name` says. */
   name(person: P): string;
+  /** A person's birth year, as `TreeOptions.born` says; undefined when unknown. */
   born(person: P): number | undefined;
 };
 
@@ -32,7 +37,39 @@ const defaultName = (person: Person) => {
   return typeof name === "string" ? name : person.id;
 };
 
-/** Looks up relatives quickly in a tree of any size. */
+/**
+ * Indexes a tree's people, parent links and unions so relatives are found quickly in a tree of any
+ * size. Links to unknown ids, to oneself and repeated links are skipped quietly; `validateTree`
+ * reports them. Your own person objects are kept as they are and come back from `relate`.
+ *
+ * @param input The people, `[parentId, childId]` links and unions.
+ * @param options How to write names and read birth years; see `TreeOptions`.
+ * @returns The lookups `relate` and `relateAll` need.
+ *
+ * @example
+ * ```ts
+ * import { createTree, relate } from "@enikakis/kinship";
+ *
+ * const tree = createTree({
+ *   people: [
+ *     { id: "maria", name: "Maria", sex: "female" },
+ *     { id: "dafni", name: "Dafni", sex: "female" },
+ *     { id: "petros", name: "Petros", sex: "male" },
+ *     { id: "anna", name: "Anna", sex: "female" },
+ *     { id: "kostas", name: "Kostas", sex: "male" },
+ *   ],
+ *   parents: [
+ *     ["maria", "dafni"],
+ *     ["maria", "petros"],
+ *     ["dafni", "anna"],
+ *     ["petros", "kostas"],
+ *   ],
+ *   unions: [],
+ * });
+ *
+ * relate(tree, "anna", "kostas")?.main.kind; // "cousin"
+ * ```
+ */
 export function createTree<P extends Person>(input: TreeInput<P>, options: TreeOptions<P> = {}): Tree<P> {
   const name = options.name ?? defaultName;
   const born = options.born ?? (() => undefined);

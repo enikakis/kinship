@@ -39,7 +39,26 @@ export type RelationText = {
   couple: boolean;
 };
 
-/** A relation (see `relate`) in words, in `locale`. */
+/**
+ * A relation (see `relate`) in words, in `locale`. Names are in-sentence forms: capitalise them
+ * for display.
+ *
+ * @param tree The tree the relation came from; it supplies the names.
+ * @param relation What `relate` (or an entry of `relateAll`, with `others: []`) returned.
+ * @param locale A language, e.g. `en` from "@enikakis/kinship/locales/en".
+ *
+ * @example
+ * ```ts
+ * import { el } from "@enikakis/kinship/locales/el";
+ * import { en } from "@enikakis/kinship/locales/en";
+ *
+ * // `tree` as in `createTree`.
+ * const relation = relate(tree, "anna", "kostas")!;
+ * describeRelation(tree, relation, en).main.summary; // "first cousin"
+ * describeRelation(tree, relation, en).main.degree; // "Related by blood in the collateral line, 4th degree"
+ * describeRelation(tree, relation, el).main.summary; // "πρώτος εξάδελφος"
+ * ```
+ */
 export function describeRelation<P extends Person>(
   tree: Tree<P>,
   relation: Relation<P>,

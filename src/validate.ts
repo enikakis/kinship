@@ -20,6 +20,23 @@ export type TreeValidation = { ok: boolean; issues: TreeIssue[] };
  * link), then cycles. A cycle is reported once, with its people in order: each id is a parent of the
  * next, and the last is a parent of the first. Overlapping cycles in one component may come out as
  * more than one issue, depending on search order. Never throws.
+ *
+ * @param input The same raw input you would give `createTree`.
+ *
+ * @example
+ * ```ts
+ * const { ok, issues } = validateTree({
+ *   people: [{ id: "a", sex: "female" }],
+ *   parents: [
+ *     ["a", "a"],
+ *     ["x", "a"],
+ *   ],
+ *   unions: [],
+ * });
+ * ok; // false
+ * issues.map((issue) => issue.message);
+ * // ['"a" is recorded as their own parent.', 'A parent link names unknown id "x".']
+ * ```
  */
 export function validateTree<P extends Person>(input: TreeInput<P>): TreeValidation {
   const issues: TreeIssue[] = [];

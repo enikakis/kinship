@@ -128,9 +128,12 @@ export function nameQuery(moves: readonly Move[], sexes: readonly Sex[], halfSib
   return { kind, moves, blood: BLOOD.test(bloodPart) ? bloodOf(bloodPart) : null, sexes };
 }
 
+/** What a chain makes the last person to the first, beyond its moves: its kind, generations, side and branch. */
 export type Classification = {
   kind: Kind;
+  /** The generations up and down of a blood tie; null when the chain is not blood. */
   blood: Blood | null;
+  /** The degree and the generations removed of a cousin, e.g. 2 and 1 for a second cousin once removed. */
   cousin: { degree: number; removed: number } | null;
   /** On which parent's side, when the chain starts by going up to a parent of known sex. */
   side: "paternal" | "maternal" | null;

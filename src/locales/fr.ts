@@ -63,6 +63,7 @@ const LINES = { direct: "directe", collateral: "collatérale" } as const satisfi
 /** 1er, 2e, 3e… */
 const ordinal = (n: number) => (n === 1 ? "1er" : `${n}e`);
 
+/** French. Experimental: awaiting a native speaker's review (see docs/locales/fr.md). */
 export const fr: KinshipLocale = {
   code: "fr",
 

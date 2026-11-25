@@ -77,7 +77,22 @@ function geometry(node: { row: number; lane: number }) {
  * `toSvg` knows no language. For locale text, pass `title: text.main.summary` and a `description`
  * built from `text.main.chain`, where `text = describeRelation(tree, relation, locale)`.
  *
+ * @param diagram The `diagram` of a relationship, e.g. `relation.main.diagram`.
+ * @param options Names, roles and accessibility text; see `SvgOptions`.
+ * @returns An `<svg>` element as a string.
  * @throws RangeError when the diagram has no people.
+ *
+ * @example
+ * ```ts
+ * import { toSvg } from "@enikakis/kinship/svg";
+ *
+ * // `tree` and `relation` as in `relate`.
+ * const roles = describeRelation(tree, relation, en).main.roles;
+ * const svg = toSvg(relation.main.diagram, { roles });
+ * // <svg class="kinship" … role="img" …>
+ * // <title …>Anna — Kostas</title>
+ * // <desc …>Anna (first cousin) → Dafni → Maria → Petros → Kostas (first cousin)</desc> …
+ * ```
  */
 export function toSvg<P extends Person>(diagram: ConnectionDiagram<P>, options: SvgOptions<P> = {}): string {
   if (diagram.nodes.length === 0) throw new RangeError("toSvg: the diagram has no people");

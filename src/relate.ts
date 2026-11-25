@@ -24,6 +24,7 @@ export type OtherTie<P extends Person> = Relationship<P> & {
   commonAncestors: P[];
 };
 
+/** How two people are related: the main relationship, the other blood ties, and whether they are a couple. */
 export type Relation<P extends Person> = {
   /**
    * The relationship to name first. Blood comes first, except that a named relation by marriage
@@ -42,6 +43,22 @@ export type Relation<P extends Person> = {
  * data, with the caller's own person objects. Null when they are not connected (or are the same
  * person). `describeRelation` puts it into words. `relate(tree, b, a)` is `relate(tree, a, b)`
  * read backwards: the same relationship, from the other end.
+ *
+ * @param tree A tree made by `createTree`.
+ * @param fromId The id of the first person (the viewer).
+ * @param toId The id of the second person.
+ * @returns The relation, or null for people who are not connected, the same person, or an id that
+ * is not in the tree (use `validateTree` to tell these apart).
+ *
+ * @example
+ * ```ts
+ * // `tree` as in `createTree`: Anna and Kostas are grandchildren of Maria.
+ * const relation = relate(tree, "anna", "kostas");
+ * relation?.main.kind; // "cousin"
+ * relation?.main.cousin; // { degree: 1, removed: 0 }
+ * relation?.main.legalDegree; // { degree: 4, line: "collateral", kind: "blood" }
+ * relate(tree, "anna", "nobody"); // null
+ * ```
  */
 export function relate<P extends Person>(tree: Tree<P>, fromId: string, toId: string): Relation<P> | null {
   const found = findRelationships(tree, fromId, toId);

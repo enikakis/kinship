@@ -88,6 +88,7 @@ const LINES = { direct: "in gerader Linie", collateral: "in der Seitenlinie" } a
   string
 >;
 
+/** German. Experimental: awaiting a native speaker's review (see docs/locales/de.md). */
 export const de: KinshipLocale = {
   code: "de",
 

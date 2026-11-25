@@ -1,6 +1,7 @@
 import { BLOOD, movesKey } from "./chain";
 import type { Move } from "./types";
 
+/** A relationship as the law counts it: the degree, the line, and whether it is by blood or by marriage (affinity). */
 export type LegalDegree = { degree: number; line: "direct" | "collateral"; kind: "blood" | "affinity" };
 
 /**

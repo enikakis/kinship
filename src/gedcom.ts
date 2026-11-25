@@ -48,9 +48,32 @@ const sexOf = (value: string): Sex => (value === "M" ? "male" : value === "F" ? 
  * and it never throws on malformed lines. A `CHIL` that points at a person who is not in the file
  * stays in `parents`; `createTree` skips it.
  *
- * `createTree` reads `name` by default but not `born`, so pass it on:
+ * `createTree` reads `name` by default but not `born`, so pass it on, as in the example.
  *
+ * @param text The file's contents, already decoded to a string.
+ * @returns People, `[parentId, childId]` links and unions, ready for `createTree`.
+ *
+ * @example
  * ```ts
+ * import { createTree } from "@enikakis/kinship";
+ * import { fromGedcom } from "@enikakis/kinship/gedcom";
+ *
+ * const text = [
+ *   "0 @I1@ INDI",
+ *   "1 NAME Anna /Rossi/",
+ *   "1 SEX F",
+ *   "1 BIRT",
+ *   "2 DATE 12 MAR 1950",
+ *   "0 @I2@ INDI",
+ *   "1 NAME Basil /Rossi/",
+ *   "0 @F1@ FAM",
+ *   "1 HUSB @I2@",
+ *   "1 WIFE @I1@",
+ * ].join("\n");
+ * fromGedcom(text);
+ * // { people: [{ id: "I1", sex: "female", name: "Anna Rossi", born: 1950 },
+ * //            { id: "I2", sex: "unknown", name: "Basil Rossi" }],
+ * //   parents: [], unions: [{ a: "I2", b: "I1" }] }
  * const tree = createTree(fromGedcom(text), { born: (p) => p.born });
  * ```
  */

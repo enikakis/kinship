@@ -87,6 +87,7 @@ function gradeOrdinal(n: number): string {
   return `${n}${shortened ? ".er" : ".º"}`;
 }
 
+/** Spanish. Experimental: awaiting a native speaker's review (see docs/locales/es.md). */
 export const es: KinshipLocale = {
   code: "es",
 

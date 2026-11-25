@@ -44,6 +44,7 @@ const ORDINALS_OF = {
 const bySex = (sex: Sex, male: string, female: string) =>
   sex === "male" ? male : sex === "female" ? female : `${male}/${female}`;
 
+/** Greek («ελληνικά»): names with gender and the genitive case, and the legal degree of the Civil Code. */
 export const el: KinshipLocale = {
   code: "el",
 

@@ -1,6 +1,6 @@
 // The demo's pure logic: no DOM, so Vitest can test it directly. Imports from the library are
 // types only.
-import type { Person, RelationEntry, RelationToEveryone } from "@enikakis/kinship";
+import type { Person, RelationEntry, RelationToEveryone } from "@enikakis99/kinship";
 
 /** The languages on offer, in the order of the switch. */
 export const LANGUAGES = [

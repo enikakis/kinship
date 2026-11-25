@@ -7,14 +7,14 @@ import {
   type Tree,
   type TreeIssue,
   validateTree,
-} from "@enikakis/kinship";
-import { fromGedcom, type GedcomPerson } from "@enikakis/kinship/gedcom";
-import { de } from "@enikakis/kinship/locales/de";
-import { el } from "@enikakis/kinship/locales/el";
-import { en } from "@enikakis/kinship/locales/en";
-import { es } from "@enikakis/kinship/locales/es";
-import { fr } from "@enikakis/kinship/locales/fr";
-import { toSvg } from "@enikakis/kinship/svg";
+} from "@enikakis99/kinship";
+import { fromGedcom, type GedcomPerson } from "@enikakis99/kinship/gedcom";
+import { de } from "@enikakis99/kinship/locales/de";
+import { el } from "@enikakis99/kinship/locales/el";
+import { en } from "@enikakis99/kinship/locales/en";
+import { es } from "@enikakis99/kinship/locales/es";
+import { fr } from "@enikakis99/kinship/locales/fr";
+import { toSvg } from "@enikakis99/kinship/svg";
 import sample from "./family.ged?raw";
 import {
   capitalise,

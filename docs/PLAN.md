@@ -2,7 +2,7 @@
 
 Design: [docs/design.md](design.md)
 
-Goal: publish `@enikakis/kinship` as a polished, zero-dependency TypeScript library that works
+Goal: publish `@enikakis99/kinship` as a polished, zero-dependency TypeScript library that works
 as a portfolio showcase (clear API, strong tests, docs, live demo, CI, verified npm provenance),
 then make `vrisies-history-hub` use it instead of its own copy.
 
@@ -29,7 +29,7 @@ See "Decided design" in the design doc above and its core-API implementation pla
       `{ people: P[]; parents: [parentId, childId][]; unions: { a: string; b: string }[] }`.
 - [x] **Structured result:** `relate(tree, from, to)` → `{ main, others, couple }` or null; the
       built shape is in the design doc, "Decided design → Result".
-- [x] **Languages as separate, tree-shakeable modules:** `@enikakis/kinship/locales/el` and
+- [x] **Languages as separate, tree-shakeable modules:** `@enikakis99/kinship/locales/el` and
       `/locales/en`, each implementing one `KinshipLocale` interface (names, ordinals, phrases).
       The locale modules exist (`src/locales/el.ts`, `en.ts`); the package subpath exports come
       with the build (Step 6).
@@ -167,7 +167,7 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
 
 ## Later (not v1)
 
-- `@enikakis/kinship-react`: the diagram + relation finder UI components from the site.
+- `@enikakis99/kinship-react`: the diagram + relation finder UI components from the site.
 - The pedigree/descendants layout (`layout.ts` in the site).
 - More locales via contributions.
 - A tie rule that doesn't depend on direction, so relateAll needs one search for everyone (today people before fromId get their own search).

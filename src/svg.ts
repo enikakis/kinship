@@ -84,7 +84,7 @@ function geometry(node: { row: number; lane: number }) {
  *
  * @example
  * ```ts
- * import { toSvg } from "@enikakis/kinship/svg";
+ * import { toSvg } from "@enikakis99/kinship/svg";
  *
  * // `tree` and `relation` as in `relate`.
  * const roles = describeRelation(tree, relation, en).main.roles;

@@ -1,4 +1,4 @@
-# `@enikakis/kinship` v1: design
+# `@enikakis99/kinship` v1: design
 
 Date: 2026-11-24 · Status: accepted, and kept in step with the code as it is built. The roadmap
 is `docs/PLAN.md`.
@@ -98,10 +98,10 @@ One package now, with subpath exports (each tree-shakeable, `"sideEffects": fals
 
 | Entry | Contents |
 |---|---|
-| `@enikakis/kinship` | `createTree`, `relate`, `relateAll`, `describeRelation`, `validateTree`, types |
-| `@enikakis/kinship/locales/el` (and `en`, `fr`, `de`, `es`) | one `KinshipLocale` each |
-| `@enikakis/kinship/gedcom` | `fromGedcom(text)` |
-| `@enikakis/kinship/svg` | `toSvg(diagram, options)` |
+| `@enikakis99/kinship` | `createTree`, `relate`, `relateAll`, `describeRelation`, `validateTree`, types |
+| `@enikakis99/kinship/locales/el` (and `en`, `fr`, `de`, `es`) | one `KinshipLocale` each |
+| `@enikakis99/kinship/gedcom` | `fromGedcom(text)` |
+| `@enikakis99/kinship/svg` | `toSvg(diagram, options)` |
 
 When the tree package starts, the repo becomes a two-package workspace; not before.
 

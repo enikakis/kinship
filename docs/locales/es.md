@@ -83,7 +83,7 @@ Besides the research's open questions (§10, below):
 
 ---
 
-# Spanish (es) kinship vocabulary: research for `@enikakis/kinship`
+# Spanish (es) kinship vocabulary: research for `@enikakis99/kinship`
 
 Scope: pan-Hispanic standard Spanish. Spain-vs-Latin-America differences are flagged **[ES]** / **[AM]**.
 

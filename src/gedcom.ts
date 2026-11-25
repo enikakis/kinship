@@ -55,8 +55,8 @@ const sexOf = (value: string): Sex => (value === "M" ? "male" : value === "F" ? 
  *
  * @example
  * ```ts
- * import { createTree } from "@enikakis/kinship";
- * import { fromGedcom } from "@enikakis/kinship/gedcom";
+ * import { createTree } from "@enikakis99/kinship";
+ * import { fromGedcom } from "@enikakis99/kinship/gedcom";
  *
  * const text = [
  *   "0 @I1@ INDI",

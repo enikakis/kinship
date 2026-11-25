@@ -33,17 +33,17 @@ function check(label, kinship, locales, svg, gedcom) {
 }
 
 const esm = {};
-for (const name of localeNames) esm[name] = (await import(`@enikakis/kinship/locales/${name}`))[name];
+for (const name of localeNames) esm[name] = (await import(`@enikakis99/kinship/locales/${name}`))[name];
 check(
   "esm",
-  await import("@enikakis/kinship"),
+  await import("@enikakis99/kinship"),
   esm,
-  await import("@enikakis/kinship/svg"),
-  await import("@enikakis/kinship/gedcom"),
+  await import("@enikakis99/kinship/svg"),
+  await import("@enikakis99/kinship/gedcom"),
 );
 
 const cjs = {};
-for (const name of localeNames) cjs[name] = require(`@enikakis/kinship/locales/${name}`)[name];
-check("cjs", require("@enikakis/kinship"), cjs, require("@enikakis/kinship/svg"), require("@enikakis/kinship/gedcom"));
+for (const name of localeNames) cjs[name] = require(`@enikakis99/kinship/locales/${name}`)[name];
+check("cjs", require("@enikakis99/kinship"), cjs, require("@enikakis99/kinship/svg"), require("@enikakis99/kinship/gedcom"));
 
 console.log("dist smoke test passed");

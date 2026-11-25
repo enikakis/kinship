@@ -45,12 +45,12 @@ export type RelationText = {
  *
  * @param tree The tree the relation came from; it supplies the names.
  * @param relation What `relate` (or an entry of `relateAll`, with `others: []`) returned.
- * @param locale A language, e.g. `en` from "@enikakis/kinship/locales/en".
+ * @param locale A language, e.g. `en` from "@enikakis99/kinship/locales/en".
  *
  * @example
  * ```ts
- * import { el } from "@enikakis/kinship/locales/el";
- * import { en } from "@enikakis/kinship/locales/en";
+ * import { el } from "@enikakis99/kinship/locales/el";
+ * import { en } from "@enikakis99/kinship/locales/en";
  *
  * // `tree` as in `createTree`.
  * const relation = relate(tree, "anna", "kostas")!;

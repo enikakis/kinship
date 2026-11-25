@@ -1,4 +1,4 @@
-# Contributing to @enikakis/kinship
+# Contributing to @enikakis99/kinship
 
 Thank you for helping. The most useful contributions are languages and corrections from native
 speakers: kinship terms are the one part of this library a program cannot check for itself.

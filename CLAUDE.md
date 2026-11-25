@@ -1,4 +1,4 @@
-# @enikakis/kinship
+# @enikakis99/kinship
 
 A TypeScript library that finds how two people in a family tree are related and names the
 relationship in Greek or English (French, German and Spanish experimental): «θεία», «πρώτος
@@ -68,7 +68,7 @@ only). No runtime dependencies. Keep it that way.
   works from 360px), `main.ts` (the DOM: pickers, language switch, result, everyone list, GEDCOM
   file input), `logic.ts` (pure: URL hash, picker labels, grouping of `relateAll`; tested in
   `logic.test.ts`), `family.ged` (the invented Karydas family, 38 people). `vite.config.ts` aliases
-  `@enikakis/kinship/*` to `src/`; `demo/tsconfig.json` holds the DOM types, apart from the library.
+  `@enikakis99/kinship/*` to `src/`; `demo/tsconfig.json` holds the DOM types, apart from the library.
 - `src/*.test.ts`, `src/locales/*.test.ts`: behaviour spec: data next to each module, words
   per locale.
 - Git history: the first commit holds the four original files (only the example names changed to

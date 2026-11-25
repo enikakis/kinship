@@ -6,10 +6,10 @@
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "types": ["vite/client"],
     "paths": {
-      "@enikakis/kinship": ["../src/index.ts"],
-      "@enikakis/kinship/svg": ["../src/svg.ts"],
-      "@enikakis/kinship/gedcom": ["../src/gedcom.ts"],
-      "@enikakis/kinship/locales/*": ["../src/locales/*.ts"]
+      "@enikakis99/kinship": ["../src/index.ts"],
+      "@enikakis99/kinship/svg": ["../src/svg.ts"],
+      "@enikakis99/kinship/gedcom": ["../src/gedcom.ts"],
+      "@enikakis99/kinship/locales/*": ["../src/locales/*.ts"]
     }
   },
   "include": ["."],

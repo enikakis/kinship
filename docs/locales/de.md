@@ -85,7 +85,7 @@ Besides the research's open questions (§10, below):
 
 ---
 
-# German (de) kinship vocabulary — research for `@enikakis/kinship`
+# German (de) kinship vocabulary — research for `@enikakis99/kinship`
 
 Target: Standard German as written in Germany (de-DE). Austria/Switzerland notes are in §10.
 Researched 2026-11-25. Confidence: **high** = dictionary or statute checked directly; **medium** = encyclopedia or genealogy guide checked directly, or standard usage I'm sure of but didn't fetch; **low** = conventions compete or the evidence is thin.

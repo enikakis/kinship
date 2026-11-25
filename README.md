@@ -1,4 +1,4 @@
-# @enikakis/kinship
+# @enikakis99/kinship
 
 Name how two people in a family tree are related, in Greek and English, with French, German and
 Spanish experimental.
@@ -16,7 +16,7 @@ legal degree of kinship. Zero runtime dependencies, fully typed, ESM and CommonJ
 ## Install
 
 ```sh
-npm install @enikakis/kinship
+npm install @enikakis99/kinship
 ```
 
 Node 22.18 or later, or any modern browser. Each language is its own entry point, so a bundle
@@ -28,9 +28,9 @@ about 12.1 kB.
 ## In ten seconds
 
 ```ts
-import { createTree, describeRelation, relate } from "@enikakis/kinship";
-import { el } from "@enikakis/kinship/locales/el";
-import { en } from "@enikakis/kinship/locales/en";
+import { createTree, describeRelation, relate } from "@enikakis99/kinship";
+import { el } from "@enikakis99/kinship/locales/el";
+import { en } from "@enikakis99/kinship/locales/en";
 
 const tree = createTree({
   people: [
@@ -143,11 +143,11 @@ everyday name (a cousin's wife's brother, an uncle by marriage's mother) gets a 
 
 | Language | Entry point | Status |
 |---|---|---|
-| Greek (el) | `@enikakis/kinship/locales/el` | stable |
-| English (en) | `@enikakis/kinship/locales/en` | stable |
-| French (fr) | `@enikakis/kinship/locales/fr` | \*experimental: [term table](docs/locales/fr.md) |
-| German (de) | `@enikakis/kinship/locales/de` | \*experimental: [term table](docs/locales/de.md) |
-| Spanish (es) | `@enikakis/kinship/locales/es` | \*experimental: [term table](docs/locales/es.md) |
+| Greek (el) | `@enikakis99/kinship/locales/el` | stable |
+| English (en) | `@enikakis99/kinship/locales/en` | stable |
+| French (fr) | `@enikakis99/kinship/locales/fr` | \*experimental: [term table](docs/locales/fr.md) |
+| German (de) | `@enikakis99/kinship/locales/de` | \*experimental: [term table](docs/locales/de.md) |
+| Spanish (es) | `@enikakis99/kinship/locales/es` | \*experimental: [term table](docs/locales/es.md) |
 
 \*Experimental languages are researched from dictionaries and statutes, with every term sourced in
 its term table, but no native speaker has reviewed them yet. If you speak one,
@@ -288,7 +288,7 @@ search from the person serves everyone listed after them in `people`. Other bloo
 pair: use `relate` for those.
 
 ```ts
-import { relateAll } from "@enikakis/kinship";
+import { relateAll } from "@enikakis99/kinship";
 
 for (const [id, entry] of relateAll(tree, "anna")) {
   const text = describeRelation(tree, { ...entry, others: [] }, el);
@@ -310,7 +310,7 @@ lefteris   θείος (από γάμο)
 ### `toSvg(diagram, options)`: the chain as an SVG
 
 ```ts
-import { toSvg } from "@enikakis/kinship/svg";
+import { toSvg } from "@enikakis99/kinship/svg";
 
 const relation = relate(tree, "anna", "lefteris")!;
 const text = describeRelation(tree, relation, en);
@@ -336,8 +336,8 @@ would rather draw it yourself.
 ### `fromGedcom(text)`: read a GEDCOM file
 
 ```ts
-import { createTree } from "@enikakis/kinship";
-import { fromGedcom } from "@enikakis/kinship/gedcom";
+import { createTree } from "@enikakis99/kinship";
+import { fromGedcom } from "@enikakis99/kinship/gedcom";
 
 const input = fromGedcom(text); // the file's contents, already decoded to a string
 const tree = createTree(input, { born: (person) => person.born });
@@ -393,7 +393,7 @@ year, and each family's partners and children. Everything else is ignored, and i
 why:
 
 ```ts
-import { validateTree } from "@enikakis/kinship";
+import { validateTree } from "@enikakis99/kinship";
 
 validateTree({
   people: [

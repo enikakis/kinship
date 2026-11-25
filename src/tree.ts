@@ -48,7 +48,7 @@ const defaultName = (person: Person) => {
  *
  * @example
  * ```ts
- * import { createTree, relate } from "@enikakis/kinship";
+ * import { createTree, relate } from "@enikakis99/kinship";
  *
  * const tree = createTree({
  *   people: [

@@ -86,7 +86,7 @@ form (call 3), and the erratum above.
 
 ---
 
-# French (fr) kinship vocabulary — research for `@enikakis/kinship`
+# French (fr) kinship vocabulary — research for `@enikakis99/kinship`
 
 Scope: metropolitan standard French. Québec usage noted where the OQLF is the source. Every term has a source. Confidence means how sure I am that the term is right *and* that a general reader understands it. No native-speaker review yet (see §10).
 

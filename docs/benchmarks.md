@@ -37,6 +37,11 @@ Mean time per run, at each step of the speed-ups (same machine, same day):
 
 The last row is not part of `npm run bench`: it was timed once per version in a separate run.
 
+Each case has few samples (5, or 3 for `relateAll`) and the tables do not record the relative margin
+of error (vitest prints it), so differences of a few percent are noise. The lower `describeRelation`
+numbers after the speed-ups are run-order noise: its code did not change, and in the baseline run it
+came right after the old slow `relate` case.
+
 ### After the heap and spouse index
 
 `createTree` builds each person's spouse list once (it used to filter every union on each lookup),
@@ -86,3 +91,20 @@ after, in a separate run on the 1,000-person tree:
 
 On the 10,000-person tree one call for `p5000` (9,855 relatives) took 18.5 s before and 9.3 s
 after, in the same run; 4,894 of its relatives come before it and still need a search each.
+
+## Final summary
+
+From the baseline to the final code. The final column is a fresh `npm run bench` run (2026-11-25,
+same machine), so it differs a little from the "After the single relateAll search" column. Five
+samples per case (3 for `relateAll`), so read small differences as noise.
+
+| Case | Tree | Baseline | Final | Speed-up |
+| --- | --- | ---: | ---: | ---: |
+| `createTree` | 10,000 people | 3.01 ms | 3.11 ms | unchanged (noise) |
+| `relate`, 200 pairs | 10,000 people | 5,040 ms | 202 ms | 25x |
+| `describeRelation` (el), 198 relations | 10,000 people | 0.98 ms | 0.46 ms | noise, not a real gain |
+| `relateAll`, 3 people | 1,000 people | 1,704 ms | 151 ms | 11x |
+| `relateAll(tree, "p5000")`, one call (one-off) | 10,000 people | 540 s | 9.3 s (after the single relateAll search) | 58x |
+
+Raw final run: createTree 321.77 ops/s (mean 3.1078 ms); relate 4.9417 ops/s (202.36 ms);
+describeRelation 2,194.63 ops/s (0.4557 ms); relateAll 6.6100 ops/s (151.29 ms).

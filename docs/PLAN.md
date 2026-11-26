@@ -107,6 +107,8 @@ See "Decided design" in the design doc above and its core-API implementation pla
       (`/gedcom`), benchmark numbers, "add a language" guide, live demo link, badges (CI, npm,
       size). Note that names are in-sentence forms; capitalise the first letter for display.
 - [x] TSDoc on every public export.
+- [x] English first in the README, with glosses for the Greek; a screenshot of the demo on top;
+      every output the README shows checked by `src/readme.test.ts`.
 - [ ] Optional: a TypeDoc site.
 - [x] `CONTRIBUTING.md` focused on adding locales (good first issues).
 
@@ -169,8 +171,8 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
 - [ ] Before 0.1.0: decide whether to align the names `path` and `chain`.
 - [ ] `ancestorPaths` keeps a full line per ancestor (O(depth²) memory): a crafted
       200,000-generation chain exhausts memory. Store parent pointers instead.
-- [ ] `createTree` in plain JavaScript: a missing `parents` or `unions` throws "is not iterable".
-      Treat a missing list as empty (or throw a clear message); found by installing 0.1.0.
+- [x] `createTree` in plain JavaScript: a missing `parents` or `unions` throws "is not iterable".
+      Both lists are now optional and default to empty (0.1.1); found by installing 0.1.0.
 
 ## Later (not v1)
 

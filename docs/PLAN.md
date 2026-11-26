@@ -144,6 +144,14 @@ See "Decided design" in the design doc above and its core-API implementation pla
 - [ ] Replace `vrisies-history-hub/src/features/family-tree/kinship.ts` with the package; keep
       the site's behaviour identical (its own tests and e2e `family-tree.spec.ts` must pass).
 
+## Step 12: GEDCOM details for the family tree (0.3.0)
+
+For `@enikakis99/family-tree` (design in that repo, `docs/design.md`), whose demo reads a GEDCOM file.
+
+- [x] `fromGedcom` keeps `given` and `surname` (slashes, or `GIVN` / `SURN`), `died`, `birthPlace`,
+      `deathPlace`, and on unions `married` and `place`; new types `GedcomUnion`, `GedcomInput`.
+- [ ] Released as 0.3.0 from CI, the workflow creating the tag and the GitHub Release.
+
 ## Follow-ups from the core API reviews (2026-11-24)
 
 Smaller findings from the reviews of the core API work, each to be taken up in the step named.
@@ -179,7 +187,6 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
 
 ## Later (not v1)
 
-- `@enikakis99/kinship-react`: the diagram + relation finder UI components from the site.
-- The pedigree/descendants layout (`layout.ts` in the site).
+- The family tree view from the site: its own package and repo, `@enikakis99/family-tree` (planned 2026-11-26).
 - More locales via contributions.
 - A tie rule that doesn't depend on direction, so relateAll needs one search for everyone (today people before fromId get their own search).

@@ -34,7 +34,7 @@ import {
 
 const LOCALES: Record<LanguageCode, KinshipLocale> = { el, en, fr, de, es };
 
-/** Lydia and Dimos: he is her uncle by marriage and her father's first cousin. */
+/** Lydia and Dimos: he is her uncle by marriage and her father's second cousin. */
 const SAMPLE_PAIR = { from: "I29", to: "I14" };
 
 /** A loaded GEDCOM file, ready to query. */

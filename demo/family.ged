@@ -195,11 +195,30 @@
 1 SEX F
 1 BIRT
 2 DATE 1997
+0 @I39@ INDI
+1 NAME Lykourgos /Karydas/
+1 SEX M
+1 BIRT
+2 DATE ABT 1855
+0 @I40@ INDI
+1 NAME Evanthia /Sgourou/
+1 SEX F
+1 BIRT
+2 DATE ABT 1860
+0 @I41@ INDI
+1 NAME Periklis /Karydas/
+1 SEX M
+1 BIRT
+2 DATE 1887
+0 @I42@ INDI
+1 NAME Ourania /Mylona/
+1 SEX F
+1 BIRT
+2 DATE 1891
 0 @F1@ FAM
 1 HUSB @I1@
 1 WIFE @I2@
 1 CHIL @I5@
-1 CHIL @I6@
 1 CHIL @I7@
 1 MARR
 2 DATE 1907
@@ -250,7 +269,7 @@
 1 CHIL @I27@
 1 MARR
 2 DATE 1960
-1 NOTE Dimos and Rhea are first cousins.
+1 NOTE Dimos and Rhea are second cousins: their grandfathers Anastasios and Periklis were brothers.
 0 @F9@ FAM
 1 HUSB @I21@
 1 WIFE @I15@
@@ -295,4 +314,17 @@
 1 CHIL @I38@
 1 MARR
 2 DATE 1995
+0 @F16@ FAM
+1 HUSB @I39@
+1 WIFE @I40@
+1 CHIL @I1@
+1 CHIL @I41@
+1 MARR
+2 DATE 1882
+0 @F17@ FAM
+1 HUSB @I41@
+1 WIFE @I42@
+1 CHIL @I6@
+1 MARR
+2 DATE 1910
 0 TRLR

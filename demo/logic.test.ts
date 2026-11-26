@@ -94,21 +94,23 @@ describe("everyone, as seen from one person", () => {
 
   it("groups by kind, closest first, then in the order of the tree", () => {
     expect(groups.map((group) => group.key)).toEqual(["ancestors", "descendants", "blood", "marriage", "unnamed"]);
-    expect(ids("ancestors")).toEqual(["I18", "I22", "I6", "I11", "I1", "I2"]);
+    expect(ids("ancestors")).toEqual(["I18", "I22", "I6", "I11", "I41", "I42", "I39", "I40"]);
     expect(ids("descendants")).toEqual(["I38"]);
-    // Brother, aunt; great-uncles and first cousins (4 steps); first cousins once removed (5);
-    // second cousins (6).
+    // Brother, aunt; first cousins (4 steps); a great-great-uncle and first cousins once removed (5);
+    // first cousins twice removed (6); second cousins once removed (7); third cousins (8).
     expect(ids("blood")).toEqual([
       ...["I30", "I17"],
-      ...["I5", "I7", "I26", "I27"],
-      ...["I15", "I16", "I19", "I36", "I37"],
+      ...["I26", "I27"],
+      ...["I1", "I36", "I37"],
+      ...["I5", "I7"],
+      ...["I15", "I16", "I19"],
       ...["I28", "I31", "I32"],
     ]);
-    // Husband; uncle by marriage (Dimos, also her father's first cousin); then spouses of relatives.
-    expect(ids("marriage")).toEqual(["I35", "I14", "I10", "I12", "I34", "I21", "I23", "I24"]);
+    // Husband; uncle by marriage (Dimos, also her father's second cousin); then spouses of relatives.
+    expect(ids("marriage")).toEqual(["I35", "I14", "I34", "I12", "I24"]);
     // Joined through marriage with no everyday name: one marriage in the middle of the chain
     // (I8, her uncle by marriage's mother) or several.
-    expect(ids("unnamed")).toEqual(["I8", "I3", "I4", "I9", "I13", "I20", "I25", "I33"]);
+    expect(ids("unnamed")).toEqual(["I8", "I2", "I3", "I4", "I10", "I9", "I21", "I23", "I13", "I20", "I25", "I33"]);
   });
 
   it("puts everyone connected in exactly one group", () => {
@@ -126,9 +128,9 @@ describe("everyone, as seen from one person", () => {
 describe("the sample family", () => {
   const input = fromGedcom(family);
 
-  it("is a valid tree of 38 invented people", () => {
+  it("is a valid tree of 42 invented people", () => {
     expect(validateTree(input)).toEqual({ ok: true, issues: [] });
-    expect(input.people).toHaveLength(38);
+    expect(input.people).toHaveLength(42);
   });
 });
 

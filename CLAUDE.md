@@ -73,7 +73,7 @@ only). No runtime dependencies. Keep it that way.
 - `demo/`: the live demo, a Vite page with no framework. `index.html`, `style.css` (light and dark,
   works from 360px), `main.ts` (the DOM: pickers, language switch, result, everyone list, GEDCOM
   file input), `logic.ts` (pure: URL hash, picker labels, grouping of `relateAll`; tested in
-  `logic.test.ts`), `family.ged` (the invented Karydas family, 38 people). `vite.config.ts` aliases
+  `logic.test.ts`), `family.ged` (the invented Karydas family, 42 people). `vite.config.ts` aliases
   `@enikakis99/kinship/*` to `src/`; `demo/tsconfig.json` holds the DOM types, apart from the library.
 - `src/*.test.ts`, `src/locales/*.test.ts`: behaviour spec: data next to each module, words
   per locale.

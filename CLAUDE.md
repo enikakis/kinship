@@ -69,6 +69,8 @@ only). No runtime dependencies. Keep it that way.
 - `src/testing/reference-path.ts`: the old path search, kept verbatim as the reference for differential tests.
 - `src/testing/sample-pairs.ts`: `samplePairs(input, count, seed)`: a fixed list of pairs for the benchmark and path tests.
 - `src/testing/describing.ts`: `describing(locale)` helpers shared by the locale tests.
+- `src/testing/readme-family.ts` and `src/readme.test.ts`: the README's example family, and every
+  output the README shows; update both together.
 - `src/bench/relate.bench.ts`: the benchmarks (`npm run bench`); not part of `npm test`.
 - `demo/`: the live demo, a Vite page with no framework. `index.html`, `style.css` (light and dark,
   works from 360px), `main.ts` (the DOM: pickers, language switch, result, everyone list, GEDCOM

@@ -18,7 +18,8 @@ const fam = (n: number, partners: string[], children: string[], married?: number
 ];
 
 /**
- * An invented family as a GEDCOM 5.5.1 file, for tests: byte order mark, CRLF line ends, notes, a
+ * An invented family as a GEDCOM 5.5.1 file, for tests (I1 has a death and places of birth and
+ * death): byte order mark, CRLF line ends, notes, a
  * source, CONC/CONT, a remarriage (I7, I12), a family with one partner (F6), a person with no name
  * (I20).
  *
@@ -59,12 +60,16 @@ export const sampleGedcom: string =
     "1 SEX M",
     "1 BIRT",
     "2 DATE 1 JAN 1900",
+    "2 PLAC Patra",
     "2 SOUR @S1@",
     "3 PAGE 12",
     "1 NOTE Farmer. A long note that is",
     "2 CONC  split in two",
     "2 CONT and goes on a second line.",
     "1 NOTE @N1@",
+    "1 DEAT",
+    "2 DATE 1975",
+    "2 PLAC Athens",
     ...indi(2, "Sofia /Markou/", "F", "ABT 1905", 12),
     ...indi(3, "Petros /Ioannou/", "M", "12 MAR 1930", 31),
     ...indi(4, "Maria /Ioannou/", "F", "1933", 31),

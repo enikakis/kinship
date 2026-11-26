@@ -21,6 +21,77 @@ it("uses the first usable NAME only, and the id when there is none", () => {
   expect(one(["1 NAME //"]).name).toBe("I1");
 });
 
+describe("name parts", () => {
+  it("splits the name at the slashes", () => {
+    expect(one(["1 NAME Maria /Ioannou/"])).toMatchObject({
+      name: "Maria Ioannou",
+      given: "Maria",
+      surname: "Ioannou",
+    });
+    expect(one(["1 NAME  Ioannis  Petros /Ioannou/ Jr"])).toMatchObject({
+      given: "Ioannis Petros",
+      surname: "Ioannou",
+    });
+    expect(one(["1 NAME Αναστάσιος /Καρύδας/"])).toMatchObject({ given: "Αναστάσιος", surname: "Καρύδας" });
+  });
+
+  it("leaves out an empty part", () => {
+    const surnameOnly = one(["1 NAME /Ioannou/"]);
+    expect(surnameOnly.surname).toBe("Ioannou");
+    expect(surnameOnly).not.toHaveProperty("given");
+    const givenOnly = one(["1 NAME Maria"]);
+    expect(givenOnly.given).toBe("Maria");
+    expect(givenOnly).not.toHaveProperty("surname");
+    const nameless = one(["1 SEX F"]);
+    expect(nameless).not.toHaveProperty("given");
+    expect(nameless).not.toHaveProperty("surname");
+  });
+
+  it("reads @@ in a part as a single @", () => {
+    expect(one(["1 NAME A@@B /C/"]).given).toBe("A@B");
+  });
+
+  it("prefers GIVN and SURN under the same NAME, and keeps name as written", () => {
+    expect(one(["1 NAME Maria /Ioannou/", "2 GIVN Maria Eleni", "2 SURN Ioannou-Papa"])).toMatchObject({
+      name: "Maria Ioannou",
+      given: "Maria Eleni",
+      surname: "Ioannou-Papa",
+    });
+  });
+
+  it("ignores GIVN and SURN under another NAME, and CONC under the used one", () => {
+    expect(one(["1 NAME A /B/", "1 NAME C /D/", "2 GIVN X", "2 SURN Y"])).toMatchObject({ given: "A", surname: "B" });
+    expect(one(["1 NAME //", "2 GIVN X", "1 NAME C /D/"])).toMatchObject({ given: "C", surname: "D" });
+    expect(one(["1 NAME A /B/", "2 CONC C"])).toMatchObject({ given: "A", surname: "B" });
+  });
+});
+
+describe("death and places", () => {
+  it("takes the death year from DEAT DATE like the birth year", () => {
+    expect(one(["1 DEAT", "2 DATE 12 MAR 1975"]).died).toBe(1975);
+    expect(one(["1 DEAT", "2 DATE ABT 1975"]).died).toBe(1975);
+    expect(one(["1 DEAT", "2 DATE @#DHEBREW@ 5730"])).not.toHaveProperty("died");
+    expect(one(["1 DEAT Y"])).not.toHaveProperty("died");
+  });
+
+  it("reads only a DATE or PLAC directly under the event", () => {
+    const person = one(["1 DEAT", "2 SOUR @S1@", "3 DATE 1999", "3 PLAC Nowhere", "2 DATE 1975", "2 PLAC Chania"]);
+    expect(person).toMatchObject({ died: 1975, deathPlace: "Chania" });
+    expect(one(["1 BIRT", "2 SOUR @S1@", "3 PLAC Nowhere"])).not.toHaveProperty("birthPlace");
+  });
+
+  it("keeps the places of birth and death as written", () => {
+    const person = one(["1 BIRT", "2 PLAC  Vrises,  Chania, Crete ", "1 DEAT", "2 PLAC Βρύσες"]);
+    expect(person.birthPlace).toBe("Vrises, Chania, Crete");
+    expect(person.deathPlace).toBe("Βρύσες");
+  });
+
+  it("uses the first non-empty PLAC and the first usable DATE", () => {
+    expect(one(["1 BIRT", "2 PLAC", "2 PLAC Chania", "2 PLAC Athens"]).birthPlace).toBe("Chania");
+    expect(one(["1 DEAT", "2 DATE unknown", "2 DATE 1975", "2 DATE 1980"]).died).toBe(1975);
+  });
+});
+
 it("reads SEX as male, female or unknown", () => {
   expect(one(["1 SEX M"]).sex).toBe("male");
   expect(one(["1 SEX F"]).sex).toBe("female");
@@ -139,18 +210,18 @@ it("keeps a CHIL that points at a missing person; createTree skips it", () => {
 it("strips a BOM and accepts \\n, \\r\\n and \\r line ends, blank lines and leading spaces", () => {
   for (const eol of ["\n", "\r\n", "\r"]) {
     const text = `\uFEFF0 HEAD${eol}${eol}  0 @I1@ INDI${eol}   1 NAME A /B/${eol}${eol}0 TRLR${eol}`;
-    expect(fromGedcom(text).people).toEqual([{ id: "I1", sex: "unknown", name: "A B" }]);
+    expect(fromGedcom(text).people).toEqual([{ id: "I1", sex: "unknown", name: "A B", given: "A", surname: "B" }]);
   }
 });
 
 it("ignores unknown tags, CONC and CONT", () => {
   const text = ["0 @I1@ INDI", "1 NAME A /B/", "2 CONC C", "1 NOTE x", "2 CONT y", "1 _CUSTOM z", "1 SEX F"].join("\n");
-  expect(fromGedcom(text).people).toEqual([{ id: "I1", sex: "female", name: "A B" }]);
+  expect(fromGedcom(text).people).toEqual([{ id: "I1", sex: "female", name: "A B", given: "A", surname: "B" }]);
 });
 
 it("reads a GEDCOM 7 file", () => {
   const text = "0 HEAD\n1 GEDC\n2 VERS 7.0\n0 @I1@ INDI\n1 NAME Ann /Lee/\n1 SEX F\n0 TRLR";
-  expect(fromGedcom(text).people).toEqual([{ id: "I1", sex: "female", name: "Ann Lee" }]);
+  expect(fromGedcom(text).people).toEqual([{ id: "I1", sex: "female", name: "Ann Lee", given: "Ann", surname: "Lee" }]);
 });
 
 it("never throws on malformed lines", () => {
@@ -172,7 +243,17 @@ const role = (from: string, to: string) => describeRelation(tree, relate(tree, f
 
 it("reads the sample file", () => {
   expect(tree.byId.size).toBe(20);
-  expect(tree.byId.get("I1")).toEqual({ id: "I1", sex: "male", name: "Nikolaos Ioannou", born: 1900 });
+  expect(tree.byId.get("I1")).toEqual({
+    id: "I1",
+    sex: "male",
+    name: "Nikolaos Ioannou",
+    given: "Nikolaos",
+    surname: "Ioannou",
+    born: 1900,
+    died: 1975,
+    birthPlace: "Patra",
+    deathPlace: "Athens",
+  });
   expect(tree.byId.get("I20")).toEqual({ id: "I20", sex: "unknown", name: "I20" });
 });
 

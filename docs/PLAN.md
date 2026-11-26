@@ -172,9 +172,10 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
       Both lists are now optional and default to empty (0.2.0); found by installing 0.1.0.
 
 - [ ] The release workflow published 0.2.0 but did not push the `v0.2.0` tag or create the GitHub
-      Release (made by hand). Likely `changesets/action@v1` does not read the output of
-      `@changesets/cli` v3. Fix it before the next release: an action version that supports v3, or
-      a workflow step that tags and creates the release after a publish.
+      Release (made by hand): `changesets/action@v1` does not support `@changesets/cli` v3. Moved
+      to `changesets/action` v2.1.2 (which does), split into select-mode, version and publish jobs
+      so that only the publish job can publish. Tick once the next release creates its own tag and
+      release.
 
 ## Later (not v1)
 

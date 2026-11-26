@@ -38,9 +38,10 @@ only). No runtime dependencies. Keep it that way.
 - `scripts/smoke-dist.mjs`: imports and requires the built package by name (`npm run test:dist`).
 - `.github/workflows/ci.yml`: CI on Node 22/24/26: lint, typecheck, test, build, check:package, test:dist.
 - `.github/workflows/pages.yml`: builds the demo and deploys it to GitHub Pages on push to main.
-- `.github/workflows/release.yml`: Changesets on push to main: a "chore: release" pull request,
-  and on its merge a publish to npm through trusted publishing. `.changeset/`: config and pending
-  changesets; `CHANGELOG.md` is written by `changeset version`.
+- `.github/workflows/release.yml`: Changesets (`changesets/action` v2, three jobs) on push to
+  main: a "chore: release" pull request, and on its merge a publish to npm through trusted
+  publishing, the git tag and the GitHub release. Only the publish job can publish.
+  `.changeset/`: config and pending changesets; `CHANGELOG.md` is written by `changeset version`.
 - `src/index.ts`: public entry: `createTree`, `relate`, `relateAll`, `describeRelation`, `validateTree`, and
   the types.
 - `src/types.ts`: `Person`, `Sex`, `Move`, `TreeInput`, `TreeOptions`.

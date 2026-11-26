@@ -183,6 +183,21 @@ and to open `docs/locales/<code>.md`.
 
 A wrong term is a bug, and fixing one is a behaviour change with a test.
 
+## Releasing (maintainers)
+
+Releases are automatic once a release pull request is merged:
+
+1. Changes that users will notice come with a changeset (`npm run changeset`) and land on `main`.
+2. The release workflow opens or updates a pull request named "chore: release". It bumps the
+   version in `package.json` and the lockfile and writes `CHANGELOG.md` from the pending
+   changesets; several changesets go into one release.
+3. When it is time to release, approve the pull request's checks if GitHub asks ("Approve and
+   run": the pull request is opened by a bot) and merge it.
+4. The workflow publishes the new version to npm through trusted publishing, with provenance, then
+   pushes the `vX.Y.Z` tag and creates the GitHub release.
+
+No npm token is stored anywhere: npm accepts a publish only from `release.yml` in this repository.
+
 ## Other changes
 
 - Behaviour changes need a test first. Refactors keep every existing test green.

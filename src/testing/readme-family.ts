@@ -6,7 +6,7 @@ import { createTree } from "../tree";
  *
  * ```text
  *                 Markos ═ Despina
- *              ┌────────┴────────┐
+ *              ┌─────────┴───────┐
  *            Rena             Ioannis
  *              │                 │
  *   Stelios ═ Sofia            Petros

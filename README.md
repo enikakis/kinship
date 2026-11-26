@@ -98,10 +98,10 @@ relation?.main.legalDegree; // { degree: 3, line: "collateral", kind: "blood" }
 ```
 
 People are your own objects: the library needs only `id` and `sex` (`"female"`, `"male"` or
-`"unknown"`) and hands the same objects back in results. `parents` and `unions` may be left out
-when there are none. `createTree(input, { name, born })` says
-how to write a name (default: a string `name` property, else the id) and how to read a birth year,
-which orders relatives and settles ties between equally short chains.
+`"unknown"`) and hands the same objects back in results. From 0.2.0, `parents` and `unions` may be
+left out when there are none. `createTree(input, { name, born })` says how to write a name
+(default: a string `name` property, else the id) and how to read a birth year, which orders
+relatives and settles ties between equally short chains.
 
 ## What it answers
 
@@ -172,7 +172,7 @@ grandparents Rena and Ioannis were sister and brother.
 
 ```text
                  Markos ═ Despina
-              ┌────────┴────────┐
+              ┌─────────┴───────┐
             Rena             Ioannis
               │                 │
    Stelios ═ Sofia            Petros
@@ -263,8 +263,8 @@ marriage", and the same other tie.
 **5. Names.** The chain's moves (up, up, down, spouse) decide the kind (`uncleByMarriage`), the
 cousin degree and removal, and the legal degree. A language turns that, with the sex of everyone on
 the chain, into words: Greek needs the genitive for longer names («κόρη της δεύτερης εξαδέλφης»,
-second cousin's daughter), French contracts articles («du père»), German declines («des Vaters»). Which relationship is the main one
-never depends on the language.
+second cousin's daughter), French contracts articles («du père»), German declines («des Vaters»).
+Which relationship is the main one never depends on the language.
 
 ## Legal degree
 

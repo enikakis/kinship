@@ -15,6 +15,13 @@ and the legal degree of kinship. Zero runtime dependencies, fully typed, ESM and
 **[Live demo](https://enikakis.github.io/kinship/)** · [Design](docs/design.md) ·
 [Benchmarks](docs/benchmarks.md) · [Contributing](CONTRIBUTING.md)
 
+<a href="https://enikakis.github.io/kinship/">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/enikakis/kinship/main/docs/images/demo-dark.png">
+    <img src="https://raw.githubusercontent.com/enikakis/kinship/main/docs/images/demo-light.png" alt="The live demo: Lydia and Dimos picked from an invented family. He is her uncle by marriage, the legal degree is affinity in the collateral line, 3rd degree, and the chain is drawn as a small diagram." width="825">
+  </picture>
+</a>
+
 ## Install
 
 ```sh

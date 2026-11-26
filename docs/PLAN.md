@@ -130,11 +130,8 @@ See "Decided design" in the design doc above and its core-API implementation pla
 
 - [x] Create the public GitHub repo `enikakis/kinship` (owner's OK first), add topics.
 - [x] Changesets for versioning + CHANGELOG.
-- [ ] npm trusted publishing from GitHub Actions with provenance (verified badge on npm). The
-      release workflow is ready (`.github/workflows/release.yml`); before the first release from CI,
-      add the trusted publisher on npmjs.com (package settings: GitHub Actions, repository
-      `enikakis/kinship`, workflow `release.yml`). A new trusted publisher that sees no successful
-      publish within two days expires, so add it right before merging a release pull request.
+- [x] npm trusted publishing from GitHub Actions with provenance (verified badge on npm): 0.2.0
+      was published by `.github/workflows/release.yml` with an SLSA provenance attestation.
 - [x] Publish `0.1.0` (as `@enikakis99/kinship`: the `@enikakis` scope on npm belongs to another
       account). Published from the owner's machine, so without provenance.
 - [ ] Pin the repo on the GitHub profile.
@@ -173,6 +170,11 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
       200,000-generation chain exhausts memory. Store parent pointers instead.
 - [x] `createTree` in plain JavaScript: a missing `parents` or `unions` throws "is not iterable".
       Both lists are now optional and default to empty (0.2.0); found by installing 0.1.0.
+
+- [ ] The release workflow published 0.2.0 but did not push the `v0.2.0` tag or create the GitHub
+      Release (made by hand). Likely `changesets/action@v1` does not read the output of
+      `@changesets/cli` v3. Fix it before the next release: an action version that supports v3, or
+      a workflow step that tags and creates the release after a publish.
 
 ## Later (not v1)
 

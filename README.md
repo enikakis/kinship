@@ -9,8 +9,8 @@ Spanish experimental.
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 Give it a tree and two people. It finds the chain between them and tells you what each is to the
-other («θεία» / «ανιψιά», "aunt" / "niece"), every other way they are related by blood, and the
-legal degree of kinship. Zero runtime dependencies, fully typed, ESM and CommonJS.
+other ("aunt" / "niece", in Greek «θεία» / «ανιψιά»), every other way they are related by blood,
+and the legal degree of kinship. Zero runtime dependencies, fully typed, ESM and CommonJS.
 
 **[Live demo](https://enikakis.github.io/kinship/)** · [Design](docs/design.md) ·
 [Benchmarks](docs/benchmarks.md) · [Contributing](CONTRIBUTING.md)
@@ -51,23 +51,12 @@ const tree = createTree({
 
 const relation = relate(tree, "anna", "katerina"); // what Katerina is to Anna, or null
 if (relation) {
-  console.log(describeRelation(tree, relation, el).main);
   console.log(describeRelation(tree, relation, en).main);
+  console.log(describeRelation(tree, relation, el).main);
 }
 ```
 
 ```js
-{
-  roles: { other: 'θεία', self: 'ανιψιά' },
-  summary: 'θεία',
-  degree: 'Συγγένεια εξ αίματος εκ πλαγίου, 3ου βαθμού',
-  chain: [
-    { id: 'anna', text: 'Anna' },
-    { id: 'dafni', text: 'μητέρα: Dafni' },
-    { id: 'sofia', text: 'μητέρα: Sofia' },
-    { id: 'katerina', text: 'κόρη: Katerina' }
-  ]
-}
 {
   roles: { other: 'aunt', self: 'niece' },
   summary: 'aunt',
@@ -77,6 +66,17 @@ if (relation) {
     { id: 'dafni', text: 'mother: Dafni' },
     { id: 'sofia', text: 'mother: Sofia' },
     { id: 'katerina', text: 'daughter: Katerina' }
+  ]
+}
+{
+  roles: { other: 'θεία', self: 'ανιψιά' },
+  summary: 'θεία',
+  degree: 'Συγγένεια εξ αίματος εκ πλαγίου, 3ου βαθμού',
+  chain: [
+    { id: 'anna', text: 'Anna' },
+    { id: 'dafni', text: 'μητέρα: Dafni' },
+    { id: 'sofia', text: 'μητέρα: Sofia' },
+    { id: 'katerina', text: 'κόρη: Katerina' }
   ]
 }
 ```
@@ -91,20 +91,22 @@ relation?.main.legalDegree; // { degree: 3, line: "collateral", kind: "blood" }
 ```
 
 People are your own objects: the library needs only `id` and `sex` (`"female"`, `"male"` or
-`"unknown"`) and hands the same objects back in results. `createTree(input, { name, born })` says
+`"unknown"`) and hands the same objects back in results. `parents` and `unions` may be left out
+when there are none. `createTree(input, { name, born })` says
 how to write a name (default: a string `name` property, else the id) and how to read a birth year,
 which orders relatives and settles ties between equally short chains.
 
 ## What it answers
 
-- **What is each to the other**, in both directions, with gender and grammar right: «πρώτος
-  εξάδελφος της μητέρας» / «κόρη της πρώτης εξαδέλφης», "first cousin once removed", "3rd
-  great-grandfather" / "3rd great-grandson". An unknown sex gives both forms: «θείος/θεία».
+- **What is each to the other**, in both directions, with gender and grammar right: "first cousin
+  once removed", "3rd great-grandfather" / "3rd great-grandson"; in Greek «πρώτος εξάδελφος της
+  μητέρας» / «κόρη της πρώτης εξαδέλφης» (mother's first cousin / first cousin's daughter). An
+  unknown sex gives both forms: "uncle/aunt", «θείος/θεία».
 - **Every other blood tie**, each with its closest common ancestors, so a cousin marriage or double
   first cousins (two brothers married to two sisters) show up in full.
 - **Whether the two are a couple**, and what else they were before they married.
 - **The legal degree** of kinship, by blood or by marriage, as civil law counts it.
-- **The chain step by step** («μητέρα: Dafni», "mother: Dafni") and **layout data** to draw it,
+- **The chain step by step** ("mother: Dafni", «μητέρα: Dafni») and **layout data** to draw it,
   plus a ready-made accessible SVG.
 - **What everyone is to one person**, in a single call.
 - **GEDCOM in**, and **validation** that tells you what is wrong with a tree instead of quietly
@@ -115,38 +117,39 @@ which orders relatives and settles ties between equally short chains.
 Every language names every blood relationship, at any distance, and every relation by marriage that
 has an everyday name, for men, women and people of unknown sex, in both directions. A sample:
 
-| Relationship | el | en | fr\* | de\* | es\* |
+| Relationship | en | el | fr\* | de\* | es\* |
 |---|---|---|---|---|---|
-| Parent | πατέρας<br>μητέρα | father<br>mother | père<br>mère | Vater<br>Mutter | padre<br>madre |
-| Grandparent | παππούς<br>γιαγιά | grandfather<br>grandmother | grand-père<br>grand-mère | Großvater<br>Großmutter | abuelo<br>abuela |
-| Sibling | αδελφός<br>αδελφή | brother<br>sister | frère<br>sœur | Bruder<br>Schwester | hermano<br>hermana |
-| Half-sibling | ετεροθαλής αδελφός<br>ετεροθαλής αδελφή | half-brother<br>half-sister | demi-frère<br>demi-sœur | Halbbruder<br>Halbschwester | medio hermano<br>media hermana |
-| Uncle, aunt | θείος<br>θεία | uncle<br>aunt | oncle<br>tante | Onkel<br>Tante | tío<br>tía |
-| Nephew, niece | ανιψιός<br>ανιψιά | nephew<br>niece | neveu<br>nièce | Neffe<br>Nichte | sobrino<br>sobrina |
-| First cousin | πρώτος εξάδελφος<br>πρώτη εξαδέλφη | first cousin | cousin germain<br>cousine germaine | Cousin<br>Cousine | primo hermano<br>prima hermana |
-| First cousin once removed (father's first cousin) | πρώτος εξάδελφος του πατέρα<br>πρώτη εξαδέλφη του πατέρα | first cousin once removed | cousin germain du père<br>cousine germaine du père | Cousin des Vaters<br>Cousine des Vaters | primo hermano del padre<br>prima hermana del padre |
-| Second cousin | δεύτερος εξάδελφος<br>δεύτερη εξαδέλφη | second cousin | cousin issu de germain<br>cousine issue de germain | Cousin 2. Grades<br>Cousine 2. Grades | primo segundo<br>prima segunda |
-| Spouse | σύζυγος | husband<br>wife | époux<br>épouse | Ehemann<br>Ehefrau | esposo<br>esposa |
-| Parent-in-law | πεθερός<br>πεθερά | father-in-law<br>mother-in-law | beau-père<br>belle-mère | Schwiegervater<br>Schwiegermutter | suegro<br>suegra |
-| Sibling-in-law (wife's sibling) | κουνιάδος<br>κουνιάδα | brother-in-law<br>sister-in-law | beau-frère<br>belle-sœur | Schwager<br>Schwägerin | cuñado<br>cuñada |
-| Co-parent-in-law (son's wife's parent) | συμπέθερος<br>συμπεθέρα | child's father-in-law<br>child's mother-in-law | père de l'épouse du fils<br>mère de l'épouse du fils | Schwiegervater des Sohnes<br>Schwiegermutter des Sohnes | consuegro<br>consuegra |
-| Step-parent | πατριός<br>μητριά | stepfather<br>stepmother | beau-père<br>belle-mère | Stiefvater<br>Stiefmutter | padrastro<br>madrastra |
+| Parent | father<br>mother | πατέρας<br>μητέρα | père<br>mère | Vater<br>Mutter | padre<br>madre |
+| Grandparent | grandfather<br>grandmother | παππούς<br>γιαγιά | grand-père<br>grand-mère | Großvater<br>Großmutter | abuelo<br>abuela |
+| Sibling | brother<br>sister | αδελφός<br>αδελφή | frère<br>sœur | Bruder<br>Schwester | hermano<br>hermana |
+| Half-sibling | half-brother<br>half-sister | ετεροθαλής αδελφός<br>ετεροθαλής αδελφή | demi-frère<br>demi-sœur | Halbbruder<br>Halbschwester | medio hermano<br>media hermana |
+| Uncle, aunt | uncle<br>aunt | θείος<br>θεία | oncle<br>tante | Onkel<br>Tante | tío<br>tía |
+| Nephew, niece | nephew<br>niece | ανιψιός<br>ανιψιά | neveu<br>nièce | Neffe<br>Nichte | sobrino<br>sobrina |
+| First cousin | first cousin | πρώτος εξάδελφος<br>πρώτη εξαδέλφη | cousin germain<br>cousine germaine | Cousin<br>Cousine | primo hermano<br>prima hermana |
+| First cousin once removed (father's first cousin) | first cousin once removed | πρώτος εξάδελφος του πατέρα<br>πρώτη εξαδέλφη του πατέρα | cousin germain du père<br>cousine germaine du père | Cousin des Vaters<br>Cousine des Vaters | primo hermano del padre<br>prima hermana del padre |
+| Second cousin | second cousin | δεύτερος εξάδελφος<br>δεύτερη εξαδέλφη | cousin issu de germain<br>cousine issue de germain | Cousin 2. Grades<br>Cousine 2. Grades | primo segundo<br>prima segunda |
+| Spouse | husband<br>wife | σύζυγος | époux<br>épouse | Ehemann<br>Ehefrau | esposo<br>esposa |
+| Parent-in-law | father-in-law<br>mother-in-law | πεθερός<br>πεθερά | beau-père<br>belle-mère | Schwiegervater<br>Schwiegermutter | suegro<br>suegra |
+| Sibling-in-law (wife's sibling) | brother-in-law<br>sister-in-law | κουνιάδος<br>κουνιάδα | beau-frère<br>belle-sœur | Schwager<br>Schwägerin | cuñado<br>cuñada |
+| Co-parent-in-law (son's wife's parent) | child's father-in-law<br>child's mother-in-law | συμπέθερος<br>συμπεθέρα | père de l'épouse du fils<br>mère de l'épouse du fils | Schwiegervater des Sohnes<br>Schwiegermutter des Sohnes | consuegro<br>consuegra |
+| Step-parent | stepfather<br>stepmother | πατριός<br>μητριά | beau-père<br>belle-mère | Stiefvater<br>Stiefmutter | padrastro<br>madrastra |
 
 *Each cell is `describeRelation(...).main.roles.other`, what the relative is to the first person:
 for a male relative on top, a female one below, one line when both are the same. The first person
 is a man, and so is everyone between them, except the wife in the in-law rows and the mother
 through whom a man has a stepfather.*
 
-Past the everyday words, names are built the way each language builds them: «αδελφός της γιαγιάς»
-(a great-uncle, named through the grandmother), «προ-προ-προπάππους», "3rd great-grandfather",
-«ascendant au 5e degré», "third cousin", «cousin au troisième degré». A relation by marriage with no
-everyday name (a cousin's wife's brother, an uncle by marriage's mother) gets a sentence instead:
-"Related through the marriages of Nikos and Dafni; Irini and Pavlos."
+Past the everyday words, names are built the way each language builds them: "3rd
+great-grandfather" and «προ-προ-προπάππους»; a great-uncle in Greek is «αδελφός της γιαγιάς»
+(grandmother's brother), named through the grandmother; «ascendant au 5e degré», "third cousin",
+«cousin au troisième degré». A relation by marriage with no everyday name (a cousin's wife's
+brother, an uncle by marriage's mother) gets a sentence instead: "Related through the marriages
+of Nikos and Dafni; Irini and Pavlos."
 
 | Language | Entry point | Status |
 |---|---|---|
-| Greek (el) | `@enikakis99/kinship/locales/el` | stable |
 | English (en) | `@enikakis99/kinship/locales/en` | stable |
+| Greek (el) | `@enikakis99/kinship/locales/el` | stable |
 | French (fr) | `@enikakis99/kinship/locales/fr` | \*experimental: [term table](docs/locales/fr.md) |
 | German (de) | `@enikakis99/kinship/locales/de` | \*experimental: [term table](docs/locales/de.md) |
 | Spanish (es) | `@enikakis99/kinship/locales/es` | \*experimental: [term table](docs/locales/es.md) |
@@ -157,16 +160,19 @@ its term table, but no native speaker has reviewed them yet. If you speak one,
 
 ## How it works
 
-Take this family. `═` is a marriage; Katerina married her first cousin Lefteris.
+Take this family. `═` is a marriage; Katerina married her second cousin Lefteris: their
+grandparents Rena and Ioannis were sister and brother.
 
 ```text
-                    Markos ═ Despina
-                  ┌────────┴────────┐
-      Stelios ═ Sofia            Ioannis
-        ┌─────┴─────────┐           │
-      Dafni         Katerina ═ Lefteris
-        │
-       Anna
+                 Markos ═ Despina
+              ┌────────┴────────┐
+            Rena             Ioannis
+              │                 │
+   Stelios ═ Sofia            Petros
+     ┌─────┴─────────┐          │
+   Dafni         Katerina ═ Lefteris
+     │
+    Anna
 ```
 
 <details>
@@ -177,24 +183,28 @@ const tree = createTree({
   people: [
     { id: "markos", name: "Markos", sex: "male" },
     { id: "despina", name: "Despina", sex: "female" },
+    { id: "rena", name: "Rena", sex: "female" },
+    { id: "ioannis", name: "Ioannis", sex: "male" },
     { id: "stelios", name: "Stelios", sex: "male" },
     { id: "sofia", name: "Sofia", sex: "female" },
-    { id: "ioannis", name: "Ioannis", sex: "male" },
+    { id: "petros", name: "Petros", sex: "male" },
     { id: "dafni", name: "Dafni", sex: "female" },
     { id: "katerina", name: "Katerina", sex: "female" },
     { id: "lefteris", name: "Lefteris", sex: "male" },
     { id: "anna", name: "Anna", sex: "female" },
   ],
   parents: [
-    ["markos", "sofia"],
-    ["despina", "sofia"],
+    ["markos", "rena"],
+    ["despina", "rena"],
     ["markos", "ioannis"],
     ["despina", "ioannis"],
+    ["rena", "sofia"],
+    ["ioannis", "petros"],
     ["stelios", "dafni"],
     ["sofia", "dafni"],
     ["stelios", "katerina"],
     ["sofia", "katerina"],
-    ["ioannis", "lefteris"],
+    ["petros", "lefteris"],
     ["dafni", "anna"],
   ],
   unions: [
@@ -211,11 +221,11 @@ const tree = createTree({
 or a spouse (`spouse`). A shortest-path search (Dijkstra) finds the cheapest chain between the two
 people. Every step costs 10 and a marriage step 11, so among chains of equal length the one with
 fewer marriages wins. From Anna to Lefteris the cheapest chain is up, up, down, spouse (cost 41):
-Lefteris is the husband of her aunt. The blood chain, up three and down two through Markos,
-costs 50.
+Lefteris is the husband of her aunt. The blood chain, up four and down three through Markos,
+costs 70.
 
 **2. Other blood ties.** Next it walks both people's ancestor lines and finds every set of closest
-common ancestors. Each set gives a blood tie: Lefteris is also the first cousin of Anna's mother,
+common ancestors. Each set gives a blood tie: Lefteris is also the second cousin of Anna's mother,
 through Markos and Despina.
 
 **3. Which one comes first.** A couple always comes first as a couple, whatever their blood ties.
@@ -228,14 +238,15 @@ cousin too, and he is her husband first of all. So:
 const relation = relate(tree, "anna", "lefteris")!;
 const text = describeRelation(tree, relation, en);
 text.main.summary;                     // "uncle by marriage"
-text.others[0].summary;                // "first cousin once removed"
+text.others[0].summary;                // "second cousin once removed"
 text.others[0].commonAncestors;        // "Common ancestors: Markos and Despina"
 describeRelation(tree, relation, el).others[0].roles;
-// { other: 'πρώτος εξάδελφος της μητέρας', self: 'κόρη της πρώτης εξαδέλφης' }
+// { other: 'δεύτερος εξάδελφος της μητέρας', self: 'κόρη της δεύτερης εξαδέλφης' }
+// (mother's second cousin / second cousin's daughter)
 ```
 
-For Katerina and Lefteris themselves, who are first cousins, `couple` is true and the main
-relationship is "husband"; "first cousin" is the other tie, with the same common ancestors.
+For Katerina and Lefteris themselves, `couple` is true and the main relationship is "husband";
+"second cousin" is the other tie, with the same common ancestors.
 
 **4. The same answer from either end.** The search always runs from whichever of the two comes
 first in your `people` and is read backwards for the other direction, so `relate(tree, "lefteris",
@@ -244,8 +255,8 @@ marriage", and the same other tie.
 
 **5. Names.** The chain's moves (up, up, down, spouse) decide the kind (`uncleByMarriage`), the
 cousin degree and removal, and the legal degree. A language turns that, with the sex of everyone on
-the chain, into words: Greek needs the genitive for longer names («της πρώτης εξαδέλφης»), French
-contracts articles («du père»), German declines («des Vaters»). Which relationship is the main one
+the chain, into words: Greek needs the genitive for longer names («κόρη της δεύτερης εξαδέλφης»,
+second cousin's daughter), French contracts articles («du père»), German declines («des Vaters»). Which relationship is the main one
 never depends on the language.
 
 ## Legal degree
@@ -268,10 +279,10 @@ the other. The example is the Greek Civil Code, arts. 1463–1464; the French Co
   marriage, in the middle of the chain) and two men married to two sisters have no degree.
 
 ```ts
-describeRelation(tree, relate(tree, "anna", "lefteris")!, el).main.degree;
-// 'Συγγένεια εξ αγχιστείας εκ πλαγίου, 3ου βαθμού'
 describeRelation(tree, relate(tree, "anna", "lefteris")!, en).main.degree;
 // 'Related by marriage (affinity) in the collateral line, 3rd degree'
+describeRelation(tree, relate(tree, "anna", "lefteris")!, el).main.degree;
+// 'Συγγένεια εξ αγχιστείας εκ πλαγίου, 3ου βαθμού'
 ```
 
 Canon law and some genealogists count differently (first cousins in the 2nd degree), so check the
@@ -293,20 +304,24 @@ pair: use `relate` for those.
 import { relateAll } from "@enikakis99/kinship";
 
 for (const [id, entry] of relateAll(tree, "anna")) {
-  const text = describeRelation(tree, { ...entry, others: [] }, el);
-  console.log(id.padEnd(10), text.main.summary);
+  const relation = { ...entry, others: [] };
+  const english = describeRelation(tree, relation, en).main.summary;
+  const greek = describeRelation(tree, relation, el).main.summary;
+  console.log(id.padEnd(10), english.padEnd(28), greek);
 }
 ```
 
 ```text
-markos     προπάππους
-despina    προγιαγιά
-stelios    παππούς
-sofia      γιαγιά
-ioannis    αδελφός της γιαγιάς
-dafni      μητέρα
-katerina   θεία
-lefteris   θείος (από γάμο)
+markos     great-great-grandfather      προ-προπάππους
+despina    great-great-grandmother      προ-προγιαγιά
+rena       great-grandmother            προγιαγιά
+ioannis    great-great-uncle            αδελφός της προγιαγιάς
+stelios    grandfather                  παππούς
+sofia      grandmother                  γιαγιά
+petros     first cousin twice removed   πρώτος εξάδελφος της γιαγιάς
+dafni      mother                       μητέρα
+katerina   aunt                         θεία
+lefteris   uncle by marriage            θείος (από γάμο)
 ```
 
 ### `toSvg(diagram, options)`: the chain as an SVG
@@ -428,8 +443,8 @@ The codes are `duplicateId`, `unknownId`, `selfParent`, `selfUnion`, `tooManyPar
 
 ### Good to know
 
-- **Names are in-sentence forms**: «θεία», "first cousin". Capitalise the first letter for display
-  («Θεία», "First cousin").
+- **Names are in-sentence forms**: "first cousin", «θεία». Capitalise the first letter for display
+  ("First cousin", «Θεία»).
 - **`relate` returns `null`** for two people who are not connected, for the same person twice, and
   for an id that is not in the tree. Run `validateTree` on your input to tell these apart.
 - **`path` and `chain` differ by one.** The data's `relation.main.path` lists each person *after*

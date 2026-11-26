@@ -189,4 +189,6 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
 
 - The family tree view from the site: its own package and repo, `@enikakis99/family-tree` (planned 2026-11-26).
 - More locales via contributions.
+- GEDCOM: baptism (`BAPM`/`CHR`) and burial (`BURI`) as fallbacks for the years, a deceased
+  mark for `DEAT Y`, and nicknames (`NICK`).
 - A tie rule that doesn't depend on direction, so relateAll needs one search for everyone (today people before fromId get their own search).

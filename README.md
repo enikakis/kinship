@@ -29,7 +29,7 @@ npm install @enikakis99/kinship
 ```
 
 Node 22.18 or later, or any modern browser. Each language is its own entry point, so a bundle
-carries only the languages you import. Minified and gzipped (esbuild, measured 2026-11-25):
+carries only the languages you import. Minified and gzipped (esbuild, measured 2026-11-26):
 `createTree`, `relate` and `describeRelation` with Greek and English, about 6.3 kB; all core
 exports with Greek and English, about 7.0 kB; everything (all five languages, SVG and GEDCOM),
 about 12.4 kB.
@@ -414,7 +414,10 @@ const tree = createTree(input, { born: (person) => person.born });
 
 </details>
 
-It reads GEDCOM 5.5.1 and 7.0 text (already decoded from UTF-8): each person's name (also split into `given` and `surname`), sex, years of birth and death and places of birth and death, and each family's partners, children, and marriage year and place. Everything else is ignored, and it never throws.
+It reads GEDCOM 5.5.1 and 7.0 text (already decoded from UTF-8): each person's name (also split into
+`given` and `surname`), sex, years of birth and death and places of birth and death (places come
+without empty parts), and each family's partners, children, and marriage year and place. Everything
+else is ignored, and it never throws.
 
 ### `validateTree(input)`: what is wrong with a tree
 

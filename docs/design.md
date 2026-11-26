@@ -51,7 +51,8 @@ site-shaped today; v1 makes it general.
 ## Non-goals (v1)
 
 - Drawing whole family trees. That is the planned **second package** (a mobile-first, accessible
-  React tree from the site's `layout.ts` / `TreeView`), designed separately after v1 ships.
+  React tree from the site's `layout.ts` / `TreeView`): `@enikakis99/family-tree`, its own package
+  and repo (design in that repo's `docs/design.md`).
 - Answering legal questions (may these two marry, who inherits). The degree is given; its use is
   the user's.
 - Chinese, Korean, Hindi and other languages with asymmetric terms. v1 must not *prevent* them
@@ -287,12 +288,20 @@ Subset read:
   ("ABT 1850", "BET 1850 AND 1860", "1850/51" give 1850; "12345" gives none). Only a `DATE` directly
   under `BIRT` counts, the first usable one wins, and `born` is left out when unknown.
 - Name parts: `given` is the `NAME` value before the first slash and `surname` the part between the
-  first and second (`@@` read as `@`, spaces collapsed); a `GIVN` or `SURN` directly under that
-  `NAME` replaces that part when it is not empty. An empty part is left out.
+  first and second (`@@` read as `@`, spaces collapsed). Only when one is empty do the `GIVN`
+  values, or the `SPFX` then `SURN` values, directly under that same `NAME` fill it, in file order,
+  joined with a space (GEDCOM 7 allows each to repeat, and says the slashes hold the one surname).
+  An empty piece never erases anything, and an empty part is left out.
 - `DEAT` > `DATE` gives `died` (read like `born`); `BIRT` > `PLAC` and `DEAT` > `PLAC` give
   `birthPlace` and `deathPlace`. `MARR` > `DATE` / `PLAC` give a union's `married` and `place`: only
   on unions, so a family with one partner has no marriage details. All are level 2 directly under the
-  event, the first usable one wins, and places are cleaned (spaces collapsed, commas kept).
+  event, the first usable one wins, and places are cleaned: split on commas, each part cleaned, empty
+  parts dropped (`Baltimore, , Maryland` gives `Baltimore, Maryland`), joined with `, `. A place
+  with no part left is empty, so the next `PLAC` is tried.
+- Limits: each field takes the first usable value among the person's (or family's) events of that
+  kind, so a date and a place can come from different `BIRT`/`DEAT`/`MARR` records. A name written
+  surname-first with nothing before the slashes and no `GIVN` (`/Kovács/ János`) gives no `given`;
+  the text after the second slash is never used.
 - Calendars: Gregorian and Julian dates give a year; Hebrew and French Republican dates (5.5.1
   `@#DHEBREW@`, 7.0 `HEBREW`) and years BC (`B.C.`, `BC`, `BCE`) give none.
 - `FAM`: `HUSB`/`WIFE` (both present: a union), `CHIL` (a parent link from each partner present).

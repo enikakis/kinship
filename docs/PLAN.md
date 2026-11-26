@@ -150,7 +150,8 @@ For `@enikakis99/family-tree` (design in that repo, `docs/design.md`), whose dem
 
 - [x] `fromGedcom` keeps `given` and `surname` (slashes, or `GIVN` / `SURN`), `died`, `birthPlace`,
       `deathPlace`, and on unions `married` and `place`; new types `GedcomUnion`, `GedcomInput`.
-- [ ] Released as 0.3.0 from CI, the workflow creating the tag and the GitHub Release.
+- [x] Released as 0.3.0 from CI (2026-11-26), with provenance; the workflow created the `v0.3.0`
+      tag and the GitHub Release itself.
 
 ## Follow-ups from the core API reviews (2026-11-24)
 
@@ -179,11 +180,11 @@ Smaller findings from the reviews of the core API work, each to be taken up in t
 - [x] `createTree` in plain JavaScript: a missing `parents` or `unions` throws "is not iterable".
       Both lists are now optional and default to empty (0.2.0); found by installing 0.1.0.
 
-- [ ] The release workflow published 0.2.0 but did not push the `v0.2.0` tag or create the GitHub
+- [x] The release workflow published 0.2.0 but did not push the `v0.2.0` tag or create the GitHub
       Release (made by hand): `changesets/action@v1` does not support `@changesets/cli` v3. Moved
       to `changesets/action` v2.1.2 (which does), split into select-mode, version and publish jobs
-      so that only the publish job can publish. Tick once the next release creates its own tag and
-      release.
+      so that only the publish job can publish. Confirmed by 0.3.0, whose tag and release the
+      workflow created.
 
 ## Later (not v1)
 

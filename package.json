@@ -139,7 +139,8 @@
     "format": "biome check --write .",
     "check:package": "publint && attw --pack .",
     "prepublishOnly": "npm test && npm run build && npm run check:package && npm run test:dist",
-    "changeset": "changeset"
+    "changeset": "changeset",
+    "version-packages": "changeset version && npm install --package-lock-only --ignore-scripts"
   },
   "engines": {
     "node": ">=22.18"

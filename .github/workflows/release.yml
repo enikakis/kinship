@@ -31,7 +31,8 @@ jobs:
       - run: npm ci
       - uses: changesets/action@v1
         with:
-          version: npx changeset version
+          # Bumps package.json and the lockfile from the pending changesets.
+          version: npm run version-packages
           publish: npx changeset publish
           commit: "chore: release"
           title: "chore: release"

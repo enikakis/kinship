@@ -222,4 +222,11 @@ describe("validateTree", () => {
     const looped = validateTree(input(ids, [...links, [ids[ids.length - 1]!, ids[0]!]]));
     expect(looped.issues.map((i) => i.code)).toEqual(["cycle"]);
   });
+
+  it("treats a missing list of parents or unions as empty", () => {
+    expect(validateTree({ people: [p("a"), p("b")] })).toEqual({ ok: true, issues: [] });
+    expect(validateTree({ people: [p("a")], unions: [{ a: "a", b: "a" }] }).issues.map((i) => i.code)).toEqual([
+      "selfUnion",
+    ]);
+  });
 });

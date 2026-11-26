@@ -142,4 +142,12 @@ describe("createTree", () => {
     });
     expect(tree.spouses("a").map((x) => x.id)).toEqual(["b"]);
   });
+
+  it("treats a missing list of parents or unions as empty", () => {
+    const tree = createTree({ people: [p("a", "male"), p("b", "female")] });
+    expect(tree.parents("a")).toEqual([]);
+    expect(tree.spouses("a")).toEqual([]);
+    const married = createTree({ people: [p("a", "male"), p("b", "female")], unions: [{ a: "a", b: "b" }] });
+    expect(married.spouses("a").map((x) => x.id)).toEqual(["b"]);
+  });
 });

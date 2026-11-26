@@ -31,7 +31,7 @@ const SURNAMES = [
  * rise with each generation. Everyone has `born`. The same `size` and `seed` always give the same
  * tree. `size` is at least 2 (one couple); smaller values give 2.
  */
-export function largeTree(size = 10_000, seed = 20_251_125): TreeInput<TestPerson> {
+export function largeTree(size = 10_000, seed = 20_251_125): Required<TreeInput<TestPerson>> {
   const random = mulberry32(seed);
   const int = (n: number) => Math.floor(random() * n);
   const people: TestPerson[] = [];

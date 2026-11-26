@@ -14,10 +14,10 @@ export type Move = "up" | "down" | "spouse";
 export type TreeInput<P extends Person> = {
   /** Everyone in the tree; ids must be unique. */
   people: readonly P[];
-  /** [parentId, childId] */
-  parents: readonly (readonly [parentId: string, childId: string])[];
-  /** Married couples, by the ids of the two spouses; the order within a pair does not matter. */
-  unions: readonly { a: string; b: string }[];
+  /** [parentId, childId]. Default: none. */
+  parents?: readonly (readonly [parentId: string, childId: string])[];
+  /** Married couples, by the ids of the two spouses; the order within a pair does not matter. Default: none. */
+  unions?: readonly { a: string; b: string }[];
 };
 
 /** How `createTree` reads your person objects. */

@@ -8,7 +8,7 @@ import type { Person, TreeInput } from "../types";
  * twice, which only a tiny or unlinked tree would cause.
  */
 export function samplePairs<P extends Person>(
-  input: TreeInput<P>,
+  input: Required<TreeInput<P>>,
   count: number,
   seed: number,
   shortestWalk = 4,

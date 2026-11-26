@@ -84,7 +84,7 @@ export function createTree<P extends Person>(input: TreeInput<P>, options: TreeO
   const parentIds = new Map<string, string[]>();
   const childIds = new Map<string, string[]>();
   const seenLinks = new Set<string>();
-  for (const [parent, child] of input.parents) {
+  for (const [parent, child] of input.parents ?? []) {
     if (parent === child || !byId.has(parent) || !byId.has(child)) continue;
     const key = `${parent}\u0000${child}`;
     if (seenLinks.has(key)) continue;
@@ -96,7 +96,7 @@ export function createTree<P extends Person>(input: TreeInput<P>, options: TreeO
   // Each person's spouses in the order of the unions; sorted by birth on lookup, like parents.
   const spouseIds = new Map<string, string[]>();
   const seenUnions = new Set<string>();
-  for (const { a, b } of input.unions) {
+  for (const { a, b } of input.unions ?? []) {
     if (a === b || !byId.has(a) || !byId.has(b)) continue;
     const key = a < b ? `${a}\u0000${b}` : `${b}\u0000${a}`;
     if (seenUnions.has(key)) continue;

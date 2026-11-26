@@ -49,7 +49,7 @@ export function validateTree<P extends Person>(input: TreeInput<P>): TreeValidat
 
   const parentsOf = new Map<string, Set<string>>();
   const childrenOf = new Map<string, string[]>();
-  for (const [parent, child] of input.parents) {
+  for (const [parent, child] of input.parents ?? []) {
     const unknown = unique([parent, child].filter((id) => !known.has(id)));
     if (unknown.length > 0) {
       issues.push({
@@ -67,7 +67,7 @@ export function validateTree<P extends Person>(input: TreeInput<P>): TreeValidat
     }
   }
 
-  for (const { a, b } of input.unions) {
+  for (const { a, b } of input.unions ?? []) {
     const unknown = unique([a, b].filter((id) => !known.has(id)));
     if (unknown.length > 0) {
       issues.push({

@@ -77,7 +77,7 @@ const sexOf = (value: string): Sex => (value === "M" ? "male" : value === "F" ? 
  * const tree = createTree(fromGedcom(text), { born: (p) => p.born });
  * ```
  */
-export function fromGedcom(text: string): TreeInput<GedcomPerson> {
+export function fromGedcom(text: string): Required<TreeInput<GedcomPerson>> {
   const people: GedcomPerson[] = [];
   const parents: [string, string][] = [];
   const unions: { a: string; b: string }[] = [];

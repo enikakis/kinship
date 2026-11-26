@@ -32,7 +32,7 @@ Node 22.18 or later, or any modern browser. Each language is its own entry point
 carries only the languages you import. Minified and gzipped (esbuild, measured 2026-11-25):
 `createTree`, `relate` and `describeRelation` with Greek and English, about 6.3 kB; all core
 exports with Greek and English, about 7.0 kB; everything (all five languages, SVG and GEDCOM),
-about 12.1 kB.
+about 12.4 kB.
 
 ## In ten seconds
 
@@ -379,37 +379,42 @@ const tree = createTree(input, { born: (person) => person.born });
 1 SEX F
 1 BIRT
 2 DATE ABT 1890
+2 PLAC Chania
+1 DEAT
+2 DATE 1961
 0 @I2@ INDI
 1 NAME Dafni /Andreou/
 1 SEX F
 1 BIRT
 2 DATE 3 MAY 1921
 0 @I3@ INDI
-1 NAME Katerina /Andreou/
-1 SEX F
+1 NAME Pavlos /Andreou/
+1 SEX M
 0 @F1@ FAM
+1 HUSB @I3@
 1 WIFE @I1@
+1 MARR
+2 DATE 1919
+2 PLAC Chania
 1 CHIL @I2@
-1 CHIL @I3@
 0 TRLR
 ```
 
 ```js
 {
   people: [
-    { id: 'I1', sex: 'female', name: 'Sofia Andreou', born: 1890 },
-    { id: 'I2', sex: 'female', name: 'Dafni Andreou', born: 1921 },
-    { id: 'I3', sex: 'female', name: 'Katerina Andreou' }
+    { id: 'I1', sex: 'female', name: 'Sofia Andreou', given: 'Sofia', surname: 'Andreou', born: 1890, died: 1961, birthPlace: 'Chania' },
+    { id: 'I2', sex: 'female', name: 'Dafni Andreou', given: 'Dafni', surname: 'Andreou', born: 1921 },
+    { id: 'I3', sex: 'male', name: 'Pavlos Andreou', given: 'Pavlos', surname: 'Andreou' }
   ],
-  parents: [ [ 'I1', 'I2' ], [ 'I1', 'I3' ] ],
-  unions: []
+  parents: [ [ 'I3', 'I2' ], [ 'I1', 'I2' ] ],
+  unions: [ { a: 'I3', b: 'I1', married: 1919, place: 'Chania' } ]
 }
 ```
 
 </details>
 
-It reads GEDCOM 5.5.1 and 7.0 text (already decoded from UTF-8): each person's name, sex and birth
-year, and each family's partners and children. Everything else is ignored, and it never throws.
+It reads GEDCOM 5.5.1 and 7.0 text (already decoded from UTF-8): each person's name (also split into `given` and `surname`), sex, years of birth and death and places of birth and death, and each family's partners, children, and marriage year and place. Everything else is ignored, and it never throws.
 
 ### `validateTree(input)`: what is wrong with a tree
 

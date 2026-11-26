@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
+import { fromGedcom } from "./gedcom";
 import { describeRelation, relate, relateAll } from "./index";
 import { el } from "./locales/el";
 import { en } from "./locales/en";
 import { toSvg } from "./svg";
 import { readmeTree as tree } from "./testing/readme-family";
 
-// Every output the README's "How it works", "Legal degree", `relateAll` and `toSvg` sections show,
+// Every output the README's "How it works", "Legal degree", `relateAll`, `toSvg` and `fromGedcom` sections show,
 // so the README cannot drift from the code.
 describe("the README's example family", () => {
   const annaLefteris = relate(tree, "anna", "lefteris")!;
@@ -75,5 +76,60 @@ describe("the README's example family", () => {
     expect(svg).toContain(
       ">Anna (niece by marriage) → Dafni → Stelios → Katerina → Lefteris (uncle by marriage)</desc>",
     );
+  });
+});
+
+describe("the README's GEDCOM example", () => {
+  it("gives what the README shows", () => {
+    const text = [
+      "0 HEAD",
+      "1 GEDC",
+      "2 VERS 5.5.1",
+      "0 @I1@ INDI",
+      "1 NAME Sofia /Andreou/",
+      "1 SEX F",
+      "1 BIRT",
+      "2 DATE ABT 1890",
+      "2 PLAC Chania",
+      "1 DEAT",
+      "2 DATE 1961",
+      "0 @I2@ INDI",
+      "1 NAME Dafni /Andreou/",
+      "1 SEX F",
+      "1 BIRT",
+      "2 DATE 3 MAY 1921",
+      "0 @I3@ INDI",
+      "1 NAME Pavlos /Andreou/",
+      "1 SEX M",
+      "0 @F1@ FAM",
+      "1 HUSB @I3@",
+      "1 WIFE @I1@",
+      "1 MARR",
+      "2 DATE 1919",
+      "2 PLAC Chania",
+      "1 CHIL @I2@",
+      "0 TRLR",
+    ].join("\n");
+    expect(fromGedcom(text)).toEqual({
+      people: [
+        {
+          id: "I1",
+          sex: "female",
+          name: "Sofia Andreou",
+          given: "Sofia",
+          surname: "Andreou",
+          born: 1890,
+          died: 1961,
+          birthPlace: "Chania",
+        },
+        { id: "I2", sex: "female", name: "Dafni Andreou", given: "Dafni", surname: "Andreou", born: 1921 },
+        { id: "I3", sex: "male", name: "Pavlos Andreou", given: "Pavlos", surname: "Andreou" },
+      ],
+      parents: [
+        ["I3", "I2"],
+        ["I1", "I2"],
+      ],
+      unions: [{ a: "I3", b: "I1", married: 1919, place: "Chania" }],
+    });
   });
 });

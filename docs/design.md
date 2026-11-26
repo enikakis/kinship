@@ -274,7 +274,11 @@ data stays public for users who draw their own.
 ### GEDCOM
 
 `fromGedcom(text)` (own module, `src/gedcom.ts`) takes a decoded string and returns
-`TreeInput<GedcomPerson>`, with `GedcomPerson = { id, sex, name, born? }`. It never throws.
+`GedcomInput` (the input of `createTree`, with the unions' details). It never throws.
+
+- `GedcomPerson = { id, sex, name, given?, surname?, born?, died?, birthPlace?, deathPlace? }`.
+- `GedcomUnion = { a, b, married?, place? }`; `GedcomInput = { people, parents, unions }`.
+- Each optional field is left out when unknown (never `undefined`).
 
 Subset read:
 - `INDI`: the first usable `NAME` (slashes removed, spaces collapsed, `@@` read as `@`; an empty
@@ -282,6 +286,13 @@ Subset read:
   unknown), and `BIRT` > `DATE`: `born` is the first 3-4 digit number bounded by non-digits
   ("ABT 1850", "BET 1850 AND 1860", "1850/51" give 1850; "12345" gives none). Only a `DATE` directly
   under `BIRT` counts, the first usable one wins, and `born` is left out when unknown.
+- Name parts: `given` is the `NAME` value before the first slash and `surname` the part between the
+  first and second (`@@` read as `@`, spaces collapsed); a `GIVN` or `SURN` directly under that
+  `NAME` replaces that part when it is not empty. An empty part is left out.
+- `DEAT` > `DATE` gives `died` (read like `born`); `BIRT` > `PLAC` and `DEAT` > `PLAC` give
+  `birthPlace` and `deathPlace`. `MARR` > `DATE` / `PLAC` give a union's `married` and `place`: only
+  on unions, so a family with one partner has no marriage details. All are level 2 directly under the
+  event, the first usable one wins, and places are cleaned (spaces collapsed, commas kept).
 - Calendars: Gregorian and Julian dates give a year; Hebrew and French Republican dates (5.5.1
   `@#DHEBREW@`, 7.0 `HEBREW`) and years BC (`B.C.`, `BC`, `BCE`) give none.
 - `FAM`: `HUSB`/`WIFE` (both present: a union), `CHIL` (a parent link from each partner present).

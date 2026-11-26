@@ -58,6 +58,9 @@ const nameParts = (value: string): { given: string; surname: string } => {
   return { given: cleanPart(given), surname: cleanPart(surname) };
 };
 
+/** A place without its empty parts: GEDCOM leaves blanks between commas for unknown levels. */
+const cleanPlace = (value: string) => value.split(",").map(cleanPart).filter(Boolean).join(", ");
+
 /** A Hebrew or French Republican calendar, or a year before the common era: no usable year. */
 const OTHER_CALENDAR = /HEBREW|FRENCH|\bB\.?C\.?(?:E\.?)?(?=\s|$)|\bBCE\b/i;
 
@@ -79,12 +82,15 @@ const sexOf = (value: string): Sex => (value === "M" ? "male" : value === "F" ? 
 /**
  * Reads the people and families of a GEDCOM file (5.5.1 or 7), already decoded to text, into the
  * input of `createTree`. It reads `INDI` records (the first usable `NAME`, with slashes removed and
- * `@@` read as `@`, and its `given` name and `surname` from the slashes or a `GIVN`/`SURN` under
- * it; `SEX`; the birth and death years from `BIRT`/`DEAT` `DATE`, left out for Hebrew, French
- * Republican and BC dates; the places from `BIRT`/`DEAT` `PLAC`) and `FAM` records (`HUSB`, `WIFE`,
- * `CHIL`; for a couple, the marriage year and place from `MARR` `DATE` and `PLAC`, read like the
- * birth ones). Everything else is ignored, and it never throws on malformed lines. A `CHIL` that
- * points at a person who is not in the file stays in `parents`; `createTree` skips it.
+ * `@@` read as `@`; its `given` name is the part before the first slash and its `surname` the part
+ * between the first and second, and only when one of those is empty, the `GIVN` values, or the
+ * `SPFX` then `SURN` values, under that same `NAME`, repeats joined with a space; `SEX`; the birth
+ * and death years from `BIRT`/`DEAT` `DATE`, left out for Hebrew, French Republican and BC dates;
+ * the places from `BIRT`/`DEAT` `PLAC`, without the empty parts between commas) and `FAM` records
+ * (`HUSB`, `WIFE`, `CHIL`; for a couple, the marriage year and place from `MARR` `DATE` and `PLAC`,
+ * read like the birth ones). Each field takes the first usable value. Everything else is ignored,
+ * and it never throws on malformed lines. A `CHIL` that points at a person who is not in the file
+ * stays in `parents`; `createTree` skips it.
  *
  * `createTree` reads `name` by default but not `born`, so pass it on, as in the example.
  *
@@ -123,6 +129,8 @@ export function fromGedcom(text: string): GedcomInput {
 
   let person: (Omit<GedcomPerson, "name"> & { name?: string }) | undefined;
   let usedName = false; // the current level-1 line is the NAME that gave `name`
+  let slashes = { given: false, surname: false }; // which parts the used NAME's slashes gave
+  let tagged = { GIVN: [] as string[], SPFX: [] as string[], SURN: [] as string[] }; // under the used NAME
   let family: { husb?: string; wife?: string; children: string[]; married?: number; place?: string } | undefined;
   let section = "";
 
@@ -163,6 +171,8 @@ export function fromGedcom(text: string): GedcomInput {
           if (person.name) {
             usedName = true;
             const { given, surname } = nameParts(value);
+            slashes = { given: given !== "", surname: surname !== "" };
+            tagged = { GIVN: [], SPFX: [], SURN: [] };
             if (given) person.given = given;
             if (surname) person.surname = surname;
           }
@@ -177,12 +187,16 @@ export function fromGedcom(text: string): GedcomInput {
     } else if (level === 2 && family) {
       if (section === "MARR") {
         if (tag === "DATE") family.married ??= yearOf(value);
-        else if (tag === "PLAC") family.place ??= cleanPart(value) || undefined;
+        else if (tag === "PLAC") family.place ??= cleanPlace(value) || undefined;
       }
     } else if (level === 2 && person) {
-      if (usedName && (tag === "GIVN" || tag === "SURN")) {
+      if (usedName && (tag === "GIVN" || tag === "SPFX" || tag === "SURN")) {
         const part = cleanPart(value);
-        if (part) person[tag === "GIVN" ? "given" : "surname"] = part;
+        if (part) tagged[tag].push(part);
+        if (!slashes.given && tagged.GIVN.length) person.given = tagged.GIVN.join(" ");
+        if (!slashes.surname && tagged.SURN.length + tagged.SPFX.length) {
+          person.surname = [...tagged.SPFX, ...tagged.SURN].join(" ");
+        }
       } else if (section === "BIRT" || section === "DEAT") {
         const born = section === "BIRT";
         if (tag === "DATE") {
@@ -190,7 +204,7 @@ export function fromGedcom(text: string): GedcomInput {
           if (person[key] === undefined) person[key] = yearOf(value);
         } else if (tag === "PLAC") {
           const key = born ? "birthPlace" : "deathPlace";
-          if (person[key] === undefined) person[key] = cleanPart(value) || undefined;
+          if (person[key] === undefined) person[key] = cleanPlace(value) || undefined;
         }
       }
     }

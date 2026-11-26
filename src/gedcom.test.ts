@@ -51,16 +51,27 @@ describe("name parts", () => {
     expect(one(["1 NAME A@@B /C/"]).given).toBe("A@B");
   });
 
-  it("prefers GIVN and SURN under the same NAME, and keeps name as written", () => {
+  it("takes the parts from the slashes even when GIVN and SURN say otherwise", () => {
     expect(one(["1 NAME Maria /Ioannou/", "2 GIVN Maria Eleni", "2 SURN Ioannou-Papa"])).toMatchObject({
       name: "Maria Ioannou",
-      given: "Maria Eleni",
-      surname: "Ioannou-Papa",
+      given: "Maria",
+      surname: "Ioannou",
     });
   });
 
+  it("falls back to GIVN, SPFX and SURN when the slashes leave a part empty, joining repeats", () => {
+    expect(one(["1 NAME /Ioannou/", "2 GIVN Maria", "2 GIVN Eleni"]).given).toBe("Maria Eleni");
+    expect(one(["1 NAME Ludwig", "2 SPFX van", "2 SURN Beethoven"]).surname).toBe("van Beethoven");
+    expect(one(["1 NAME Ana", "2 SURN García", "2 SURN López"]).surname).toBe("García López");
+  });
+
+  it("does not let an empty GIVN erase the given name", () => {
+    expect(one(["1 NAME Maria /Ioannou/", "2 GIVN"]).given).toBe("Maria");
+    expect(one(["1 NAME /Ioannou/", "2 GIVN"])).not.toHaveProperty("given");
+  });
+
   it("ignores GIVN and SURN under another NAME, and CONC under the used one", () => {
-    expect(one(["1 NAME A /B/", "1 NAME C /D/", "2 GIVN X", "2 SURN Y"])).toMatchObject({ given: "A", surname: "B" });
+    expect(one(["1 NAME /B/", "1 NAME C /D/", "2 GIVN X"])).not.toHaveProperty("given");
     expect(one(["1 NAME //", "2 GIVN X", "1 NAME C /D/"])).toMatchObject({ given: "C", surname: "D" });
     expect(one(["1 NAME A /B/", "2 CONC C"])).toMatchObject({ given: "A", surname: "B" });
   });
@@ -84,6 +95,12 @@ describe("death and places", () => {
     const person = one(["1 BIRT", "2 PLAC  Vrises,  Chania, Crete ", "1 DEAT", "2 PLAC Βρύσες"]);
     expect(person.birthPlace).toBe("Vrises, Chania, Crete");
     expect(person.deathPlace).toBe("Βρύσες");
+  });
+
+  it("drops the empty parts of a place", () => {
+    expect(one(["1 BIRT", "2 PLAC Baltimore, , Maryland, USA"]).birthPlace).toBe("Baltimore, Maryland, USA");
+    expect(one(["1 DEAT", "2 PLAC , , Austro-Hungarian Empire"]).deathPlace).toBe("Austro-Hungarian Empire");
+    expect(one(["1 BIRT", "2 PLAC , , ", "2 PLAC Chania"]).birthPlace).toBe("Chania");
   });
 
   it("uses the first non-empty PLAC and the first usable DATE", () => {
@@ -253,6 +270,12 @@ describe("marriages", () => {
     expect(family(["1 MARR Y"])).toEqual([{ a: "I1", b: "I2" }]);
     expect(family(["1 MARR", "2 SOUR @S1@", "3 DATE 1999", "3 PLAC Nowhere"])).toEqual([{ a: "I1", b: "I2" }]);
     expect(family(["1 MARR", "2 DATE @#DFRENCH R@ 1 VEND 10"])).toEqual([{ a: "I1", b: "I2" }]);
+  });
+
+  it("drops the empty parts of a marriage place and skips a blank one", () => {
+    expect(family(["1 MARR", "2 DATE unknown", "2 DATE 1932", "2 PLAC , ,", "2 PLAC , Vrises, Crete"])).toEqual([
+      { a: "I1", b: "I2", married: 1932, place: "Vrises, Crete" },
+    ]);
   });
 
   it("drops marriage details of a family with one partner", () => {

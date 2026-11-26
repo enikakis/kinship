@@ -9,19 +9,18 @@ const indi = (n: number, name: string, sex: string, date: string, page: number):
   `3 PAGE ${page}`,
 ];
 
-/** Lines of a FAM record: partners, children and an optional marriage year. */
-const fam = (n: number, partners: string[], children: string[], married?: number): string[] => [
+/** Lines of a FAM record: partners, children and an optional marriage year and place. */
+const fam = (n: number, partners: string[], children: string[], married?: number, place?: string): string[] => [
   `0 @F${n}@ FAM`,
   ...partners,
   ...children.map((child) => `1 CHIL @${child}@`),
-  ...(married === undefined ? [] : ["1 MARR", `2 DATE ${married}`]),
+  ...(married === undefined ? [] : ["1 MARR", `2 DATE ${married}`, ...(place ? [`2 PLAC ${place}`] : [])]),
 ];
 
 /**
- * An invented family as a GEDCOM 5.5.1 file, for tests (I1 has a death and places of birth and
- * death): byte order mark, CRLF line ends, notes, a
- * source, CONC/CONT, a remarriage (I7, I12), a family with one partner (F6), a person with no name
- * (I20).
+ * An invented family as a GEDCOM 5.5.1 file, for tests. It has a byte order mark, CRLF line ends,
+ * notes, a source, CONC/CONT, a death and places of birth and death (I1), a marriage place (F1),
+ * a remarriage (I7, I12), a family with one partner (F6) and a person with no name (I20).
  *
  *     I1 Nikolaos ═ I2 Sofia
  *                 │
@@ -90,7 +89,7 @@ export const sampleGedcom: string =
     ...indi(19, "Alexia /Lazarou/", "F", "1994", 98),
     "0 @I20@ INDI",
     "1 SEX U",
-    ...fam(1, ["1 HUSB @I1@", "1 WIFE @I2@"], ["I3", "I4"], 1927),
+    ...fam(1, ["1 HUSB @I1@", "1 WIFE @I2@"], ["I3", "I4"], 1927, "Patra"),
     ...fam(2, ["1 HUSB @I3@", "1 WIFE @I5@"], ["I7", "I8"], 1957),
     ...fam(3, ["1 HUSB @I6@", "1 WIFE @I4@"], ["I9", "I10"], 1958),
     ...fam(4, ["1 HUSB @I7@", "1 WIFE @I11@"], ["I13", "I14"], 1988),

@@ -238,6 +238,30 @@ it("keeps people in file order", () => {
   expect(fromGedcom("0 @B@ INDI\n0 @A@ INDI").people.map((p) => p.id)).toEqual(["B", "A"]);
 });
 
+describe("marriages", () => {
+  const family = (lines: string[]) =>
+    fromGedcom(["0 @I1@ INDI", "0 @I2@ INDI", "0 @F1@ FAM", "1 HUSB @I1@", "1 WIFE @I2@", ...lines].join("\n")).unions;
+
+  it("puts the marriage year and place on the union", () => {
+    expect(family(["1 MARR", "2 DATE 4 JUN 1932", "2 PLAC Vrises"])).toEqual([
+      { a: "I1", b: "I2", married: 1932, place: "Vrises" },
+    ]);
+  });
+
+  it("leaves them out when unknown, and ignores citations under MARR", () => {
+    expect(family([])).toEqual([{ a: "I1", b: "I2" }]);
+    expect(family(["1 MARR Y"])).toEqual([{ a: "I1", b: "I2" }]);
+    expect(family(["1 MARR", "2 SOUR @S1@", "3 DATE 1999", "3 PLAC Nowhere"])).toEqual([{ a: "I1", b: "I2" }]);
+    expect(family(["1 MARR", "2 DATE @#DFRENCH R@ 1 VEND 10"])).toEqual([{ a: "I1", b: "I2" }]);
+  });
+
+  it("drops marriage details of a family with one partner", () => {
+    const input = fromGedcom("0 @I1@ INDI\n0 @I3@ INDI\n0 @F1@ FAM\n1 WIFE @I1@\n1 MARR\n2 DATE 1932\n1 CHIL @I3@");
+    expect(input.unions).toEqual([]);
+    expect(input.parents).toEqual([["I1", "I3"]]);
+  });
+});
+
 const tree = createTree(fromGedcom(sampleGedcom), { born: (p) => p.born });
 const role = (from: string, to: string) => describeRelation(tree, relate(tree, from, to)!, en).main.roles?.other;
 
@@ -255,6 +279,9 @@ it("reads the sample file", () => {
     deathPlace: "Athens",
   });
   expect(tree.byId.get("I20")).toEqual({ id: "I20", sex: "unknown", name: "I20" });
+  const input = fromGedcom(sampleGedcom);
+  expect(input.unions[0]).toEqual({ a: "I1", b: "I2", married: 1927, place: "Patra" });
+  expect(input.unions.find((u) => u.a === "I7" && u.b === "I12")).toEqual({ a: "I7", b: "I12", married: 1996 });
 });
 
 it("names a first cousin, an aunt by marriage and a step-parent from the sample", () => {
